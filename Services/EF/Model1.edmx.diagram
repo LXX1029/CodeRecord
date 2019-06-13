@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="77f72b49cbb24fcd97ffa95a34d09f8c" Name="Diagram1">
+        <EntityTypeShape EntityType="RecordDBModel.DevelopFun" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RecordDBModel.DevelopPowerFun" Width="1.875" PointX="3.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RecordDBModel.DevelopRecord" Width="1.75" PointX="3.875" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RecordDBModel.DevelopType" Width="2" PointX="6.875" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="RecordDBModel.DevelopUser" Width="1.5" PointX="6.375" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RecordDBModel.View_DevelopUserPowerFun" Width="1.5" PointX="8.75" PointY="0.875" IsExpanded="true" />
+        <AssociationConnector Association="RecordDBModel.FK_DevelopPowerFun_DevelopUser" />
+        <AssociationConnector Association="RecordDBModel.FK_DevelopRecord_DevelopType" />
+        <AssociationConnector Association="RecordDBModel.FK_DevelopPowerFun_DevelopFun" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

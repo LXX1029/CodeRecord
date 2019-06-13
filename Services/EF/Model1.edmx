@@ -1,0 +1,525 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RecordDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="DevelopFun">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ParentID" Type="int" />
+          <Property Name="ImageIndex" Type="int" />
+        </EntityType>
+        <EntityType Name="DevelopPowerFun">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FunId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DevelopRecord">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TypeId" Type="int" />
+          <Property Name="Title" Type="nvarchar" MaxLength="500" />
+          <Property Name="ImagePath" Type="nvarchar" MaxLength="200" />
+          <Property Name="Desc" Type="nvarchar(max)" />
+          <Property Name="ClickCount" Type="int" />
+          <Property Name="CreatedTime" Type="datetime" />
+          <Property Name="UpdatedTime" Type="datetime" />
+          <Property Name="Picture" Type="image" />
+          <Property Name="Zip" Type="varbinary(max)" />
+          <Property Name="UserId" Type="int" />
+        </EntityType>
+        <EntityType Name="DevelopType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="200" />
+          <Property Name="ParentId" Type="int" />
+          <Property Name="CreatedTime" Type="datetime" />
+          <Property Name="UpdatedTime" Type="datetime" />
+        </EntityType>
+        <EntityType Name="DevelopUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Sex" Type="varchar" MaxLength="50" />
+          <Property Name="DevelopAge" Type="decimal" Precision="18" Scale="1" Nullable="false" />
+          <Property Name="Pwd" Type="varchar" MaxLength="200" />
+          <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“RecordDB.dbo.View_DevelopUserPowerFun”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="View_DevelopUserPowerFun">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="FunId" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="IsEnabled" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="FunId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="ParentID" Type="int" />
+          <Property Name="ImageIndex" Type="int" />
+        </EntityType>
+        <Association Name="FK_DevelopPowerFun_DevelopFun">
+          <End Role="DevelopFun" Type="Self.DevelopFun" Multiplicity="1" />
+          <End Role="DevelopPowerFun" Type="Self.DevelopPowerFun" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DevelopFun">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DevelopPowerFun">
+              <PropertyRef Name="FunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DevelopPowerFun_DevelopUser">
+          <End Role="DevelopUser" Type="Self.DevelopUser" Multiplicity="1" />
+          <End Role="DevelopPowerFun" Type="Self.DevelopPowerFun" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DevelopUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DevelopPowerFun">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DevelopRecord_DevelopType">
+          <End Role="DevelopType" Type="Self.DevelopType" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DevelopRecord" Type="Self.DevelopRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DevelopType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DevelopRecord">
+              <PropertyRef Name="TypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="proc_ClickCountReport" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="proc_DeleteDevelopType" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="typeid" Type="int" Mode="In" />
+        </Function>
+        <Function Name="proc_GetDevelopRecord" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="startId" Type="int" Mode="In" />
+          <Parameter Name="endId" Type="int" Mode="In" />
+        </Function>
+        <Function Name="proc_GetDevelopRecordPager" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="pageIndex" Type="int" Mode="In" />
+          <Parameter Name="pageCount" Type="int" Mode="In" />
+        </Function>
+        <Function Name="proc_SaveUserFun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserId" Type="int" Mode="In" />
+          <Parameter Name="FunId" Type="int" Mode="In" />
+          <Parameter Name="IsEnable" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="SP_Pagination" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Tables" Type="varchar" Mode="In" />
+          <Parameter Name="PrimaryKey" Type="varchar" Mode="In" />
+          <Parameter Name="Sort" Type="varchar" Mode="In" />
+          <Parameter Name="CurrentPage" Type="int" Mode="In" />
+          <Parameter Name="PageSize" Type="int" Mode="In" />
+          <Parameter Name="Fields" Type="varchar" Mode="In" />
+          <Parameter Name="Filter" Type="varchar" Mode="In" />
+          <Parameter Name="Group" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="RecordDBModelStoreContainer">
+          <EntitySet Name="DevelopFun" EntityType="Self.DevelopFun" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DevelopPowerFun" EntityType="Self.DevelopPowerFun" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DevelopRecord" EntityType="Self.DevelopRecord" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DevelopType" EntityType="Self.DevelopType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DevelopUser" EntityType="Self.DevelopUser" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="View_DevelopUserPowerFun" EntityType="Self.View_DevelopUserPowerFun" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [View_DevelopUserPowerFun].[UserId] AS [UserId], 
+    [View_DevelopUserPowerFun].[FunId] AS [FunId], 
+    [View_DevelopUserPowerFun].[Name] AS [Name], 
+    [View_DevelopUserPowerFun].[IsEnabled] AS [IsEnabled], 
+    [View_DevelopUserPowerFun].[ParentID] AS [ParentID], 
+    [View_DevelopUserPowerFun].[ImageIndex] AS [ImageIndex]
+    FROM [dbo].[View_DevelopUserPowerFun] AS [View_DevelopUserPowerFun]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_DevelopPowerFun_DevelopFun" Association="Self.FK_DevelopPowerFun_DevelopFun">
+            <End Role="DevelopFun" EntitySet="DevelopFun" />
+            <End Role="DevelopPowerFun" EntitySet="DevelopPowerFun" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DevelopPowerFun_DevelopUser" Association="Self.FK_DevelopPowerFun_DevelopUser">
+            <End Role="DevelopUser" EntitySet="DevelopUser" />
+            <End Role="DevelopPowerFun" EntitySet="DevelopPowerFun" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DevelopRecord_DevelopType" Association="Self.FK_DevelopRecord_DevelopType">
+            <End Role="DevelopType" EntitySet="DevelopType" />
+            <End Role="DevelopRecord" EntitySet="DevelopRecord" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RecordDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="DevelopFun">
+          <Key>
+            <PropertyRef Name="FunId" />
+          </Key>
+          <Property Name="FunId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ParentID" Type="Int32" />
+          <Property Name="ImageIndex" Type="Int32" />
+          <NavigationProperty Name="DevelopPowerFuns" Relationship="RecordDBModel.FK_DevelopPowerFun_DevelopFun" FromRole="DevelopFun" ToRole="DevelopPowerFun" />
+        </EntityType>
+        <EntityType Name="DevelopPowerFun">
+          <Key>
+            <PropertyRef Name="PowerFunId" />
+          </Key>
+          <Property Name="PowerFunId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FunId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="DevelopUser" Relationship="RecordDBModel.FK_DevelopPowerFun_DevelopUser" FromRole="DevelopPowerFun" ToRole="DevelopUser" />
+          <NavigationProperty Name="DevelopFun" Relationship="RecordDBModel.FK_DevelopPowerFun_DevelopFun" FromRole="DevelopPowerFun" ToRole="DevelopFun" />
+        </EntityType>
+        <EntityType Name="DevelopRecord">
+          <Key>
+            <PropertyRef Name="RecordId" />
+          </Key>
+          <Property Name="RecordId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TypeId" Type="Int32" />
+          <Property Name="Title" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ImagePath" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Desc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClickCount" Type="Int32" />
+          <Property Name="CreatedTime" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedTime" Type="DateTime" Precision="3" />
+          <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Zip" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="UserId" Type="Int32" />
+          <NavigationProperty Name="DevelopType" Relationship="RecordDBModel.FK_DevelopRecord_DevelopType" FromRole="DevelopRecord" ToRole="DevelopType" />
+        </EntityType>
+        <EntityType Name="DevelopType">
+          <Key>
+            <PropertyRef Name="TypeId" />
+          </Key>
+          <Property Name="TypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ParentId" Type="Int32" />
+          <Property Name="CreatedTime" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedTime" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="DevelopRecords" Relationship="RecordDBModel.FK_DevelopRecord_DevelopType" FromRole="DevelopType" ToRole="DevelopRecord" />
+        </EntityType>
+        <EntityType Name="DevelopUser">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Sex" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DevelopAge" Type="Decimal" Precision="18" Scale="1" Nullable="false" />
+          <Property Name="Pwd" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DevelopPowerFuns" Relationship="RecordDBModel.FK_DevelopPowerFun_DevelopUser" FromRole="DevelopUser" ToRole="DevelopPowerFun" />
+          <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" annotation:StoreGeneratedPattern="Computed" ConcurrencyMode="None" />
+        </EntityType>
+        <EntityType Name="View_DevelopUserPowerFun">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="FunId" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="IsEnabled" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="FunId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="ParentID" Type="Int32" />
+          <Property Name="ImageIndex" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="RecordDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DevelopFuns" EntityType="Self.DevelopFun" />
+          <EntitySet Name="DevelopPowerFuns" EntityType="Self.DevelopPowerFun" />
+          <EntitySet Name="DevelopRecords" EntityType="Self.DevelopRecord" />
+          <EntitySet Name="DevelopTypes" EntityType="Self.DevelopType" />
+          <EntitySet Name="DevelopUsers" EntityType="Self.DevelopUser" />
+          <EntitySet Name="View_DevelopUserPowerFun" EntityType="Self.View_DevelopUserPowerFun" />
+          <FunctionImport Name="proc_ClickCountReport" ReturnType="Collection(RecordDBModel.proc_ClickCountReport_Result)" />
+          <FunctionImport Name="proc_DeleteDevelopType">
+          <Parameter Name="typeid" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="proc_GetDevelopRecord" ReturnType="Collection(RecordDBModel.proc_GetDevelopRecord_Result)">
+            <Parameter Name="startId" Mode="In" Type="Int32" />
+            <Parameter Name="endId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="proc_GetDevelopRecordPager" ReturnType="Collection(RecordDBModel.proc_GetDevelopRecordPager_Result)">
+            <Parameter Name="pageIndex" Mode="In" Type="Int32" />
+            <Parameter Name="pageCount" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="proc_SaveUserFun" ReturnType="Collection(Int32)">
+            <Parameter Name="UserId" Mode="In" Type="Int32" />
+            <Parameter Name="FunId" Mode="In" Type="Int32" />
+            <Parameter Name="IsEnable" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="SP_Pagination">
+            <Parameter Name="Tables" Mode="In" Type="String" />
+            <Parameter Name="PrimaryKey" Mode="In" Type="String" />
+            <Parameter Name="Sort" Mode="In" Type="String" />
+            <Parameter Name="CurrentPage" Mode="In" Type="Int32" />
+            <Parameter Name="PageSize" Mode="In" Type="Int32" />
+            <Parameter Name="Fields" Mode="In" Type="String" />
+            <Parameter Name="Filter" Mode="In" Type="String" />
+            <Parameter Name="Group" Mode="In" Type="String" />
+          </FunctionImport>
+          <AssociationSet Name="FK_DevelopPowerFun_DevelopUser" Association="RecordDBModel.FK_DevelopPowerFun_DevelopUser">
+            <End Role="DevelopUser" EntitySet="DevelopUsers" />
+            <End Role="DevelopPowerFun" EntitySet="DevelopPowerFuns" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DevelopRecord_DevelopType" Association="RecordDBModel.FK_DevelopRecord_DevelopType">
+            <End Role="DevelopType" EntitySet="DevelopTypes" />
+            <End Role="DevelopRecord" EntitySet="DevelopRecords" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DevelopPowerFun_DevelopFun" Association="RecordDBModel.FK_DevelopPowerFun_DevelopFun">
+            <End Role="DevelopFun" EntitySet="DevelopFuns" />
+            <End Role="DevelopPowerFun" EntitySet="DevelopPowerFuns" />
+          </AssociationSet>
+        </EntityContainer>
+        <ComplexType Name="proc_ClickCountReport_Result">
+          <Property Type="String" Name="ParentName" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="ParentId" Nullable="true" />
+          <Property Type="Int32" Name="ChildrenId" Nullable="false" />
+          <Property Type="String" Name="ChildrenName" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="ClickCount" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="proc_GetDevelopRecord_Result">
+          <Property Type="Int32" Name="IdIndex" Nullable="true" />
+          <Property Type="String" Name="ParentName" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="TypeName" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="ParentId" Nullable="true" />
+          <Property Type="Int32" Name="ChildrenId" Nullable="true" />
+          <Property Type="String" Name="Title" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Desc" Nullable="true" />
+          <Property Type="DateTime" Name="CreatedTime" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ImagePath" Nullable="true" MaxLength="200" />
+          <Property Type="Binary" Name="Picture" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="UserId" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="proc_GetDevelopRecordPager_Result">
+          <Property Type="Int32" Name="IdIndex" Nullable="true" />
+          <Property Type="String" Name="ParentName" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="TypeName" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="ParentId" Nullable="true" />
+          <Property Type="Int32" Name="ChildrenId" Nullable="true" />
+          <Property Type="String" Name="Title" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Desc" Nullable="true" />
+          <Property Type="DateTime" Name="CreatedTime" Nullable="true" Precision="23" />
+          <Property Type="String" Name="ImagePath" Nullable="true" MaxLength="200" />
+          <Property Type="Binary" Name="Picture" Nullable="true" MaxLength="Max" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="UserId" Nullable="true" />
+        </ComplexType>
+        <Association Name="FK_DevelopPowerFun_DevelopUser">
+          <End Type="RecordDBModel.DevelopUser" Role="DevelopUser" Multiplicity="1" />
+          <End Type="RecordDBModel.DevelopPowerFun" Role="DevelopPowerFun" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DevelopUser">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="DevelopPowerFun">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DevelopRecord_DevelopType">
+          <End Type="RecordDBModel.DevelopType" Role="DevelopType" Multiplicity="0..1" />
+          <End Type="RecordDBModel.DevelopRecord" Role="DevelopRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DevelopType">
+              <PropertyRef Name="TypeId" />
+            </Principal>
+            <Dependent Role="DevelopRecord">
+              <PropertyRef Name="TypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DevelopPowerFun_DevelopFun">
+          <End Type="RecordDBModel.DevelopFun" Role="DevelopFun" Multiplicity="1" />
+          <End Type="RecordDBModel.DevelopPowerFun" Role="DevelopPowerFun" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DevelopFun">
+              <PropertyRef Name="FunId" />
+            </Principal>
+            <Dependent Role="DevelopPowerFun">
+              <PropertyRef Name="FunId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RecordDBModelStoreContainer" CdmEntityContainer="RecordDBEntities">
+          <EntitySetMapping Name="DevelopFuns">
+            <EntityTypeMapping TypeName="RecordDBModel.DevelopFun">
+              <MappingFragment StoreEntitySet="DevelopFun">
+                <ScalarProperty Name="FunId" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ParentID" ColumnName="ParentID" />
+                <ScalarProperty Name="ImageIndex" ColumnName="ImageIndex" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DevelopPowerFuns">
+            <EntityTypeMapping TypeName="RecordDBModel.DevelopPowerFun">
+              <MappingFragment StoreEntitySet="DevelopPowerFun">
+                <ScalarProperty Name="PowerFunId" ColumnName="Id" />
+                <ScalarProperty Name="FunId" ColumnName="FunId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DevelopRecords">
+            <EntityTypeMapping TypeName="RecordDBModel.DevelopRecord">
+              <MappingFragment StoreEntitySet="DevelopRecord">
+                <ScalarProperty Name="RecordId" ColumnName="Id" />
+                <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
+                <ScalarProperty Name="Desc" ColumnName="Desc" />
+                <ScalarProperty Name="ClickCount" ColumnName="ClickCount" />
+                <ScalarProperty Name="CreatedTime" ColumnName="CreatedTime" />
+                <ScalarProperty Name="UpdatedTime" ColumnName="UpdatedTime" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="Zip" ColumnName="Zip" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DevelopTypes">
+            <EntityTypeMapping TypeName="RecordDBModel.DevelopType">
+              <MappingFragment StoreEntitySet="DevelopType">
+                <ScalarProperty Name="TypeId" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="CreatedTime" ColumnName="CreatedTime" />
+                <ScalarProperty Name="UpdatedTime" ColumnName="UpdatedTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DevelopUsers">
+            <EntityTypeMapping TypeName="RecordDBModel.DevelopUser">
+              <MappingFragment StoreEntitySet="DevelopUser">
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+                <ScalarProperty Name="UserId" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Sex" ColumnName="Sex" />
+                <ScalarProperty Name="DevelopAge" ColumnName="DevelopAge" />
+                <ScalarProperty Name="Pwd" ColumnName="Pwd" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="View_DevelopUserPowerFun">
+            <EntityTypeMapping TypeName="RecordDBModel.View_DevelopUserPowerFun">
+              <MappingFragment StoreEntitySet="View_DevelopUserPowerFun">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="FunId" ColumnName="FunId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="ParentID" ColumnName="ParentID" />
+                <ScalarProperty Name="ImageIndex" ColumnName="ImageIndex" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="proc_ClickCountReport" FunctionName="RecordDBModel.Store.proc_ClickCountReport">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RecordDBModel.proc_ClickCountReport_Result">
+                <ScalarProperty Name="ParentName" ColumnName="ParentName" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="ChildrenId" ColumnName="ChildrenId" />
+                <ScalarProperty Name="ChildrenName" ColumnName="ChildrenName" />
+                <ScalarProperty Name="ClickCount" ColumnName="ClickCount" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="proc_DeleteDevelopType" FunctionName="RecordDBModel.Store.proc_DeleteDevelopType" />
+          <FunctionImportMapping FunctionImportName="proc_GetDevelopRecord" FunctionName="RecordDBModel.Store.proc_GetDevelopRecord">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RecordDBModel.proc_GetDevelopRecord_Result">
+                <ScalarProperty Name="IdIndex" ColumnName="IdIndex" />
+                <ScalarProperty Name="ParentName" ColumnName="ParentName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="ChildrenId" ColumnName="ChildrenId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Desc" ColumnName="Desc" />
+                <ScalarProperty Name="CreatedTime" ColumnName="CreatedTime" />
+                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="proc_GetDevelopRecordPager" FunctionName="RecordDBModel.Store.proc_GetDevelopRecordPager">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RecordDBModel.proc_GetDevelopRecordPager_Result">
+                <ScalarProperty Name="IdIndex" ColumnName="IdIndex" />
+                <ScalarProperty Name="ParentName" ColumnName="ParentName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="ChildrenId" ColumnName="ChildrenId" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Desc" ColumnName="Desc" />
+                <ScalarProperty Name="CreatedTime" ColumnName="CreatedTime" />
+                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="proc_SaveUserFun" FunctionName="RecordDBModel.Store.proc_SaveUserFun" />
+          <FunctionImportMapping FunctionImportName="SP_Pagination" FunctionName="RecordDBModel.Store.SP_Pagination" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="无" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
