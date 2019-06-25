@@ -202,7 +202,7 @@ namespace DLCodeRecord.DevelopForms
                 UtilityHelper.SetConfigurationKeyValue("userId", user.Id.ToString());
                 // 显示主窗口
                 manageFrm = new DevelopManageFrm();
-                manageFrm.AttatchedHandler(manageFrm_CloseLoginFrmHandler);
+                manageFrm.AttatchedHandler(new Action(() => { this.Hide(); }));
                 manageFrm.Show();
             }
             catch (Exception ex)
@@ -212,12 +212,5 @@ namespace DLCodeRecord.DevelopForms
         }
 
         #endregion 登陆事件
-
-        #region 窗体隐藏事件,在主窗口中触发
-        private void manageFrm_CloseLoginFrmHandler(object sender, EventArgs e)
-        {
-            this.Hide();
-        }
-        #endregion 窗体隐藏事件,在主窗口中触发
     }
 }

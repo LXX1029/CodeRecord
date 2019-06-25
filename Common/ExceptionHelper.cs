@@ -31,7 +31,6 @@ namespace Common
             {
                 catchAction?.Invoke(ex);
                 LoggerHelper.WriteException(ex);
-                throw ex;
             }
             finally
             {

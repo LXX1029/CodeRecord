@@ -146,12 +146,13 @@ namespace Common
             byte[] imagebytes = null;
             CatchException(() =>
             {
-                using (FileStream fs = new FileStream(fullpath, FileMode.Open, FileAccess.Read))
+                FileStream fs = new FileStream(fullpath, FileMode.Open, FileAccess.Read);
                 using (BinaryReader br = new BinaryReader(fs))
                 {
                     imagebytes = new byte[fs.Length];
                     imagebytes = br.ReadBytes(Convert.ToInt32(fs.Length));
                 }
+
             });
             return imagebytes;
         }

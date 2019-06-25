@@ -448,7 +448,7 @@ namespace DLCodeRecord.DevelopForms
         #endregion 自定义绘制 空数据显示文字
 
         #region 触发隐藏登陆窗口事件
-        public void AttatchedHandler(EventHandler handler)
+        public void AttatchedHandler(Action handler)
         {
             if (handler == null) return;
             this.CloseLoginFrmHandler -= handler;
@@ -458,11 +458,11 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 隐藏登陆窗口事件
         /// </summary>
-        private event EventHandler CloseLoginFrmHandler;
+        private Action CloseLoginFrmHandler;
 
         private void OnCloseLoginFrmHandler()
         {
-            CloseLoginFrmHandler?.Invoke(null, null);
+            CloseLoginFrmHandler?.Invoke();
         }
 
         #endregion 触发隐藏登陆窗口事件
