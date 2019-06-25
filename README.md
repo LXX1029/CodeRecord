@@ -5,9 +5,13 @@
 
 # 创建数据库
   若已成功编译项目，更改DataServices与DLCodeRecord程序集中的App.config文件，修改数据库连接字符串RecordDBConnectionString为你安装的数据库地址以及设定的相关凭据。运行DataServices控制台项目，会进行数据库创建并添加默认用户数据。输出提示“数据库迁移完毕”表示数据库创建成功。
-
+ 
 # 运行项目
 将DLCodeRecord作为启动项目并运行，输入默认用户名：admin 密码：0。
 
+# 还原数据库
+  备份数据库为“RecordDB.bak”，放置程序运行根目录，运行“DLInitialDB”项目进行数据库还原。
+
 # 说明
-  欢迎提供宝贵优化修改意见。
+  1:将Dll文件夹下的zh-Hans文件夹拷贝到运行根目录下实现Devexpress控件汉化。
+  2:使用中会有bug，会不断迭代更新项目。
