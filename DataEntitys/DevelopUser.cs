@@ -12,7 +12,7 @@ namespace DataEntitys
         [MaxLength(15), Required]
         public string Name { get; set; }
         [MaxLength(50), Required]
-        public string Pwd { get; set; }
+        public string Pwd { get; set; } = "111111";
         [MaxLength(2)]
         public string Sex { get; set; }
 

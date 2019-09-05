@@ -33,6 +33,7 @@ namespace DLCodeRecord.DevelopForms
             InitializeComponent();
             this.Text = "查看";
             this.picImg.Properties.NullText = "暂无图片";
+            this.Load -= new EventHandler(DevelopViewFrm_Load);
             this.Load += new EventHandler(DevelopViewFrm_Load);
             developRecordEntity = entity;
         }

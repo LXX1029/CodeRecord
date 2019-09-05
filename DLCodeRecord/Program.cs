@@ -69,7 +69,7 @@ namespace DLCodeRecord
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
             MsgHelper.CloseSplashScreenForm();
-            //MsgHelper.ShowError("程序遇到不可修复的异常被迫关闭，参见日志文件修复错误!");
+            MsgHelper.ShowError("程序遇到不可修复的异常被迫关闭，参见日志文件修复错误!");
             LoggerHelper.WriteException(e.Exception);
             Environment.Exit(Environment.ExitCode);
             Application.Exit();

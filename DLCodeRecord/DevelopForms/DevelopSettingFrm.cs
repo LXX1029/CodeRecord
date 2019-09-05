@@ -1,11 +1,9 @@
-﻿using Common;
-using static Common.ExceptionHelper;
-using DataEntitys;
-using log4net;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Common;
+using DataEntitys;
+using static Services.Unity.UnityContainerManager;
 
 namespace DLCodeRecord.DevelopForms
 {
@@ -75,7 +73,7 @@ namespace DLCodeRecord.DevelopForms
                     return;
                 }
                 pwd = UtilityHelper.MD5Encrypt(pwd.Trim());
-                DevelopUser user = await base.UnityUserFacade.GetEntity(Convert.ToInt32(userId));
+                DevelopUser user = await UnityUserFacade.GetEntity(Convert.ToInt32(userId));
                 if (user.Pwd != pwd)
                 {
                     txtPwd.ErrorText = "原始密码输入不正确";

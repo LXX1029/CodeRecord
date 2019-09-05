@@ -19,7 +19,6 @@ namespace Services.Repositories
         /// <summary>
         /// 数据库上下文
         /// </summary>
-        //protected RecordDBEntities DbContext { get; } = DbContextFactory.Instance;
         protected RecordContext DbContext { get; } = DbContextFactory.Instance;
         /// <summary>
         /// 添加实体

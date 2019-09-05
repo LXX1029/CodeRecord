@@ -1,10 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Services.Unity;
+﻿using System.Threading.Tasks;
 using DataEntitys;
-using System.Threading.Tasks;
-using Services.EFCodeFirst;
-
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Services.Unity.UnityContainerManager;
 namespace UnitTestProject
 {
     [TestClass]
@@ -13,30 +10,40 @@ namespace UnitTestProject
         [TestMethod]
         public async Task TestMethod1()
         {
-            //for (int i = 0; i < 5; i++)
-            //{
-            //    // 测试用户更新
-            //    DevelopUser updateUser = await UnitySingleton.UnityUserFacade.GetEntity(20270);
-            //    updateUser.Name = $"第{ i + 1}次  测试更新";
-            //    DevelopUser updatedUser = await UnitySingleton.UnityUserFacade.UpdateEntity(updateUser);
-            //    //Assert.AreEqual(true, );
-            //    //Assert.IsTrue(updatedUser.Name == "测试更新");
-            //}
 
-            using (RecordContext context = new RecordContext())
+            for (int i = 0; i < 5; i++)
             {
-                DevelopUser user = context.DevelopUsers.Find(20270);
-                for (int i = 0; i < 100; i++)
+                await Task.Run(async () =>
                 {
-                    user.Name = $"x{i + 1}";
-                    context.SaveChanges();
+                    // 测试用户更新
+                    DevelopUser updateUser = await UnityUserFacade.GetEntity(2);
+                    updateUser.Name = $"第{ i + 1}次  测试更新";
+                    await UnityUserFacade.UpdateEntity(updateUser);
+                });
+                //Assert.AreEqual(true, );
+                //Assert.IsTrue(updatedUser.Name == "测试更新");
 
-                    user.Name = $"x{i + 2}";
-                    context.SaveChanges();
-                }
-
-
+                await Task.Run(async () =>
+                {
+                    // 测试用户更新
+                    DevelopUser updateUser = await UnityUserFacade.GetEntity(2);
+                    updateUser.Name = $"第{ i + 5}次  测试更新";
+                    await UnityUserFacade.UpdateEntity(updateUser);
+                });
             }
+            System.Console.ReadKey();
+            //using (RecordContext context = new RecordContext())
+            //{
+            //    DevelopUser user = context.DevelopUsers.Find(2);
+            //    for (int i = 0; i < 100; i++)
+            //    {
+            //        user.Name = $"x{i + 1}";
+            //        context.SaveChanges();
+
+            //        user.Name = $"x{i + 2}";
+            //        context.SaveChanges();
+            //    }
+            //}
         }
     }
 }

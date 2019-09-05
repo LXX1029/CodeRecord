@@ -1,24 +1,18 @@
-﻿using Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Common;
+using DataEntitys;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraTreeList.Columns;
 using DevExpress.XtraTreeList.Nodes;
-using Services;
-using DataEntitys;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static Common.ExceptionHelper;
-using static Common.LoggerHelper;
 using static Common.MsgHelper;
-using log4net;
-
+using static Services.Unity.UnityContainerManager;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -205,7 +199,7 @@ namespace DLCodeRecord.DevelopForms
                 SelectedUser = gvUser.GetFocusedRow() as DevelopUser;
                 if (SelectedUser?.Id > 0)
                 {
-                    await base.UnityUserFacade.UpdateEntity(SelectedUser);
+                    await UnityUserFacade.UpdateEntity(SelectedUser);
                     ShowInfo("修改成功");
                 }
                 actionState = DevelopActiveState.Normal;
@@ -273,8 +267,8 @@ namespace DLCodeRecord.DevelopForms
             try
             {
                 ShowSplashScreenForm(this, PromptHelper.D_LOADINGDATA);
-                IQueryable<DevelopUser> userArray = base.UnityUserFacade.GetDevelopUsers().Where(m => m.Id != 1);
-                IList<DevelopFun> funList = await base.UnityDevelopFunFacade.GetEntities();
+                IQueryable<DevelopUser> userArray = UnityUserFacade.GetDevelopUsers().Where(m => m.Id != 1);
+                IList<DevelopFun> funList = await UnityDevelopFunFacade.GetEntities();
                 dataManage.DevelopUserList.Clear();
                 foreach (DevelopUser user in userArray)
                     dataManage?.DevelopUserList.Add(user);
@@ -470,7 +464,7 @@ namespace DLCodeRecord.DevelopForms
             bool isChecked = treeListNode.Checked;
             if (tlUserPower.GetDataRecordByNode(treeListNode) is DevelopFun powerFun && powerFun != null && SelectedUser != null)
             {
-                DevelopPowerFun developPowerFun = await base.UnityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
+                DevelopPowerFun developPowerFun = await UnityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
                 {
                     FunId = powerFun.Id,
                     UserId = SelectedUser.Id,
@@ -488,7 +482,7 @@ namespace DLCodeRecord.DevelopForms
                     // 获取节点包含的数据对象
                     if (tlUserPower.GetDataRecordByNode(node) is DevelopFun powerFunData)
                     {
-                        developPowerFun = await base.UnityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
+                        developPowerFun = await UnityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
                         {
                             FunId = powerFunData.Id,
                             UserId = SelectedUser.Id,
@@ -521,7 +515,7 @@ namespace DLCodeRecord.DevelopForms
                 }
                 if (MsgHelper.ShowConfirm(PromptHelper.D_DELETE_CONFIRM) == DialogResult.OK)
                 {
-                    bool result = await base.UnityUserFacade.RemoveEntity(SelectedUser);
+                    bool result = await UnityUserFacade.RemoveEntity(SelectedUser);
                     if (result)
                     {
                         await ReLoadDevelopUser();

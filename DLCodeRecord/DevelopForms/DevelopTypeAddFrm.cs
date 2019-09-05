@@ -1,16 +1,13 @@
-﻿using DevExpress.XtraEditors;
-using DevExpress.XtraTreeList.Nodes;
-using DataEntitys;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common;
-using static Common.ExceptionHelper;
+using DataEntitys;
+using DevExpress.XtraEditors;
+using DevExpress.XtraTreeList.Nodes;
 using static Common.VerifyHelper;
-using log4net;
-
+using static Services.Unity.UnityContainerManager;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -34,17 +31,23 @@ namespace DLCodeRecord.DevelopForms
             this.txtRoot.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
             this.tlDevelopList.OptionsFind.AllowFindPanel = true;
             //this.tlDevelopList.ExpandAll();
-            this.tlDevelopList.FocusedNodeChanged += new DevExpress.XtraTreeList.FocusedNodeChangedEventHandler(tlDevelopList_FocusedNodeChanged);
+            this.tlDevelopList.FocusedNodeChanged -= tlDevelopList_FocusedNodeChanged;
+            this.tlDevelopList.FocusedNodeChanged += tlDevelopList_FocusedNodeChanged;
+            this.txtRoot.TextChanged -= Txt_TextChanged;
             this.txtRoot.TextChanged += Txt_TextChanged;
+            this.txtChild.TextChanged -= Txt_TextChanged;
             this.txtChild.TextChanged += Txt_TextChanged;
             #endregion 初始化设置
 
             #region 窗体加载/关闭
             this.Load -= DevelopTypeAddFrm_Load;
             this.Load += DevelopTypeAddFrm_Load;
-            this.FormClosing += (m, n) => { base.FormClosingTip(n); };
+            this.FormClosing -= DevelopTypeAddFrm_FormClosing;
+            this.FormClosing += DevelopTypeAddFrm_FormClosing;
             #endregion 窗体加载/关闭
         }
+
+
         #endregion
 
         #region 版块信息文本改变
@@ -70,6 +73,13 @@ namespace DLCodeRecord.DevelopForms
 
         #endregion 窗口加载事件
 
+        #region 窗口关闭
+        private void DevelopTypeAddFrm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            base.FormClosingTip(e);
+        }
+        #endregion
+
         #region 选择项改变，设置对象到按钮
 
         private void tlDevelopList_FocusedNodeChanged(object sender, DevExpress.XtraTreeList.FocusedNodeChangedEventArgs e)
@@ -91,7 +101,7 @@ namespace DLCodeRecord.DevelopForms
         {
             try
             {
-                IList<DevelopType> developTypeList = await base.UnityDevelopTypeFacade.GetEntities();
+                IList<DevelopType> developTypeList = await UnityDevelopTypeFacade.GetEntities();
                 this.tlDevelopList.DataSource = developTypeList;
             }
             catch (Exception ex)
@@ -122,7 +132,7 @@ namespace DLCodeRecord.DevelopForms
                     return;
                 }
 
-                IList<DevelopType> array = await base.UnityDevelopTypeFacade.GetDevelopTypeListByFilter(name, 0);
+                IList<DevelopType> array = await UnityDevelopTypeFacade.GetDevelopTypeListByFilter(name, 0);
                 if (array.Count > 0)
                 {
                     txtRoot.ErrorText = "该版块名称已存在";
@@ -133,7 +143,7 @@ namespace DLCodeRecord.DevelopForms
                 {
                     Name = name
                 };
-                await base.UnityDevelopTypeFacade.AddEntity(type);
+                await UnityDevelopTypeFacade.AddEntity(type);
                 this.txtRoot.Text = "";
                 await LoadDevelopType();
                 MsgHelper.ShowInfo(PromptHelper.D_ADD_SUCCESS);
@@ -178,7 +188,7 @@ namespace DLCodeRecord.DevelopForms
                     return;
                 }
 
-                IList<DevelopType> array = await base.UnityDevelopTypeFacade.GetDevelopTypeListByFilter(name, parentType.Id);
+                IList<DevelopType> array = await UnityDevelopTypeFacade.GetDevelopTypeListByFilter(name, parentType.Id);
                 if (array.Count > 0)
                 {
                     txtChild.ErrorText = "该版块已存在";
@@ -193,7 +203,7 @@ namespace DLCodeRecord.DevelopForms
                     ParentId = parentType.Id,
                     CreatedTime = DateTime.Now
                 };
-                await base.UnityDevelopTypeFacade.AddEntity(type);
+                await UnityDevelopTypeFacade.AddEntity(type);
                 txtChild.Text = "";
                 await LoadDevelopType();
                 tlDevelopList.FocusedNode.ExpandAll();
@@ -226,7 +236,7 @@ namespace DLCodeRecord.DevelopForms
                     {
                         TreeListNode parentNode = tlDevelopList.FocusedNode.ParentNode;
                         // 执行删除
-                        bool result = await base.UnityDevelopTypeFacade.RemoveEntity(type);
+                        bool result = await UnityDevelopTypeFacade.RemoveEntity(type);
                         if (result)
                         {
                             await LoadDevelopType();

@@ -1,16 +1,11 @@
 ﻿using DevExpress.XtraEditors;
 using System;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common;
 using static Common.UtilityHelper;
 using static Common.ExceptionHelper;
-
-using Services.Unity;
 using log4net;
-using System.Reflection;
-
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -32,7 +27,7 @@ namespace DLCodeRecord.DevelopForms
         public BaseFrm()
         {
             InitializeComponent();
-            DevExpress.Data.CurrencyDataController.DisableThreadingProblemsDetection = true;
+            //DevExpress.Data.CurrencyDataController.DisableThreadingProblemsDetection = true;
             try
             {
                 this.MaximizeBox = true;
@@ -196,19 +191,19 @@ namespace DLCodeRecord.DevelopForms
         #endregion
 
         #region 数据接口层
-        protected virtual IUnityDevelopFunFacade UnityDevelopFunFacade => UnitySingleton.GetUnityFacade<IUnityDevelopFunFacade>();
+        //protected virtual IUnityDevelopFunFacade UnityDevelopFunFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopFunFacade>();
 
-        protected virtual IUnityDevelopPowerFunFacade UnityDevelopPowerFunFacade => UnitySingleton.GetUnityFacade<IUnityDevelopPowerFunFacade>();
+        //protected virtual IUnityDevelopPowerFunFacade UnityDevelopPowerFunFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopPowerFunFacade>();
 
-        protected virtual IUnityDevelopRecordFacade UnityDevelopRecordFacade => UnitySingleton.GetUnityFacade<IUnityDevelopRecordFacade>();
+        //protected virtual IUnityDevelopRecordFacade UnityDevelopRecordFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopRecordFacade>();
 
-        protected virtual IUnityDevelopTypeFacade UnityDevelopTypeFacade => UnitySingleton.GetUnityFacade<IUnityDevelopTypeFacade>();
+        //protected virtual IUnityDevelopTypeFacade UnityDevelopTypeFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopTypeFacade>();
 
-        protected virtual IUnityStatisticsFacade UnityStatisticsFacade => UnitySingleton.GetUnityFacade<IUnityStatisticsFacade>();
+        //protected virtual IUnityStatisticsFacade UnityStatisticsFacade => UnityContainerManager.GetUnityFacade<IUnityStatisticsFacade>();
 
-        protected virtual IUnityUserFacade UnityUserFacade => UnitySingleton.GetUnityFacade<IUnityUserFacade>();
+        //protected virtual IUnityUserFacade UnityUserFacade => UnityContainerManager.GetUnityFacade<IUnityUserFacade>();
         #endregion
     }
- 
+
 
 }

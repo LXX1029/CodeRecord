@@ -96,7 +96,7 @@
     <Compile Include="Unity\UnityRecord\UnityDevelopTypeFacade.cs" />
     <Compile Include="Unity\UnityRecord\UnityStatisticsFacade.cs" />
     <Compile Include="Unity\UnityRecord\UnityUserFacade.cs" />
-    <Compile Include="Unity\UnitySingleton.cs" />
+    <Compile Include="Unity\UnityContainerManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

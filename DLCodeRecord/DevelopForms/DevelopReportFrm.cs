@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using log4net;
+using static Services.Unity.UnityContainerManager;
 
 namespace DLCodeRecord.DevelopForms
 {
@@ -65,7 +66,7 @@ namespace DLCodeRecord.DevelopForms
                 await Task.Delay(1000);
                 CloseSplashScreenForm();
                 // 获取数据
-                IList<ClickCountReportEntity> reportList = base.UnityStatisticsFacade.GetClickCountReport().ToList();
+                IList<ClickCountReportEntity> reportList = UnityStatisticsFacade.GetClickCountReport().ToList();
                 if (reportList.Count != 0)
                 {
                     // 线

@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Services.Unity;
-using DataEntitys;
 using System.Collections.Generic;
 using System.Linq;
+using static Services.Unity.UnityContainerManager;
+using DataEntitys;
 
 namespace UnitTestProject
 {
@@ -19,7 +19,7 @@ namespace UnitTestProject
             //    Console.WriteLine(f.Name);
             //});
 
-            IQueryable<DevelopUser> list = UnitySingleton.UnityUserFacade.GetQueryableEntities(m => m.Id < 10);
+            IQueryable<DevelopUser> list = UnityUserFacade.GetQueryableEntities(m => m.Id < 10);
             list.ToList().ForEach(f =>
             {
                 Console.WriteLine(f.Name);
@@ -38,7 +38,7 @@ namespace UnitTestProject
             //IList<DevelopRecordEntity> list1 = UnitySingleton.UnityDevelopRecordFacade.GetDevelopRecordListByPager(1, 30).Result;
 
             /*测试更新点击次数*/
-            bool affectRows = UnitySingleton.UnityDevelopRecordFacade.UpdateDevelopRecordClickCount(4).Result;
+            bool affectRows = UnityDevelopRecordFacade.UpdateDevelopRecordClickCount(4).Result;
             Assert.IsTrue(true);
         }
     }

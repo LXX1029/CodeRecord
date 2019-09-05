@@ -1,11 +1,10 @@
 ﻿using Common;
 using DevExpress.XtraEditors;
 using DataEntitys;
-//using Services.Singleton.SingRecord;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-
+using static Services.Unity.UnityContainerManager;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>

@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using log4net;
 using static Common.ExceptionHelper;
-
+using static Services.Unity.UnityContainerManager;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -341,7 +341,7 @@ namespace DLCodeRecord.DevelopForms
                 if (gvDevelop.GetFocusedRow() is DevelopRecordEntity entity)
                 {
                     // 更新数据库
-                    bool result = await base.UnityDevelopRecordFacade.UpdateDevelopRecordClickCount(entity.Id);
+                    bool result = await UnityDevelopRecordFacade.UpdateDevelopRecordClickCount(entity.Id);
                     DevelopViewFrm developViewFrm = new DevelopViewFrm(entity)
                     {
                         Owner = this
@@ -355,7 +355,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 if (gvDevelop.GetFocusedRow() is DevelopRecordEntity entity)
                 {
-                    DevelopRecord record = await base.UnityDevelopRecordFacade.GetEntity(entity.Id);
+                    DevelopRecord record = await UnityDevelopRecordFacade.GetEntity(entity.Id);
                     if (record.Zip == null)
                     {
                         MsgHelper.ShowInfo(PromptHelper.D_NOPACKAGE);

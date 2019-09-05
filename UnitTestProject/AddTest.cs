@@ -1,7 +1,9 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Services.Unity;
+using System.Diagnostics;
 using DataEntitys;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Services.Unity.UnityContainerManager;
+
 namespace UnitTestProject
 {
     [TestClass]
@@ -10,16 +12,20 @@ namespace UnitTestProject
         [TestMethod]
         public void TestMethod1()
         {
-            for (int i = 0; i < 10; i++)
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            for (int i = 0; i < 1000000; i++)
             {
-                DevelopUser user = UnitySingleton.UnityUserFacade.AddEntity(new DevelopUser()
+                DevelopUser user = UnityUserFacade.AddEntity(new DevelopUser()
                 {
                     Name = "测试" + i,
-                    DevelopAge = 5
+                    DevelopAge = 5,
+                    Pwd = "1111"
                 }).Result;
                 Assert.IsTrue(user.Id > 0);
             }
-
+            sw.Stop();
+            Console.WriteLine($"time:{sw.Elapsed.TotalSeconds}");
         }
     }
 }

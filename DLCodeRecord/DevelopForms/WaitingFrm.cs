@@ -5,11 +5,6 @@ using System.Windows.Forms;
 
 namespace DLCodeRecord.DevelopForms
 {
-    public class PercentEventArgs : EventArgs
-    {
-        public int Percent { get; set; }
-    }
-
     /// <summary>
     /// 等待窗口
     /// </summary>
@@ -65,7 +60,6 @@ namespace DLCodeRecord.DevelopForms
                 progressBarControl1.Text = value.ToString();
                 progressBarControl1.PerformStep();
                 progressBarControl1.Update();
-                //this.labelControl1.Text = "  当前进度:" + (((double)value / (double)((long)MaxCount)) * 100).ToString("0") + "%";
             }
         }
     }

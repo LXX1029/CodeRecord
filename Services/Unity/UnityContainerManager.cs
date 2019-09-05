@@ -8,9 +8,9 @@ namespace Services.Unity
     /// <summary>
     /// Unity容器类
     /// </summary>
-    public static class UnitySingleton
+    public static class UnityContainerManager
     {
-        static UnitySingleton()
+        static UnityContainerManager()
         {
             // 注册接口实现
             UnityContainer = new UnityContainer().AddNewExtension<Interception>()

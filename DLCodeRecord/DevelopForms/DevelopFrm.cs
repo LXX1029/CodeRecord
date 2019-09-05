@@ -1,30 +1,26 @@
-﻿using Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Common;
+using DataEntitys;
 using DevExpress.Office.Utils;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraLayout.Utils;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.API.Native;
 using DevExpress.XtraRichEdit.Services;
-using DataEntitys;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static Common.ExceptionHelper;
 using static Common.LoggerHelper;
 using static Common.UtilityHelper;
+using static Services.Unity.UnityContainerManager;
 using namespaceDraw = System.Drawing;
 using namespaceFrm = System.Windows.Forms;
 using namespaceWin = System.Windows;
-using log4net;
 
 namespace DLCodeRecord.DevelopForms
 {
