@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataEntitys
 {
+    [Table("DevelopType")]
     public class DevelopType
     {
         [Key]

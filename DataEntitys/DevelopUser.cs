@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataEntitys
 {
+    [Table("DevelopUser")]
     public class DevelopUser
     {
         [Key]

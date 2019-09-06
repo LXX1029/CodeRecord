@@ -34,11 +34,10 @@ namespace DLCodeRecord.Reports
             //Watermark.PageRange = "1-2";
             #endregion
 
-
             #region 初始化报表页面结构
             xrpbLogo.ImageUrl = UtilityHelper.AppLaunchPath + @"\Images\Bug.ico";
             xrpbLogo.SizeF = new SizeF(40, 40);
-            #endregion
+
             this.xrlbTitle.Font = new Font("宋体", 15, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
             this.xrlbTitle.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrlbTitle.Text = entity?.Title;
@@ -77,7 +76,7 @@ namespace DLCodeRecord.Reports
                 if (lb != null)
                     lb.ForeColor = Color.OrangeRed;
             }
-
+            #endregion
         }
     }
 }

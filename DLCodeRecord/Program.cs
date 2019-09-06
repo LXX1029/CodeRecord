@@ -19,14 +19,14 @@ namespace DLCodeRecord
         private static void Main()
         {
 
-            using (RecordContext recordContext = new RecordContext())
-            {
-                if (!recordContext.Database.Exists())
-                {
-                    recordContext.Database.Create();
-                }
-                recordContext.Database.Initialize(true);
-            }
+            //using (RecordContext recordContext = new RecordContext())
+            //{
+            //    if (!recordContext.Database.Exists())
+            //    {
+            //        recordContext.Database.Create();
+            //    }
+            //    recordContext.Database.Initialize(true);
+            //}
 
 
             // 创建新的地方化culture

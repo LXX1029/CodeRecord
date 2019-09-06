@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataEntitys
 {
+    [Table("DevelopPowerFun")]
     public class DevelopPowerFun
     {
         [Key]
