@@ -1,4 +1,5 @@
 ﻿using DataEntitys;
+using Services.EFCodeFirst;
 using Services.Repositories;
 //using Services.Singleton.ISingRecord;
 using Services.Unity.UnityControl;
@@ -24,7 +25,8 @@ namespace Services.Unity
         [UnityException]
         public async Task<DevelopType> GetDevelopTypeByParentId(int parentId)
         {
-            return await DbContext.DevelopTypes.SingleOrDefaultAsync(s => s.Id == parentId);
+            using (var context = new RecordContext())
+                return await context.DevelopTypes.SingleOrDefaultAsync(s => s.Id == parentId);
         }
 
         /// <summary>
@@ -53,21 +55,26 @@ namespace Services.Unity
         [UnityException]
         public async Task<int> GetMaxDevelopTypeId()
         {
-            return await DbContext.DevelopTypes.MaxAsync(m => m.Id);
+            using (var context = new RecordContext())
+                return await context.DevelopTypes.MaxAsync(m => m.Id);
         }
-
 
         public override async Task<bool> RemoveEntity(DevelopType t)
         {
             if (t == null) return false;
-            using (DbContextTransaction trans = DbContext.Database.BeginTransaction())
+            using (var context = new RecordContext())
+            using (DbContextTransaction trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var removeRecordList = DbContext.DevelopRecords.Where(x => x.TypeId == t.Id);
-                    DbContext.DevelopRecords.RemoveRange(removeRecordList);
-                    DbContext.DevelopTypes.Remove(t);
-                    await DbContext.SaveChangesAsync();
+                    var removeRecordList = context.DevelopRecords.Where(x => x.TypeId == t.Id);
+                    if (removeRecordList.Count() > 0)
+                    {
+                        foreach (var item in removeRecordList)
+                            context.Entry<DevelopRecord>(item).State = EntityState.Deleted;
+                    }
+                    context.Entry<DevelopType>(t).State = EntityState.Deleted;
+                    await context.SaveChangesAsync();
                     trans.Commit();
                     return true;
                 }

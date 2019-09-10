@@ -383,6 +383,69 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="zh-Hans\DevExpress.Data.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.Office.v15.2.Core.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.Pdf.v15.2.Core.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.Printing.v15.2.Core.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.RichEdit.v15.2.Core.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.Sparkline.v15.2.Core.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.Utils.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.Utils.v15.2.UI.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraBars.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraCharts.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraCharts.v15.2.Wizard.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraEditors.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraGrid.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraLayout.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraNavBar.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraPrinting.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraRichEdit.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraTreeList.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\DevExpress.XtraVerticalGrid.v15.2.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\EntityFramework.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="zh-Hans\EntityFramework.SqlServer.resources.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Images\Bug.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

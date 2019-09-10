@@ -66,7 +66,7 @@ namespace DLCodeRecord.DevelopForms
                 await Task.Delay(1000);
                 CloseSplashScreenForm();
                 // 获取数据
-                IList<ClickCountReportEntity> reportList = UnityStatisticsFacade.GetClickCountReport().ToList();
+                List<ClickCountReportEntity> reportList = await UnityStatisticsFacade.GetClickCountReport();
                 if (reportList.Count != 0)
                 {
                     // 线

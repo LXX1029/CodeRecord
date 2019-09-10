@@ -12,7 +12,7 @@ namespace Services.Unity
     {
         #region 记录操作
         Task<bool> UpdateDevelopRecordClickCount(int recordId);
-        IQueryable<DevelopRecordEntity> GetDevelopRecordListByPager(int pageIndex, int pageCount);
+        Task<IList<DevelopRecordEntity>> GetDevelopRecordListByPager(int pageIndex, int pageCount);
         Task<int> GetDevelopRecordListCount();
         Task<int> GetMaxDevelopId();
         #endregion 记录操作

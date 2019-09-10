@@ -9,7 +9,7 @@ namespace Services.Unity
     public interface IUnityStatisticsFacade : IRepository<ClickCountReportEntity>
     {
         #region Public Methods
-        IQueryable<ClickCountReportEntity> GetClickCountReport();
+        Task<List<ClickCountReportEntity>> GetClickCountReport();
         #endregion Public Methods
     }
 }

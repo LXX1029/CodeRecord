@@ -4,6 +4,9 @@ using Services.Unity.UnityControl;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Services.EFCodeFirst;
+using System.Data.Entity;
+
 namespace Services.Unity
 {
     /// <summary>
@@ -13,20 +16,22 @@ namespace Services.Unity
     {
         #region Public Methods
         [UnityException]
-        public IQueryable<ClickCountReportEntity> GetClickCountReport()
+        public async Task<List<ClickCountReportEntity>> GetClickCountReport()
         {
-            var reportData = from p in DbContext.DevelopRecords
-                             group p by new { p.TypeId, p.DevelopType } into g
-                             let parentType = DbContext.DevelopTypes.FirstOrDefault(s => s.Id == g.Key.DevelopType.ParentId)
-                             select new ClickCountReportEntity
-                             {
-                                 ParentTypeId = parentType.Id,
-                                 ParentTypeName = parentType.Name,
-                                 SubTypeId = g.Key.DevelopType.Id,
-                                 SubTypeName = g.Key.DevelopType.Name,
-                                 ClickCount = g.Sum(s => s.ClickCount)
-                             };
-            return reportData;
+            using (var context = new RecordContext())
+            {
+                return await (from p in context.DevelopRecords
+                              group p by new { p.TypeId, p.DevelopType } into g
+                              let parentType = context.DevelopTypes.FirstOrDefault(s => s.Id == g.Key.DevelopType.ParentId)
+                              select new ClickCountReportEntity
+                              {
+                                  ParentTypeId = parentType.Id,
+                                  ParentTypeName = parentType.Name,
+                                  SubTypeId = g.Key.DevelopType.Id,
+                                  SubTypeName = g.Key.DevelopType.Name,
+                                  ClickCount = g.Sum(s => s.ClickCount)
+                              }).ToListAsync();
+            }
         }
 
         #endregion Public Methods

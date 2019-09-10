@@ -26,9 +26,12 @@ namespace Services.Repositories
         /// <param name="t">实体对象</param>
         public virtual async Task<T> AddEntity(T t)
         {
-            T entity = DbContext.Set<T>().Add(t);
-            await DbContext.SaveChangesAsync();
-            return entity;
+            using (RecordContext context = new RecordContext())
+            {
+                T entity = context.Set<T>().Add(t);
+                await context.SaveChangesAsync();
+                return entity;
+            }
         }
 
         /// <summary>
@@ -37,8 +40,10 @@ namespace Services.Repositories
         /// <param name="id">主键</param>
         public virtual async Task<T> GetEntity(int id)
         {
-            return await DbContext.Set<T>().FindAsync(id);
-
+            using (RecordContext context = new RecordContext())
+            {
+                return await context.Set<T>().FindAsync(id);
+            }
         }
         /// <summary>
         /// 更新实体
@@ -46,14 +51,15 @@ namespace Services.Repositories
         /// <param name="t">实体对象</param>
         public virtual async Task<T> UpdateEntity(T t)
         {
-            if (t == null)
-                return null;
-            if (DbContext.Entry<T>(t).State != EntityState.Modified)
+            using (RecordContext context = new RecordContext())
             {
-                DbContext.Entry<T>(t).State = EntityState.Modified;
+                if (t == null)
+                    return null;
+                if (context.Entry<T>(t).State != EntityState.Modified)
+                    context.Entry<T>(t).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+                return t;
             }
-            await DbContext.SaveChangesAsync();
-            return t;
         }
         /// <summary>
         /// 移除实体
@@ -61,10 +67,13 @@ namespace Services.Repositories
         /// <param name="id">主键</param>
         public virtual async Task<bool> RemoveEntity(int id)
         {
-            T entity = await DbContext.Set<T>().FindAsync(id);
-            if (entity != null)
-                DbContext.Set<T>().Remove(entity);
-            return await DbContext.SaveChangesAsync() > 0 ? true : false;
+            using (RecordContext context = new RecordContext())
+            {
+                T entity = await context.Set<T>().FindAsync(id);
+                if (entity != null)
+                    context.Set<T>().Remove(entity);
+                return await context.SaveChangesAsync() > 0 ? true : false;
+            }
         }
 
         /// <summary>
@@ -73,9 +82,12 @@ namespace Services.Repositories
         /// <param name="t">实体对象</param>
         public virtual async Task<bool> RemoveEntity(T t)
         {
-            if (t != null)
-                DbContext.Set<T>().Remove(t);
-            return await DbContext.SaveChangesAsync() > 0 ? true : false;
+            using (RecordContext context = new RecordContext())
+            {
+                if (t != null)
+                    context.Set<T>().Remove(t);
+                return await context.SaveChangesAsync() > 0 ? true : false;
+            }
         }
         /// <summary>
         /// 获取实体集
@@ -83,9 +95,12 @@ namespace Services.Repositories
         /// <param name="predicate">条件</param>
         public virtual async Task<List<T>> GetEntities(Expression<Func<T, bool>> predicate)
         {
-            if (predicate == null)
-                return await DbContext.Set<T>().ToListAsync();
-            return await DbContext.Set<T>().Where(predicate).ToListAsync();
+            using (RecordContext context = new RecordContext())
+            {
+                if (predicate == null)
+                    return await context.Set<T>().ToListAsync();
+                return await context.Set<T>().Where(predicate).ToListAsync();
+            }
         }
         /// <summary>
         /// 获取实体集

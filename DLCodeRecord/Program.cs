@@ -55,6 +55,7 @@ namespace DLCodeRecord
             string skinName = ConfigurationManager.AppSettings["skin"];
             DevExpress.LookAndFeel.UserLookAndFeel.Default.SkinName = skinName;
 
+            Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 
             Application.Run(new DevelopLoginFrm());

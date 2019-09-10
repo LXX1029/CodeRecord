@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Linq;
+using Services.EFCodeFirst;
+
 namespace Services.Unity
 {
     /// <summary>
@@ -19,29 +21,30 @@ namespace Services.Unity
         /// </summary>
         /// <param name="pageIndex">页</param>
         /// <param name="pageCount">每页数量</param>
-        public IQueryable<DevelopRecordEntity> GetDevelopRecordListByPager(int pageIndex = 0, int pageCount = 10)
+        public async Task<IList<DevelopRecordEntity>> GetDevelopRecordListByPager(int pageIndex = 0, int pageCount = 10)
         {
             if (pageIndex < 0) pageIndex = 0;
             if (pageCount < 0) pageCount = 10;
+            using (var context = new RecordContext())
+            {
+                return await (from p in context.DevelopRecords.Include("DevelopType")
+                              select new DevelopRecordEntity
+                              {
+                                  Id = p.Id,
+                                  ParentId = p.DevelopType.ParentId,
+                                  ParentTypeName = context.DevelopTypes.FirstOrDefault(m => m.Id == p.DevelopType.ParentId).Name,
+                                  SubTypeId = p.DevelopType.Id,
+                                  SubTypeName = p.DevelopType.Name,
+                                  Title = p.Title,
+                                  Desc = p.Desc,
+                                  Picture = p.Picture,
+                                  UserId = p.DevelopUser.Id,
+                                  UserName = p.DevelopUser.Name,
+                                  CreatedTime = p.CreatedTime,
+                                  UpdatedTime = p.UpdatedTime
 
-            var pagedEntities = (from p in DbContext.DevelopRecords.Include("DevelopType")
-                                 select new DevelopRecordEntity
-                                 {
-                                     Id = p.Id,
-                                     ParentId = p.DevelopType.ParentId,
-                                     ParentTypeName = DbContext.DevelopTypes.FirstOrDefault(m => m.Id == p.DevelopType.ParentId).Name,
-                                     SubTypeId = p.DevelopType.Id,
-                                     SubTypeName = p.DevelopType.Name,
-                                     Title = p.Title,
-                                     Desc = p.Desc,
-                                     Picture = p.Picture,
-                                     UserId = p.DevelopUser.Id,
-                                     UserName = p.DevelopUser.Name,
-                                     CreatedTime = p.CreatedTime,
-                                     UpdatedTime = p.UpdatedTime
-
-                                 }).OrderByDescending(m => m.CreatedTime).Skip(pageIndex * pageCount).Take(pageCount);
-            return pagedEntities;
+                              }).OrderByDescending(m => m.CreatedTime).Skip(pageIndex * pageCount).Take(pageCount).ToListAsync();
+            }
         }
 
         /// <summary>
@@ -49,7 +52,8 @@ namespace Services.Unity
         /// </summary>
         public async Task<int> GetDevelopRecordListCount()
         {
-            return await DbContext.DevelopRecords.CountAsync();
+            using (var context = new RecordContext())
+                return await context.DevelopRecords.CountAsync();
         }
 
         /// <summary>
@@ -60,13 +64,10 @@ namespace Services.Unity
         public async Task<bool> UpdateDevelopRecordClickCount(int recordId)
         {
             var entity = await GetEntity(recordId);
-            if (entity != null)
-            {
-                entity.ClickCount += 1;
-                await UpdateEntity(entity);
-                return true;
-            }
-            return false;
+            if (entity == null) return false;
+            entity.ClickCount += 1;
+            await UpdateEntity(entity);
+            return true;
         }
 
         /// <summary>
@@ -75,7 +76,8 @@ namespace Services.Unity
         [UnityException]
         public async Task<int> GetMaxDevelopId()
         {
-            return await DbContext.DevelopRecords.MaxAsync(m => m.Id);
+            using (var context = new RecordContext())
+                return await context.DevelopRecords.MaxAsync(m => m.Id);
         }
         #endregion 记录操作
 

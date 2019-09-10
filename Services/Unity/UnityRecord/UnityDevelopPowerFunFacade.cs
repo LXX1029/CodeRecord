@@ -1,4 +1,5 @@
 ﻿using DataEntitys;
+using Services.EFCodeFirst;
 using Services.Repositories;
 using Services.Unity.UnityControl;
 using System.Collections.Generic;
@@ -21,20 +22,26 @@ namespace Services.Unity
         /// <param name="userId">用户id</param>
         public async Task<IList<DevelopPowerFun>> GetDevelopPowerFunsByUserId(int userId)
         {
-            return await DbContext.DevelopPowerFuns.Include(i => i.DevelopFun).Where(w => w.UserId == userId).ToListAsync();
+            using (var context = new RecordContext())
+                return await context.DevelopPowerFuns.Include(i => i.DevelopFun).Where(w => w.UserId == userId).ToListAsync();
         }
 
         public async Task<DevelopPowerFun> SetDevelopPowerFun(DevelopPowerFun developPowerFun)
         {
-            DevelopPowerFun currentDevelopPowerFun = DbContext.DevelopPowerFuns.FirstOrDefault(m => m.UserId == developPowerFun.UserId && m.FunId == developPowerFun.FunId);
-            if (currentDevelopPowerFun != null)
+            DevelopPowerFun currentDevelopPowerFun = null;
+            using (var context = new RecordContext())
             {
-                currentDevelopPowerFun.IsEnabled = developPowerFun.IsEnabled;
-                return await UpdateEntity(currentDevelopPowerFun);
-            }
-            else
-            {
-                return await AddEntity(developPowerFun);
+                currentDevelopPowerFun = context.DevelopPowerFuns.FirstOrDefault(m => m.UserId == developPowerFun.UserId && m.FunId == developPowerFun.FunId);
+
+                if (currentDevelopPowerFun != null)
+                {
+                    currentDevelopPowerFun.IsEnabled = developPowerFun.IsEnabled;
+                    return await UpdateEntity(currentDevelopPowerFun);
+                }
+                else
+                {
+                    return await AddEntity(developPowerFun);
+                }
             }
         }
 

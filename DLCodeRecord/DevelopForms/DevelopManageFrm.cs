@@ -703,9 +703,9 @@ namespace DLCodeRecord.DevelopForms
                         frm.DeleteNodeHandler += (m, n) =>
                         {
                             // 获取包含删除小版块的Record记录
-                            var records = dataManage.DevelopRecordEntityList.Where(w => w.SubTypeId == n.TypeId);
-                            foreach (var record in records)
-                                dataManage.DevelopRecordEntityList.Remove(record);
+                            var records = dataManage.DevelopRecordEntityList.Where(w => w.SubTypeId == n.TypeId).ToList();
+                            for (int i = 0; i < records.Count; i++)
+                                dataManage.DevelopRecordEntityList.Remove(records[i]);
                         };
                         ShowForm(frm);
                     }
@@ -802,7 +802,7 @@ namespace DLCodeRecord.DevelopForms
                     {
                         if (cts.IsCancellationRequested) break;
                         int pageIndex = i;
-                        IList<DevelopRecordEntity> entitys = UnityDevelopRecordFacade.GetDevelopRecordListByPager(pageIndex, StepCount).ToList();
+                        IList<DevelopRecordEntity> entitys = await UnityDevelopRecordFacade.GetDevelopRecordListByPager(pageIndex, StepCount).ConfigureAwait(false);
                         int entityCount = entitys.Count();
                         this.BeginInvoke(new Action(() =>
                         {
@@ -818,7 +818,11 @@ namespace DLCodeRecord.DevelopForms
                         await Task.Delay(100);
                     }
                 }, cts);
-                frm.Close();
+                this.BeginInvoke(new Action(() =>
+                {
+                    frm.Close();
+                }));
+
                 if (item != null)
                     item.Enabled = true;
             }

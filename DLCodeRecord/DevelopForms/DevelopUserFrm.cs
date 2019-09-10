@@ -267,7 +267,7 @@ namespace DLCodeRecord.DevelopForms
             try
             {
                 ShowSplashScreenForm(this, PromptHelper.D_LOADINGDATA);
-                IQueryable<DevelopUser> userArray = UnityUserFacade.GetDevelopUsers().Where(m => m.Id != 1);
+                IList<DevelopUser> userArray = await UnityUserFacade.GetDevelopUsers(m => m.Id != 1);
                 IList<DevelopFun> funList = await UnityDevelopFunFacade.GetEntities();
                 dataManage.DevelopUserList.Clear();
                 foreach (DevelopUser user in userArray)
@@ -357,7 +357,7 @@ namespace DLCodeRecord.DevelopForms
             foreach (TreeListNode node in this.tlUserPower.Nodes)
                 SetTreeListNodeCheck(node, false);
             // 根据用户Id 获取对应权限
-            IEnumerable<DevelopPowerFun> developPowerFuns = user.DevelopPowerFuns;
+            List<DevelopPowerFun> developPowerFuns = user.DevelopPowerFuns.ToList();
             dataManage?.DevelopPowerFunList.Clear();
             foreach (DevelopPowerFun powerFun in developPowerFuns)
             {
