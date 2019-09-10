@@ -19,7 +19,8 @@ namespace Services.Repositories
         /// <summary>
         /// 数据库上下文
         /// </summary>
-        protected RecordContext DbContext { get; } = DbContextFactory.Instance;
+        //protected RecordContext DbContext { get; } = DbContextFactory.Instance;
+
         /// <summary>
         /// 添加实体
         /// </summary>
@@ -108,9 +109,12 @@ namespace Services.Repositories
         /// <param name="predicate">条件</param>
         public virtual IQueryable<T> GetQueryableEntities(Expression<Func<T, bool>> predicate = null)
         {
-            if (predicate == null)
-                return DbContext.Set<T>();
-            return DbContext.Set<T>().Where(predicate);
+            using (var context = new RecordContext())
+            {
+                if (predicate == null)
+                    return context.Set<T>();
+                return context.Set<T>().Where(predicate);
+            }
         }
     }
 }
