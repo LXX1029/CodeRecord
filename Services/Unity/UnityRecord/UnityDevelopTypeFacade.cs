@@ -57,9 +57,10 @@ namespace Services.Unity
                 return await context.DevelopTypes.MaxAsync(m => m.Id);
         }
 
-        public override async Task<bool> RemoveEntity(DevelopType t)
+        public override async Task<int> RemoveEntity(DevelopType t)
         {
-            if (t == null) return false;
+            var affectedRows = 0;
+            if (t == null) return affectedRows;
             using (var context = new RecordContext())
             using (var trans = context.Database.BeginTransaction())
             {
@@ -71,18 +72,16 @@ namespace Services.Unity
                         foreach (var item in removeRecordList)
                             context.Entry<DevelopRecord>(item).State = EntityState.Deleted;
                     }
-
                     context.Entry<DevelopType>(t).State = EntityState.Deleted;
-                    await context.SaveChangesAsync();
+                    affectedRows = await context.SaveChangesAsync();
                     trans.Commit();
-                    return true;
                 }
                 catch (System.Exception)
                 {
                     trans.Rollback();
-                    return false;
                 }
             }
+            return affectedRows;
         }
     }
 }

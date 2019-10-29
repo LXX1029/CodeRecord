@@ -69,7 +69,6 @@ namespace Services.Repositories
                         trans.Rollback();
                     }
                 }
-
                 return t;
             }
         }
@@ -78,21 +77,21 @@ namespace Services.Repositories
         /// 移除实体
         /// </summary>
         /// <param name="id">主键</param>
-        public virtual async Task<bool> RemoveEntity(int id)
+        public virtual async Task<int> RemoveEntity(int id)
         {
-            if (id < 0) return false;
+            var affectedRows = 0;
+            if (id < 0) return affectedRows;
             using (RecordContext context = new RecordContext())
             {
+                var entity = await context.Set<T>().FindAsync(id);
+                if (entity == null) return affectedRows;
                 using (var trans = context.Database.BeginTransaction())
                 {
                     try
                     {
-                        T entity = await context.Set<T>().FindAsync(id);
-                        if (entity != null)
-                            context.Set<T>().Remove(entity);
-                        await context.SaveChangesAsync();
+                        context.Set<T>().Remove(entity);
+                        affectedRows = await context.SaveChangesAsync();
                         trans.Commit();
-                        return true;
                     }
                     catch (Exception)
                     {
@@ -100,17 +99,17 @@ namespace Services.Repositories
                     }
                 }
             }
-
-            return false;
+            return affectedRows;
         }
 
         /// <summary>
         /// 移除实体
         /// </summary>
         /// <param name="t">实体对象</param>
-        public virtual async Task<bool> RemoveEntity(T t)
+        public virtual async Task<int> RemoveEntity(T t)
         {
-            if (t == null) return false;
+            var affectedRows = 0;
+            if (t == null) return affectedRows;
             using (RecordContext context = new RecordContext())
             {
                 using (var trans = context.Database.BeginTransaction())
@@ -118,9 +117,8 @@ namespace Services.Repositories
                     try
                     {
                         context.Set<T>().Remove(t);
-                        await context.SaveChangesAsync();
+                        affectedRows = await context.SaveChangesAsync();
                         trans.Commit();
-                        return true;
                     }
                     catch (Exception)
                     {
@@ -128,8 +126,7 @@ namespace Services.Repositories
                     }
                 }
             }
-
-            return false;
+            return affectedRows;
         }
 
         /// <summary>

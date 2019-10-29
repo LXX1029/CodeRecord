@@ -847,8 +847,8 @@ namespace DLCodeRecord.DevelopForms
                 if (MsgHelper.ShowConfirm(PromptHelper.D_DELETE_CONFIRM) == DialogResult.OK)
                 {
                     DevelopRecordEntity entity = obj as DevelopRecordEntity;
-                    bool result = await UnityDevelopRecordFacade.RemoveEntity(entity.Id);
-                    if (result)
+                    int affectedRows = await UnityDevelopRecordFacade.RemoveEntity(entity.Id);
+                    if (affectedRows > 0)
                     {
                         _dataManage.DevelopRecordEntityList.Remove(entity);
                         MsgHelper.ShowInfo(PromptHelper.D_DELETE_SUCCESS);

@@ -25,13 +25,13 @@
         /// 移除实体
         /// </summary>
         /// <param name="id">主键</param>
-        Task<bool> RemoveEntity(int id);
+        Task<int> RemoveEntity(int id);
 
         /// <summary>
         /// 移除实体
         /// </summary>
         /// <param name="t">实体对象</param>
-        Task<bool> RemoveEntity(T t);
+        Task<int> RemoveEntity(T t);
 
         /// <summary>
         /// 根据主键获取Entity

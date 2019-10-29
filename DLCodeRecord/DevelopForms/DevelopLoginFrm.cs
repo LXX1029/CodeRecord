@@ -20,7 +20,7 @@ namespace DLCodeRecord.DevelopForms
         static DevelopLoginFrm()
         {
             string readCount = UtilityHelper.GetConfigurationKeyValue("perReadCount");
-            if (!int.TryParse(readCount, out int stepCount))
+            if (!int.TryParse(readCount, out _))
             {
                 MsgHelper.ShowError("配置文件存在错误,请修复后重新启动程序。");
                 LoggerHelper.WriteException("加载量参数格式配置错误");
@@ -96,36 +96,43 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private void DevelopLoginFrm_Load(object sender, EventArgs e)
         {
-            var tuple = UtilityHelper.GetWorkingAreaSize(0.2, 0.2);
-            this.Size = tuple.Item3;
-            this.Location = tuple.Item4;
-            this.txtName.Properties.MaxLength = 15;
-            this.txtName.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
-            this.txtPwd.Properties.MaxLength = 50;
-            this.txtPwd.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
-
-            string name = UtilityHelper.GetConfigurationKeyValue("userName");
-            this.txtName.Text = name;
-
-            if (name == string.Empty)
-                this.txtName.Text = "admin";
-            string pwd = UtilityHelper.GetConfigurationKeyValue("pwd");
-
-            if (!VerifyHelper.IsEmptyOrNullOrWhiteSpace(pwd))
+            try
             {
-                // 根据md5Key 解密
-                this.txtPwd.Text = pwd;
-                this.btnLogin.Focus();
-                this.chkRemeberPwd.Checked = true;
+                var tuple = UtilityHelper.GetWorkingAreaSize(0.2, 0.2);
+                this.Size = tuple.Item3;
+                this.Location = tuple.Item4;
+                this.txtName.Properties.MaxLength = 15;
+                this.txtName.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
+                this.txtPwd.Properties.MaxLength = 50;
+                this.txtPwd.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
+
+                string name = UtilityHelper.GetConfigurationKeyValue("userName");
+                this.txtName.Text = name;
+
+                if (name == string.Empty)
+                    this.txtName.Text = "admin";
+                string pwd = UtilityHelper.GetConfigurationKeyValue("pwd");
+
+                if (!VerifyHelper.IsEmptyOrNullOrWhiteSpace(pwd))
+                {
+                    // 根据md5Key 解密
+                    this.txtPwd.Text = pwd;
+                    this.btnLogin.Focus();
+                    this.chkRemeberPwd.Checked = true;
+                }
+                // 选中密码
+                if (!VerifyHelper.IsEmptyOrNullOrWhiteSpace(name))
+                {
+                    this.txtName.TabStop = false;
+                    this.txtPwd.Focus();
+                }
+                if (VerifyHelper.IsEmptyOrNullOrWhiteSpace(name) && VerifyHelper.IsEmptyOrNullOrWhiteSpace(pwd))
+                    txtName.Focus();
             }
-            // 选中密码
-            if (!VerifyHelper.IsEmptyOrNullOrWhiteSpace(name))
+            catch (Exception ex)
             {
-                this.txtName.TabStop = false;
-                this.txtPwd.Focus();
+                CatchLoadException(this, ex);
             }
-            if (VerifyHelper.IsEmptyOrNullOrWhiteSpace(name) && VerifyHelper.IsEmptyOrNullOrWhiteSpace(pwd))
-                txtName.Focus();
         }
 
         #endregion 窗体加载

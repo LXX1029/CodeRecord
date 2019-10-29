@@ -253,7 +253,6 @@ namespace DLCodeRecord.DevelopForms
             if (sender is ToolTipController controller && controller.ActiveObject is SeriesPoint seriesPoint &&
                seriesPoint.Tag is List<ClickCountReportEntity> list && list.Count > 0)
             {
-                string chartTitle = list[0].ParentTypeName;
                 e.ToolTipImage = CreateChart(list);
                 e.ToolTip = string.Empty;
             }

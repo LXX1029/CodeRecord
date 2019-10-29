@@ -501,12 +501,16 @@ namespace DLCodeRecord.DevelopForms
                 }
                 if (MsgHelper.ShowConfirm(PromptHelper.D_DELETE_CONFIRM) == DialogResult.OK)
                 {
-                    bool result = await UnityUserFacade.RemoveEntity(selectedUser);
-                    if (result)
+                    int affectedRows = await UnityUserFacade.RemoveEntity(selectedUser);
+                    if (affectedRows > 0)
                     {
                         await ReLoadDevelopUser();
                         gvUser.RefreshData();
-                        MsgHelper.ShowInfo(PromptHelper.D_DELETE_SUCCESS);
+                        ShowInfo(PromptHelper.D_DELETE_SUCCESS);
+                    }
+                    else
+                    {
+                        ShowInfo(PromptHelper.D_DELETE_FAIL);
                     }
                 }
             }

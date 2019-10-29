@@ -124,7 +124,7 @@ namespace DLCodeRecord.DevelopForms
             form.Hide();
             MsgHelper.CloseSplashScreenForm();
             MsgHelper.ShowError($"加载错误");
-            Logger.Error(ex);
+            Logger.Error(form.GetType().FullName, ex);
             form.Close();
         }
         /// <summary>

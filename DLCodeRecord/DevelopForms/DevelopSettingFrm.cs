@@ -25,13 +25,20 @@ namespace DLCodeRecord.DevelopForms
         #region 窗口加载
         private async void DevelopSettingFrm_Load(object sender, EventArgs e)
         {
-            var tuple = UtilityHelper.GetWorkingAreaSize(0.6, 0.6);
-            this.Size = tuple.Item3;
-            this.Location = tuple.Item4;
-            ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
-            await Task.Delay(1000);
-            CloseSplashScreenForm();
-            InitialLayOut();
+            try
+            {
+                var tuple = UtilityHelper.GetWorkingAreaSize(0.6, 0.6);
+                this.Size = tuple.Item3;
+                this.Location = tuple.Item4;
+                ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
+                await Task.Delay(1000);
+                CloseSplashScreenForm();
+                InitialLayOut();
+            }
+            catch (Exception ex)
+            {
+                CatchLoadException(this, ex);
+            }
         }
         #endregion 窗口加载
 

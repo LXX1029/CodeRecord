@@ -231,8 +231,8 @@ namespace DLCodeRecord.DevelopForms
                     {
                         TreeListNode parentNode = tlDevelopList.FocusedNode.ParentNode;
                         // 执行删除
-                        bool result = await UnityDevelopTypeFacade.RemoveEntity(type);
-                        if (result)
+                        int affectedRows = await UnityDevelopTypeFacade.RemoveEntity(type);
+                        if (affectedRows > 0)
                         {
                             await LoadDevelopType();
                             txtNode.Text = string.Empty;

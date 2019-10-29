@@ -99,7 +99,7 @@ namespace DLCodeRecord.DevelopForms
         #region 代码编辑改变
         private void Scintilla_TextChanged(object sender, EventArgs e)
         {
-            DevelopRecordEntity.Desc = codeEditor.Scintilla.Text.Trim();
+            //DevelopRecordEntity.Desc = codeEditor.Scintilla.Text.Trim();
         }
         #endregion
 
@@ -167,12 +167,14 @@ namespace DLCodeRecord.DevelopForms
                 // this.rgParentType.DataBindings.Add("EditValue", DevelopRecordEntity, "ParentId", true, DataSourceUpdateMode.OnPropertyChanged);
                 // this.rdioGChildType.DataBindings.Add("EditValue", DevelopRecordEntity, "SubTypeId", true);
                 // this.codeEditor.scintilla.DataBindings.Add("Text", DevelopRecordEntity, "Desc", true, DataSourceUpdateMode.OnPropertyChanged);
+                // this.txtTitle.DataBindings.Add(new Binding("EditValue", DevelopRecordEntity, "Title", true, DataSourceUpdateMode.OnPropertyChanged));
+                //this.picImg.DataBindings.Add("EditValue", DevelopRecordEntity, "Picture", true, DataSourceUpdateMode.OnPropertyChanged);
                 this.rgParentType.EditValue = DevelopRecordEntity.ParentId;
                 this.rdioGChildType.EditValue = DevelopRecordEntity.SubTypeId;
                 this.codeEditor.Scintilla.Text = DevelopRecordEntity.Desc;
+                this.txtTitle.EditValue = DevelopRecordEntity.Title;
+                this.picImg.EditValue = DevelopRecordEntity.Picture;
 
-                this.txtTitle.DataBindings.Add(new Binding("EditValue", DevelopRecordEntity, "Title", true, DataSourceUpdateMode.OnPropertyChanged));
-                this.picImg.DataBindings.Add("EditValue", DevelopRecordEntity, "Picture", true, DataSourceUpdateMode.OnPropertyChanged);
                 if (actionState == DevelopActiveState.Adding && parentTypes.Count() > 0)
                 {
                     int parentTypeId = (int)parentTypes.FirstOrDefault().Id;
@@ -307,14 +309,14 @@ namespace DLCodeRecord.DevelopForms
                 rdioGChildType.ErrorText = "请选择小版块";
                 return;
             }
-
-            if (VerifyHelper.IsEmptyOrNullOrWhiteSpace(DevelopRecordEntity.Title))
+            string title = this.txtTitle.Text.Trim();
+            if (VerifyHelper.IsEmptyOrNullOrWhiteSpace(title))
             {
                 txtTitle.ErrorText = "标题不能为空";
                 txtTitle.Focus();
                 return;
             }
-            if (DevelopRecordEntity.Title.Length > 100)
+            if (title.Length > 100)
             {
                 txtTitle.ErrorText = "输入字符长度小于50";
                 txtTitle.Focus();
@@ -327,20 +329,25 @@ namespace DLCodeRecord.DevelopForms
                 DateTime editTime = DateTime.Now;
                 if (this.LocalDevelopRecord == null)
                     this.LocalDevelopRecord = new DevelopRecord();
+                DevelopRecordEntity.Title = title;
+                DevelopRecordEntity.Desc = codeEditor.Scintilla.Text.Trim();
+                DevelopRecordEntity.Picture = ConvertImgToByte(picImg.Image);
+                DevelopRecordEntity.SubTypeName = rdioGChildType.Properties.Items[rdioGChildType.SelectedIndex].Description;
+                DevelopRecordEntity.ParentTypeName = rgParentType.Properties.Items[rgParentType.SelectedIndex].Description;
+                DevelopRecordEntity.UpdatedTime = editTime;
+
                 this.LocalDevelopRecord.Title = DevelopRecordEntity.Title;
                 this.LocalDevelopRecord.Desc = DevelopRecordEntity.Desc;
                 this.LocalDevelopRecord.TypeId = DevelopRecordEntity.SubTypeId;
+
                 this.LocalDevelopRecord.UpdatedTime = editTime;
-                this.LocalDevelopRecord.Picture = ConvertImgToByte(picImg.Image);
+                this.LocalDevelopRecord.Picture = DevelopRecordEntity.Picture;
                 this.LocalDevelopRecord.UserId = DataManage.LoginUser.Id;
                 if (rgParentType.SelectedIndex == -1)
                     rgParentType.SelectedIndex = 0;
                 if (rdioGChildType.SelectedIndex == -1)
                     rdioGChildType.SelectedIndex = 0;
-                DevelopRecordEntity.SubTypeName = rdioGChildType.Properties.Items[rdioGChildType.SelectedIndex].Description;
-                DevelopRecordEntity.ParentTypeName = rgParentType.Properties.Items[rgParentType.SelectedIndex].Description;
-                DevelopRecordEntity.UpdatedTime = editTime;
-                DevelopRecordEntity.Picture = this.LocalDevelopRecord.Picture;
+
                 if (actionState == DevelopActiveState.Updating)
                 {
                     // 判断是否修改压缩包
