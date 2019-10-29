@@ -52,6 +52,17 @@ namespace DLCodeRecord.DevelopForms
         /// 每次读取量
         /// </summary>
         private static int StepCount { get; set; }
+
+        /// <summary>
+        /// 页数
+        /// </summary>
+        private int PagerCount { get; set; }
+
+        /// <summary>
+        /// 总页数
+        /// </summary>
+        private int TotalPagerCount { get; set; }
+
         #endregion 变量
 
         #region 构造函数
@@ -294,7 +305,6 @@ namespace DLCodeRecord.DevelopForms
             _timer.Interval = 1000;
             #endregion Timer
             OnCloseLoginFrmHandler();
-
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
             LoadDevelopRecord();
@@ -761,13 +771,12 @@ namespace DLCodeRecord.DevelopForms
             try
             {
                 _dataManage.DevelopRecordEntityList.Clear();
-                TotalCount = await UnityDevelopRecordFacade.GetDevelopRecordListCount();
-                // 根据stepCount 计算总页数
-                int pagerCount = TotalCount / StepCount;
-                int totalPagerCount = (TotalCount % StepCount) > 0 ? pagerCount + 1 : pagerCount;
 
+                TotalCount = await UnityDevelopRecordFacade.GetDevelopRecordListCount();
+                PagerCount = TotalCount / StepCount;
+                TotalPagerCount = (TotalCount % StepCount) > 0 ? PagerCount + 1 : PagerCount;
                 // 显示进度窗体
-                frm = new WaitingFrm(totalPagerCount)
+                frm = new WaitingFrm(TotalPagerCount)
                 {
                     Owner = this,
                 };
@@ -779,7 +788,7 @@ namespace DLCodeRecord.DevelopForms
 
                 await Task.Run(async () =>
                 {
-                    for (int i = 0; i < totalPagerCount; i++)
+                    for (int i = 0; i < TotalPagerCount; i++)
                     {
                         if (cts.IsCancellationRequested) break;
                         int pageIndex = i;
@@ -794,7 +803,7 @@ namespace DLCodeRecord.DevelopForms
                             if (frm.Visible == false)
                                 frm.ShowDialog();
                         }));
-                        await Task.Delay(100);
+                        await Task.Delay(10);
                     }
                 }, cts);
                 this.BeginInvoke(new Action(() =>

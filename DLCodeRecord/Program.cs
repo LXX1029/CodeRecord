@@ -55,12 +55,18 @@ namespace DLCodeRecord
 
             Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
             Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-
+            Application.ApplicationExit -= Application_ApplicationExit;
+            Application.ApplicationExit += Application_ApplicationExit;
             Application.Run(new DevelopLoginFrm());
             //Application.Run(new DevelopFrm());
             //Application.Run(new DevelopUserFrm());
             //Application.Run(new DevelopReportFrm());
             //Application.Run(new DevelopTypeAddFrm());
+        }
+
+        private static void Application_ApplicationExit(object sender, EventArgs e)
+        {
+            GC.Collect();
         }
 
         #region 捕获线程异常
