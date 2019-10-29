@@ -1,7 +1,6 @@
-﻿using Common;
-using System;
+﻿using System;
 using System.Drawing;
-using System.ComponentModel.DataAnnotations;
+using Common;
 namespace DataEntitys
 {
     /// <summary>
@@ -29,8 +28,7 @@ namespace DataEntitys
             get
             {
                 // 从数据库读取， 且Picture 必须有值
-                return
-                    UtilityHelper.ConvertByteToImg(Picture);
+                return UtilityHelper.ConvertByteToImg(Picture);
             }
             set
             {
@@ -38,22 +36,20 @@ namespace DataEntitys
             }
         }
 
-
-
         /// <summary>
         /// 创建时间
         /// </summary>
-        public DateTime? CreatedTime { get; set; } = new DateTime();
+        public DateTime? CreatedTime { get; set; } = default(DateTime);
 
         /// <summary>
         /// 更新时间
         /// </summary>
-        public DateTime? UpdatedTime { get; set; } = new DateTime();
+        public DateTime? UpdatedTime { get; set; } = default(DateTime);
 
         /// <summary>
         /// 描述
         /// </summary>
-        public string Desc { get; set; } = string.Empty;
+        public string Desc { get; set; }
 
         /// <summary>
         /// 记录Id
@@ -63,12 +59,12 @@ namespace DataEntitys
         /// <summary>
         /// 父 Id
         /// </summary>
-        public int ParentId { get; set; } = -1;
+        public int ParentId { get; set; }
 
         /// <summary>
         /// 父类型名称
         /// </summary>
-        public string ParentTypeName { get; set; } = string.Empty;
+        public string ParentTypeName { get; set; }
 
         /// <summary>
         /// 图片字节
@@ -77,11 +73,11 @@ namespace DataEntitys
         /// <summary>
         /// 子 Id
         /// </summary>
-        public int SubTypeId { get; set; } = 0;
+        public int SubTypeId { get; set; }
         /// <summary>
         /// 子类型名称
         /// </summary>
-        public string SubTypeName { get; set; } = string.Empty;
+        public string SubTypeName { get; set; }
 
         /// <summary>
         /// 添加记录的UserId
@@ -91,6 +87,6 @@ namespace DataEntitys
         /// <summary>
         /// 添加记录的用户名称
         /// </summary>
-        public string UserName { get; set; } = string.Empty;
+        public string UserName { get; set; }
     }
 }

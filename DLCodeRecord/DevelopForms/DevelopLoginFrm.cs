@@ -1,9 +1,9 @@
-﻿using Common;
-using DevExpress.XtraEditors;
-using DataEntitys;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Common;
+using DataEntitys;
+using DevExpress.XtraEditors;
 using static Services.Unity.UnityContainerManager;
 namespace DLCodeRecord.DevelopForms
 {
@@ -29,7 +29,6 @@ namespace DLCodeRecord.DevelopForms
             }
         }
 
-
         public DevelopLoginFrm()
         {
             InitializeComponent();
@@ -37,11 +36,10 @@ namespace DLCodeRecord.DevelopForms
             #region 汉化
 
             // 汉化
-            //GridLocalizer.Active = new GridControlLocalizer();
-            //Localizer.Active = new EditorsLocalizer();
-            //BarControlLocalizer.Active = new BarControlLocalizer();
+            // GridLocalizer.Active = new GridControlLocalizer();
+            // Localizer.Active = new EditorsLocalizer();
+            // BarControlLocalizer.Active = new BarControlLocalizer();
             // RichEditControlLocalizer.Active = new RichEditControlLocalizer();
-
             #endregion 汉化
 
             #region 初始化设置
@@ -71,15 +69,13 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 密码输入项改变
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void txtPwd_TextChanged(object sender, EventArgs e)
         {
             if (sender is TextEdit te && te?.Name == "txtPwd")
             {
                 if (this.chkRemeberPwd.Checked)
                 {
-                    UtilityHelper.SetConfigurationKeyValue("pwd", "");
+                    UtilityHelper.SetConfigurationKeyValue("pwd", string.Empty);
                     this.chkRemeberPwd.Checked = false;
                 }
             }
@@ -111,7 +107,7 @@ namespace DLCodeRecord.DevelopForms
             string name = UtilityHelper.GetConfigurationKeyValue("userName");
             this.txtName.Text = name;
 
-            if (name == "")
+            if (name == string.Empty)
                 this.txtName.Text = "admin";
             string pwd = UtilityHelper.GetConfigurationKeyValue("pwd");
 
@@ -139,10 +135,7 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 退出
         /// </summary>
-        private void btnExit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
+        private void btnExit_Click(object sender, EventArgs e) => Application.Exit();
         #endregion 退出
 
         #region 登陆事件
@@ -150,7 +143,7 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 主窗口
         /// </summary>
-        private DevelopManageFrm manageFrm;
+        private DevelopManageFrm _manageFrm;
 
         /// <summary>
         /// 登陆
@@ -193,16 +186,16 @@ namespace DLCodeRecord.DevelopForms
                 DataManage.LoginUser = user;
                 // 保存用户名
                 UtilityHelper.SetConfigurationKeyValue("userName", name);
-                //记住密码
+                // 记住密码
                 if (chkRemeberPwd.Checked)
                     UtilityHelper.SetConfigurationKeyValue("pwd", pwd);
                 else
-                    UtilityHelper.SetConfigurationKeyValue("pwd", "");
+                    UtilityHelper.SetConfigurationKeyValue("pwd", string.Empty);
                 UtilityHelper.SetConfigurationKeyValue("userId", user.Id.ToString());
                 // 显示主窗口
-                manageFrm = new DevelopManageFrm();
-                manageFrm.AttatchedHandler(new Action(() => { this.Hide(); }));
-                manageFrm.Show();
+                _manageFrm = new DevelopManageFrm();
+                _manageFrm.AttatchedHandler(new Action(() => { this.Hide(); }));
+                _manageFrm.Show();
             }
             catch (Exception ex)
             {

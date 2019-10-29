@@ -1,8 +1,8 @@
-﻿using Common;
+﻿using System;
+using System.Threading.Tasks;
+using Common;
 using DataEntitys;
 using log4net;
-using System;
-using System.Threading.Tasks;
 
 namespace DLCodeRecord.DevelopForms
 {
@@ -16,7 +16,7 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 记录类
         /// </summary>
-        private DevelopRecordEntity developRecordEntity = null;
+        private DevelopRecordEntity _developRecordEntity = null;
         private ILog Log => LogManager.GetLogger("DevelopViewFrm");
 
         #endregion Private Fields
@@ -35,7 +35,7 @@ namespace DLCodeRecord.DevelopForms
             this.picImg.Properties.NullText = "暂无图片";
             this.Load -= new EventHandler(DevelopViewFrm_Load);
             this.Load += new EventHandler(DevelopViewFrm_Load);
-            developRecordEntity = entity;
+            _developRecordEntity = entity;
         }
 
         #endregion Public Constructors
@@ -48,10 +48,7 @@ namespace DLCodeRecord.DevelopForms
 
         #region Private Methods
 
-        private void BtnClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private void BtnClose_Click(object sender, EventArgs e) => this.Close();
 
         /// <summary>
         /// 窗体加载
@@ -66,6 +63,7 @@ namespace DLCodeRecord.DevelopForms
 
         private void InitialRichEditControl()
         {
+            /*
             //
             // recDesc
             //
@@ -99,6 +97,7 @@ namespace DLCodeRecord.DevelopForms
             //// 显示行号 宽度
             //this.recDesc.Views.DraftView.Padding = new System.Windows.Forms.Padding(80, 4, 0, 0);
             ////this.recDesc.Views.SimpleView.Padding = new System.Windows.Forms.Padding(50, 4, 4, 0);
+            ///*/
         }
 
         /// <summary>
@@ -107,22 +106,21 @@ namespace DLCodeRecord.DevelopForms
         private void LoadDate()
         {
             this.picImg.Properties.ShowMenu = true;  // 图片 不显示右键菜单
-            this.lcParentName.Text = string.Format("大板块：{0}", developRecordEntity.ParentTypeName);
-            this.lcChildrenName.Text = string.Format("小板块：{0}", developRecordEntity.SubTypeName);
-            this.codeEditor.scintilla.Text = developRecordEntity.Desc;
-            this.codeEditor.scintilla.ReadOnly = true;
-            this.picImg.Image = UtilityHelper.ConvertByteToImg(developRecordEntity.Picture);
+            this.lcParentName.Text = string.Format("大板块：{0}", _developRecordEntity.ParentTypeName);
+            this.lcChildrenName.Text = string.Format("小板块：{0}", _developRecordEntity.SubTypeName);
+            this.codeEditor.Scintilla.Text = _developRecordEntity.Desc;
+            this.codeEditor.Scintilla.ReadOnly = true;
+            this.picImg.Image = UtilityHelper.ConvertByteToImg(_developRecordEntity.Picture);
             this.picImg.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Stretch;
-            this.lcTitle.Text = developRecordEntity.Title;
+            this.lcTitle.Text = _developRecordEntity.Title;
         }
 
         /// <summary>
         /// 初始化文档
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void RecDesc_InitializeDocument(object sender, EventArgs e)
         {
+            /*
             //Document document = recDesc.Document;
             //document.BeginUpdate();
             //try
@@ -152,8 +150,8 @@ namespace DLCodeRecord.DevelopForms
             //{
             //    document.EndUpdate();
             //}
+            */
         }
-
         #endregion Private Methods
     }
 }

@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.Entity;
-using System.Linq.Expressions;
 using Services.EFCodeFirst;
 
 namespace Services.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T>
+        where T : class
     {
-
         public Repository()
-        {
+        { }
 
-        }
         /// <summary>
         /// 数据库上下文
         /// </summary>
-        //protected RecordContext DbContext { get; } = DbContextFactory.Instance;
+        // protected RecordContext DbContext { get; } = DbContextFactory.Instance;
 
         /// <summary>
         /// 添加实体
@@ -46,35 +45,63 @@ namespace Services.Repositories
                 return await context.Set<T>().FindAsync(id);
             }
         }
+
         /// <summary>
         /// 更新实体
         /// </summary>
         /// <param name="t">实体对象</param>
         public virtual async Task<T> UpdateEntity(T t)
         {
+            if (t == null) return null;
             using (RecordContext context = new RecordContext())
             {
-                if (t == null)
-                    return null;
-                if (context.Entry<T>(t).State != EntityState.Modified)
-                    context.Entry<T>(t).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        if (context.Entry<T>(t).State != EntityState.Modified)
+                            context.Entry<T>(t).State = EntityState.Modified;
+                        await context.SaveChangesAsync();
+                        trans.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                    }
+                }
+
                 return t;
             }
         }
+
         /// <summary>
         /// 移除实体
         /// </summary>
         /// <param name="id">主键</param>
         public virtual async Task<bool> RemoveEntity(int id)
         {
+            if (id < 0) return false;
             using (RecordContext context = new RecordContext())
             {
-                T entity = await context.Set<T>().FindAsync(id);
-                if (entity != null)
-                    context.Set<T>().Remove(entity);
-                return await context.SaveChangesAsync() > 0 ? true : false;
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        T entity = await context.Set<T>().FindAsync(id);
+                        if (entity != null)
+                            context.Set<T>().Remove(entity);
+                        await context.SaveChangesAsync();
+                        trans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                    }
+                }
             }
+
+            return false;
         }
 
         /// <summary>
@@ -83,13 +110,28 @@ namespace Services.Repositories
         /// <param name="t">实体对象</param>
         public virtual async Task<bool> RemoveEntity(T t)
         {
+            if (t == null) return false;
             using (RecordContext context = new RecordContext())
             {
-                if (t != null)
-                    context.Set<T>().Remove(t);
-                return await context.SaveChangesAsync() > 0 ? true : false;
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        context.Set<T>().Remove(t);
+                        await context.SaveChangesAsync();
+                        trans.Commit();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                    }
+                }
             }
+
+            return false;
         }
+
         /// <summary>
         /// 获取实体集
         /// </summary>
@@ -103,6 +145,7 @@ namespace Services.Repositories
                 return await context.Set<T>().Where(predicate).ToListAsync();
             }
         }
+
         /// <summary>
         /// 获取实体集
         /// </summary>

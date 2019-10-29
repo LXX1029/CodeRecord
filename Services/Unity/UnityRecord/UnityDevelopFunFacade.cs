@@ -1,10 +1,5 @@
 ﻿using DataEntitys;
 using Services.Repositories;
-//using Services.Singleton.ISingRecord;
-using Services.Unity.UnityControl;
-using System.Collections.Generic;
-using System.Data.Entity;
-
 namespace Services.Unity
 {
     /// <summary>
@@ -12,8 +7,5 @@ namespace Services.Unity
     /// </summary>
     public sealed class UnityDevelopFunFacade : Repository<DevelopFun>, IUnityDevelopFunFacade
     {
-        #region Public Methods
-
-        #endregion Public Methods
     }
 }

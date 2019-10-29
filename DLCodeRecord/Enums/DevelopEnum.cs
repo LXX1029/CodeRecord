@@ -25,23 +25,50 @@ namespace DLCodeRecord.DevelopForms
         Updating,
     }
 
-
     /// <summary>
     /// 功能枚举
     /// </summary>
     public enum DevelopFunCaptions
     {
+        /// <summary>
+        /// 用户管理
+        /// </summary>
         DevelopUser = 5,
+        /// <summary>
+        /// 设置
+        /// </summary>
         DevelopSetting = 6,
+        /// <summary>
+        /// 新增
+        /// </summary>
         DevelopAdd = 7,
+        /// <summary>
+        /// 更新
+        /// </summary>
         DevelopUpdate = 8,
+        /// <summary>
+        /// 删除
+        /// </summary>
         DevelopDelete = 9,
+        /// <summary>
+        /// 报告
+        /// </summary>
         DevelopReport = 10,
+        /// <summary>
+        /// 类型增加
+        /// </summary>
         DevelopTypeAdd = 11,
+        /// <summary>
+        /// 打印
+        /// </summary>
         Print = 12,
+        /// <summary>
+        /// 退出
+        /// </summary>
         Exist = 500,
+        /// <summary>
+        /// 重载数据
+        /// </summary>
         ReLoadData = 501,
     }
-
-
 }

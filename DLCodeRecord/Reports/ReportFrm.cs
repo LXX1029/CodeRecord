@@ -1,10 +1,4 @@
-﻿using Common;
-using DevExpress.XtraEditors;
-using DevExpress.XtraPrinting.Drawing;
-using DevExpress.XtraPrinting.Native;
-using DevExpress.XtraReports.UI;
-using DLCodeRecord.DevelopForms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,9 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Common;
+using DevExpress.XtraEditors;
+using DevExpress.XtraPrinting.Drawing;
+using DevExpress.XtraPrinting.Native;
+using DevExpress.XtraReports.UI;
+using DLCodeRecord.DevelopForms;
 
 namespace DLCodeRecord.Reports
 {
+    /// <summary>
+    /// 打印窗体
+    /// </summary>
     public partial class ReportFrm : BaseFrm
     {
         private XtraReport _xtraReport { get; set; }

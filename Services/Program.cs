@@ -1,16 +1,11 @@
-﻿using Services.EFCodeFirst;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Services.EFCodeFirst;
 
 namespace Services
 {
-
     public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             try
             {
@@ -22,6 +17,7 @@ namespace Services
                     {
                         recordContext.Database.Create();
                     }
+
                     recordContext.Database.Initialize(true);
                     Console.WriteLine("数据库迁移完毕");
                 }
@@ -30,6 +26,7 @@ namespace Services
             {
                 Console.WriteLine($"error:{ex.Message}");
             }
+
             Console.WriteLine(".......按任意键退出");
             Console.ReadKey();
         }

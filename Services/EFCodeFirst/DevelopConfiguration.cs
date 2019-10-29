@@ -1,14 +1,9 @@
-﻿using DataEntitys;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Services.EFCodeFirst
+﻿namespace Services.EFCodeFirst
 {
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.ModelConfiguration;
+    using DataEntitys;
+
     /// <summary>
     /// DevelopUser表配置
     /// </summary>
@@ -24,7 +19,8 @@ namespace Services.EFCodeFirst
             this.Property(m => m.Sex).HasColumnType("nchar").HasMaxLength(2);
             this.Property(m => m.DevelopAge).HasColumnType("decimal").HasPrecision(9, 2);
             this.Property(m => m.RowVersion).IsConcurrencyToken(true).IsRequired();
-            //this.Property(m => m.address).HasColumnType("nvarchar").HasMaxLength(100);
+
+            // this.Property(m => m.address).HasColumnType("nvarchar").HasMaxLength(100);
         }
     }
 
@@ -42,11 +38,10 @@ namespace Services.EFCodeFirst
             this.Property(m => m.ParentId).HasColumnType("int").IsRequired();
             this.Property(m => m.CreatedTime).HasColumnType("datetime");
             this.Property(m => m.UpdatedTime).HasColumnType("datetime");
-
         }
     }
 
-    // /// <summary>
+    /// <summary>
     /// DevelopPowerFun表配置
     /// </summary>
     public class DevelopPowerFunConfiguration : EntityTypeConfiguration<DevelopPowerFun>
@@ -59,8 +54,6 @@ namespace Services.EFCodeFirst
             this.Property(m => m.IsEnabled).HasColumnType("bit").IsRequired();
             this.Property(m => m.UserId).HasColumnType("int").IsRequired();
             this.Property(m => m.FunId).HasColumnType("int").IsRequired();
-
         }
     }
-
 }

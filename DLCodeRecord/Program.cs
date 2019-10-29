@@ -1,12 +1,12 @@
-﻿using Common;
-using DLCodeRecord.DevelopForms;
-using Services.EFCodeFirst;
-using System;
+﻿using System;
 using System.ComponentModel.Composition;
 using System.Configuration;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
+using Common;
+using DLCodeRecord.DevelopForms;
+using Services.EFCodeFirst;
 
 namespace DLCodeRecord
 {
@@ -18,7 +18,6 @@ namespace DLCodeRecord
         [STAThread]
         private static void Main()
         {
-
             //using (RecordContext recordContext = new RecordContext())
             //{
             //    if (!recordContext.Database.Exists())
@@ -27,7 +26,6 @@ namespace DLCodeRecord
             //    }
             //    recordContext.Database.Initialize(true);
             //}
-
 
             // 创建新的地方化culture
             // zh-Hans 文件夹在Debug或者Release文件夹下

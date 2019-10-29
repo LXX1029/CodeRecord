@@ -1,20 +1,20 @@
-﻿using DataEntitys;
-using Services.Repositories;
-using Services.Unity.UnityControl;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using Services.EFCodeFirst;
-using System.Data.Entity;
-
-namespace Services.Unity
+﻿namespace Services.Unity
 {
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using DataEntitys;
+    using Services.EFCodeFirst;
+    using Services.Repositories;
+    using Services.Unity.UnityControl;
+
     /// <summary>
     /// 统计模块数据层
     /// </summary>
     public sealed class UnityStatisticsFacade : Repository<ClickCountReportEntity>, IUnityStatisticsFacade
     {
-        #region Public Methods
+        /// <inheritdoc/>
         [UnityException]
         public async Task<List<ClickCountReportEntity>> GetClickCountReport()
         {
@@ -29,11 +29,9 @@ namespace Services.Unity
                                   ParentTypeName = parentType.Name,
                                   SubTypeId = g.Key.DevelopType.Id,
                                   SubTypeName = g.Key.DevelopType.Name,
-                                  ClickCount = g.Sum(s => s.ClickCount)
+                                  ClickCount = g.Sum(s => s.ClickCount),
                               }).ToListAsync();
             }
         }
-
-        #endregion Public Methods
     }
 }

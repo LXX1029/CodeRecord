@@ -12,7 +12,8 @@ namespace DataEntitys
         /// <summary>
         /// 功能名称
         /// </summary>
-        [MaxLength(20), Required]
+        [MaxLength(20)]
+        [Required]
         public string Name { get; set; }
         /// <summary>
         /// 图标对应索引

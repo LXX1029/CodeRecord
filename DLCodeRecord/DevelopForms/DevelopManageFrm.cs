@@ -1,4 +1,14 @@
-﻿using Common;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Common;
+using DataEntitys;
 using DevExpress.Skins;
 using DevExpress.Utils;
 using DevExpress.XtraBars;
@@ -10,16 +20,6 @@ using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraSplashScreen;
 using DLCodeRecord.Reports;
-using DataEntitys;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using log4net;
 using static Common.ExceptionHelper;
 using static Services.Unity.UnityContainerManager;
@@ -35,12 +35,12 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 数据管理类
         /// </summary>
-        private DataManage dataManage = null;
+        private DataManage _dataManage = null;
 
         /// <summary>
         /// 计时器
         /// </summary>
-        private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.Timer _timer;
 
         private DevelopRecordEntity SelectedDevelopRecordEntity { get; set; }
 
@@ -52,7 +52,6 @@ namespace DLCodeRecord.DevelopForms
         /// 每次读取量
         /// </summary>
         private static int StepCount { get; set; }
-        private ILog Log => LogManager.GetLogger("DevelopManageFrm");
         #endregion 变量
 
         #region 构造函数
@@ -84,9 +83,7 @@ namespace DLCodeRecord.DevelopForms
                 this.Close();
                 return;
             }
-
-            dataManage = DataManage.Instance;
-
+            _dataManage = DataManage.Instance;
             var tuple = UtilityHelper.GetWorkingAreaSize();
             this.Size = tuple.Item1;
             this.Location = tuple.Item2;
@@ -98,7 +95,7 @@ namespace DLCodeRecord.DevelopForms
                 Caption = "大版块",
                 FieldName = "ParentTypeName",
                 VisibleIndex = 0,
-                Width = 150
+                Width = 150,
             };
             colParentType.OptionsColumn.AllowFocus = false;
             colParentType.OptionsColumn.AllowSize = false;
@@ -108,7 +105,7 @@ namespace DLCodeRecord.DevelopForms
                 Caption = "小版块",
                 FieldName = "SubTypeName",
                 VisibleIndex = 1,
-                Width = 150
+                Width = 150,
             };
             colType.OptionsColumn.AllowFocus = false;
 
@@ -198,11 +195,9 @@ namespace DLCodeRecord.DevelopForms
                 MaxWidth = 150,
             };
             colUpdatedTime.OptionsColumn.AllowFocus = false;
-            //colUpdatedTime.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+            // colUpdatedTime.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
             colUpdatedTime.DisplayFormat.FormatType = FormatType.Custom;
             colUpdatedTime.DisplayFormat.FormatString = "yyyy-MM-dd HH:mm:ss";
-
-
             // 操作列
             GridColumn colView = new GridColumn()
             {
@@ -234,9 +229,7 @@ namespace DLCodeRecord.DevelopForms
                 ImageLocation = ImageLocation.MiddleRight,
             };
             // 添加按钮到RepositoryItemButtonEdit
-            repositoryItemButtonEdit.Buttons.AddRange(new EditorButton[] {
-               ebView,
-               ebDownLoad});
+            repositoryItemButtonEdit.Buttons.AddRange(new EditorButton[] { ebView, ebDownLoad });
             colView.ColumnEdit = repositoryItemButtonEdit;
             #region 按钮列操作事件
             // 按钮列操作事件
@@ -247,10 +240,10 @@ namespace DLCodeRecord.DevelopForms
             this.gvDevelop.BeginInit();
             // 添加列到gvDevelop
             this.gvDevelop.Columns.AddRange(new GridColumn[] { colParentType, colType, colTitle, colDesc, colCreatedTime, colUpdatedTime, colImagePath, colView, colUserName });
-            //gcDevelop.RepositoryItems.Add(repositoryItemImageEdit);
-            //gcDevelop.RepositoryItems.Add(repositoryItemMemoExEdit);
-            //this.gvDevelop.Columns["Desc"].ColumnEdit = repositoryItemMemoExEdit;
-            //this.gvDevelop.Columns["BitMap"].ColumnEdit = repositoryItemImageEdit;
+            /*gcDevelop.RepositoryItems.Add(repositoryItemImageEdit);
+            gcDevelop.RepositoryItems.Add(repositoryItemMemoExEdit);
+            this.gvDevelop.Columns["Desc"].ColumnEdit = repositoryItemMemoExEdit;
+            this.gvDevelop.Columns["BitMap"].ColumnEdit = repositoryItemImageEdit;*/
             // 添加统计
             this.gvDevelop.Columns["SubTypeName"].Summary.Add(DevExpress.Data.SummaryItemType.Count, "SubTypeName", "共计：{0}");
             this.gvDevelop.OptionsView.ShowFooter = true;
@@ -272,13 +265,10 @@ namespace DLCodeRecord.DevelopForms
             this.barStatus.Manager.AllowCustomization = false;
             // 控制bar是否显示右键菜单
             this.barStatus.Manager.AllowShowToolbarsPopup = false;
-
             this.gvDevelop.EndInit();
-
             this.gvDevelop.FocusedRowChanged -= GvDevelop_FocusedRowChanged;
             this.gvDevelop.FocusedRowChanged += GvDevelop_FocusedRowChanged;
-
-            this.gcDevelop.DataBindings.Add("DataSource", dataManage, "DevelopRecordEntityList", true, DataSourceUpdateMode.OnPropertyChanged, "暂无数据");
+            this.gcDevelop.DataBindings.Add("DataSource", _dataManage, "DevelopRecordEntityList", true, DataSourceUpdateMode.OnPropertyChanged, "暂无数据");
             #endregion 构建columns
 
             #region 构建菜单项,显示当前用户
@@ -295,15 +285,13 @@ namespace DLCodeRecord.DevelopForms
             }
 
             bsiUser.Caption = "当前用户:" + DataManage.LoginUser?.Name;
-
             #endregion 构建菜单项,显示当前用户
 
             #region Timer
-
-            timer = new System.Windows.Forms.Timer();
-            timer.Tick -= new EventHandler(Timer_Tick);
-            timer.Tick += new EventHandler(Timer_Tick);
-            timer.Interval = 1000;
+            _timer = new System.Windows.Forms.Timer();
+            _timer.Tick -= new EventHandler(Timer_Tick);
+            _timer.Tick += new EventHandler(Timer_Tick);
+            _timer.Interval = 1000;
             #endregion Timer
             OnCloseLoginFrmHandler();
 
@@ -312,7 +300,7 @@ namespace DLCodeRecord.DevelopForms
             LoadDevelopRecord();
             sw.Stop();
             Console.WriteLine("=======" + sw.ElapsedMilliseconds);
-            timer.Start();
+            _timer.Start();
         }
 
         /// <summary>
@@ -344,7 +332,7 @@ namespace DLCodeRecord.DevelopForms
                     bool result = await UnityDevelopRecordFacade.UpdateDevelopRecordClickCount(entity.Id);
                     DevelopViewFrm developViewFrm = new DevelopViewFrm(entity)
                     {
-                        Owner = this
+                        Owner = this,
                     };
                     developViewFrm.ShowDialog();
                     this.Activate();
@@ -396,8 +384,8 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private void DevelopManageFrm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (timer.Enabled)
-                timer.Stop();
+            if (_timer.Enabled)
+                _timer.Stop();
             Application.Exit();
         }
         /// <summary>
@@ -412,18 +400,12 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 退出提示
         /// </summary>
-        private DialogResult ExitConfirm()
-        {
-            return MsgHelper.ShowConfirm(PromptHelper.D_EXIST_CONFIRM);
-        }
+        private DialogResult ExitConfirm() => MsgHelper.ShowConfirm(PromptHelper.D_EXIST_CONFIRM);
         #endregion 窗口关闭
 
         #region 计时器事件
 
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            barStaticItem1.Caption = $"😄{DateTime.Now.ToString()}";
-        }
+        private void Timer_Tick(object sender, EventArgs e) => barStaticItem1.Caption = $"😄{DateTime.Now.ToString()}";
 
         #endregion 计时器事件
 
@@ -439,8 +421,7 @@ namespace DLCodeRecord.DevelopForms
             if (rowCount == 0)
             {
                 Graphics graphics = e.Graphics;
-                Rectangle r = new Rectangle(e.Bounds.Left + 5, e.Bounds.Top + 5, e.Bounds.Width - 5,
-         e.Bounds.Height - 5);
+                Rectangle r = new Rectangle(e.Bounds.Left + 5, e.Bounds.Top + 5, e.Bounds.Width - 5, e.Bounds.Height - 5);
                 graphics.DrawString("暂无记录", new System.Drawing.Font("宋体", 12, FontStyle.Bold), Brushes.Red, new PointF(e.Bounds.X + 10, e.Bounds.Y + 10));
             }
         }
@@ -451,29 +432,27 @@ namespace DLCodeRecord.DevelopForms
         public void AttatchedHandler(Action handler)
         {
             if (handler == null) return;
-            this.CloseLoginFrmHandler -= handler;
-            this.CloseLoginFrmHandler += handler;
+            this._closeLoginFrmHandler -= handler;
+            this._closeLoginFrmHandler += handler;
         }
 
         /// <summary>
         /// 隐藏登陆窗口事件
         /// </summary>
-        private Action CloseLoginFrmHandler;
+        private Action _closeLoginFrmHandler;
 
         private void OnCloseLoginFrmHandler()
         {
-            CloseLoginFrmHandler?.Invoke();
+            _closeLoginFrmHandler?.Invoke();
         }
 
         #endregion 触发隐藏登陆窗口事件
-
-
 
         #region 根据用户Id,生成所有功能项菜单
         /// <summary>
         /// 初始化菜单
         /// </summary>
-        /// <param name="userId">用户Id</param>
+        /// <param name="developUser">用户</param>
         private async Task InitialFunMenu(DevelopUser developUser)
         {
             ribbonControl1.ShowExpandCollapseButton = DevExpress.Utils.DefaultBoolean.False;
@@ -516,7 +495,7 @@ namespace DLCodeRecord.DevelopForms
                     }
                 }
             }
-            else  // 其它用户
+            else
             {
                 // 获取当前用户对应的菜单权限关系
                 IEnumerable<DevelopPowerFun> funList = DataManage.LoginUser.DevelopPowerFuns.OrderBy(o => o?.Id);
@@ -568,7 +547,7 @@ namespace DLCodeRecord.DevelopForms
             #region 刷新数据 Id = 501
             RibbonPageGroup refreshrrpg = new RibbonPageGroup("重载数据")
             {
-                Name = "refreshrrpg"
+                Name = "refreshrrpg",
             };
             BarButtonItem refreshButtonItem = ribbonControl1.Items.CreateButton("重载数据");
             refreshButtonItem.Name = "refreshButtonItem";
@@ -588,7 +567,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 Caption = "皮肤",
                 Border = BorderStyles.Flat,
-                Id = 502
+                Id = 502,
             };
             srgbri.Gallery.ShowItemText = true;
             srgbri.Gallery.ImageSize = new Size(32, 32);
@@ -596,7 +575,7 @@ namespace DLCodeRecord.DevelopForms
             srgbri.Gallery.AllowHoverImages = true; // 允许显示 悬浮图片
             GalleryItemGroup group1 = new GalleryItemGroup
             {
-                Tag = 1
+                Tag = 1,
             };
             string applicationSource = AppDomain.CurrentDomain.BaseDirectory + "SkinImg\\";
             foreach (SkinContainer skin in SkinManager.Default.Skins)
@@ -607,7 +586,7 @@ namespace DLCodeRecord.DevelopForms
                 if (System.IO.File.Exists(hoverImgPath) == false) continue;
                 Image image = Image.FromFile(imgPath);
                 Image hoverImage = Image.FromFile(hoverImgPath);
-                GalleryItem item = new GalleryItem(image, hoverImage, skin.SkinName, "", 1, 1, null, "");
+                GalleryItem item = new GalleryItem(image, hoverImage, skin.SkinName, string.Empty, 1, 1, null, string.Empty);
                 group1.Items.Add(item);
             }
             srgbri.Gallery.Groups.Add(group1);
@@ -634,30 +613,33 @@ namespace DLCodeRecord.DevelopForms
             #endregion 皮肤设定
 
             #region 打印数据  Id = 503
-            //RibbonPageGroup reportrrpg = new RibbonPageGroup("打印");
-            //BarButtonItem reportButtonItem = ribbonControl1.Items.CreateButton("打印");
-            //reportButtonItem.RibbonStyle = RibbonItemStyles.Large;
-            //reportButtonItem.ImageIndex = 10;
-            //reportButtonItem.LargeWidth = 80;
-            //reportButtonItem.Id = 503;
-            //reportButtonItem.ItemClick += new ItemClickEventHandler(item_ItemClick);
-            //reportrrpg.ItemLinks.Add(reportButtonItem);
+            /*RibbonPageGroup reportrrpg = new RibbonPageGroup("打印");
+            BarButtonItem reportButtonItem = ribbonControl1.Items.CreateButton("打印");
+            reportButtonItem.RibbonStyle = RibbonItemStyles.Large;
+            reportButtonItem.ImageIndex = 10;
+            reportButtonItem.LargeWidth = 80;
+            reportButtonItem.Id = 503;
+            reportButtonItem.ItemClick += new ItemClickEventHandler(item_ItemClick);
+            reportrrpg.ItemLinks.Add(reportButtonItem);*/
             #endregion
 
             otherPage.Groups.Add(refreshrrpg);
             otherPage.Groups.Add(skinsrrpg);
-            //otherPage.Groups.Add(reportrrpg);
+            // otherPage.Groups.Add(reportrrpg);
             otherPage.Groups.Add(existrrpg);
             ribbonControl1.Pages.Add(otherPage);
             foreach (RibbonPage page in ribbonControl1.Pages)
+            {
                 foreach (RibbonPageGroup group in page.Groups)
                     group.ShowCaptionButton = false;  // 不显示右下角箭头
+            }
             #endregion
             #region 设置ApplicationButton菜单
             // 设置ApplicationButton菜单
-            this.popupMenu.AddItems(new BarItem[] {
+            this.popupMenu.AddItems(new BarItem[]
+            {
                 refreshButtonItem,
-                existButtonItem
+                existButtonItem,
             });
             ribbonControl1.ApplicationButtonDropDownControl = this.popupMenu;
             #endregion
@@ -677,17 +659,16 @@ namespace DLCodeRecord.DevelopForms
                     DevelopFrm addFrm = new DevelopFrm(null)
                     {
                         Owner = this,
-                        StartPosition = FormStartPosition.CenterParent
+                        StartPosition = FormStartPosition.CenterParent,
                     };
                     addFrm.ShowDialog();
-                    //gcDevelop.RefreshDataSource();
-                    dataManage.DevelopRecordEntityList.AddingNew += (m, n) =>
+                    _dataManage.DevelopRecordEntityList.AddingNew += (m, n) =>
                     {
                         gcDevelop.RefreshDataSource();
                         gvDevelop.FocusedRowHandle = 0;
                         this.Activate();
                     };
-                    dataManage.DevelopRecordEntityList.ListChanged += (m, n) =>
+                    _dataManage.DevelopRecordEntityList.ListChanged += (m, n) =>
                     {
                         gcDevelop.RefreshDataSource();
                         gvDevelop.FocusedRowHandle = 0;
@@ -703,9 +684,9 @@ namespace DLCodeRecord.DevelopForms
                         frm.DeleteNodeHandler += (m, n) =>
                         {
                             // 获取包含删除小版块的Record记录
-                            var records = dataManage.DevelopRecordEntityList.Where(w => w.SubTypeId == n.TypeId).ToList();
+                            var records = _dataManage.DevelopRecordEntityList.Where(w => w.SubTypeId == n.TypeId).ToList();
                             for (int i = 0; i < records.Count; i++)
-                                dataManage.DevelopRecordEntityList.Remove(records[i]);
+                                _dataManage.DevelopRecordEntityList.Remove(records[i]);
                         };
                         ShowForm(frm);
                     }
@@ -779,16 +760,16 @@ namespace DLCodeRecord.DevelopForms
 
             try
             {
-                dataManage.DevelopRecordEntityList.Clear();
+                _dataManage.DevelopRecordEntityList.Clear();
                 TotalCount = await UnityDevelopRecordFacade.GetDevelopRecordListCount();
                 // 根据stepCount 计算总页数
-                int PagerCount = TotalCount / StepCount;
-                int totalPagerCount = (TotalCount % StepCount) > 0 ? PagerCount + 1 : PagerCount;
+                int pagerCount = TotalCount / StepCount;
+                int totalPagerCount = (TotalCount % StepCount) > 0 ? pagerCount + 1 : pagerCount;
 
                 // 显示进度窗体
                 frm = new WaitingFrm(totalPagerCount)
                 {
-                    Owner = this
+                    Owner = this,
                 };
                 this.BeginInvoke(new Action(() =>
                 {
@@ -808,9 +789,7 @@ namespace DLCodeRecord.DevelopForms
                         {
                             frm.Percent = pageIndex + 1;
                             for (int j = 0; j < entityCount; j++)
-                            {
-                                dataManage.DevelopRecordEntityList.Add(entitys[j]);
-                            }
+                                _dataManage.DevelopRecordEntityList.Add(entitys[j]);
                             entitys.Clear();
                             if (frm.Visible == false)
                                 frm.ShowDialog();
@@ -822,7 +801,6 @@ namespace DLCodeRecord.DevelopForms
                 {
                     frm.Close();
                 }));
-
                 if (item != null)
                     item.Enabled = true;
             }
@@ -830,7 +808,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 CatchException(ex);
                 frm?.Close();
-                dataManage?.DevelopRecordEntityList.Clear();
+                _dataManage?.DevelopRecordEntityList.Clear();
                 source?.Cancel();
             }
             finally
@@ -848,8 +826,8 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private void ReLoadData()
         {
-            this.gvDevelop.FindFilterText = "";
-            dataManage?.DevelopRecordEntityList.Clear();
+            this.gvDevelop.FindFilterText = string.Empty;
+            _dataManage?.DevelopRecordEntityList.Clear();
             LoadDevelopRecord();
         }
 
@@ -872,7 +850,7 @@ namespace DLCodeRecord.DevelopForms
                     bool result = await UnityDevelopRecordFacade.RemoveEntity(entity.Id);
                     if (result)
                     {
-                        dataManage.DevelopRecordEntityList.Remove(entity);
+                        _dataManage.DevelopRecordEntityList.Remove(entity);
                         MsgHelper.ShowInfo(PromptHelper.D_DELETE_SUCCESS);
                     }
                     else
@@ -885,9 +863,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 CatchException(ex);
             }
-
         }
-
         #endregion 删除事件
 
         #region 修改事件
@@ -915,22 +891,22 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private void GcDevelop_MouseUp(object sender, MouseEventArgs e)
         {
-            //if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            //{
-            //    object obj = this.gvDevelop.GetFocusedRow();
-            //    if (obj == null)
-            //    {
-            //        MsgHelper.ShowInfo("请选择要操作的行");
-            //        return;
-            //    }
-            //    DevelopRecordEntity entity = obj as DevelopRecordEntity;
-            //    if (entity.Id != DataManage.CurrentUser.Id)
-            //    {
-            //        MsgHelper.ShowInfo("该数据由其它人员创建，不可进行操作。");
-            //        return;
-            //    }
-            //    //popupMenu1.ShowPopup(Control.MousePosition);
-            //}
+            /*if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                object obj = this.gvDevelop.GetFocusedRow();
+                if (obj == null)
+                {
+                    MsgHelper.ShowInfo("请选择要操作的行");
+                    return;
+                }
+                DevelopRecordEntity entity = obj as DevelopRecordEntity;
+                if (entity.Id != DataManage.CurrentUser.Id)
+                {
+                    MsgHelper.ShowInfo("该数据由其它人员创建，不可进行操作。");
+                    return;
+                }
+                //popupMenu1.ShowPopup(Control.MousePosition);
+            }*/
         }
 
         #endregion 右键菜单显示事件
@@ -941,16 +917,17 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private bool HandleVerify()
         {
-            object obj = this.gvDevelop.GetFocusedRow();
-            if (obj == null)
+            if (this.gvDevelop.GetFocusedRow() is DevelopRecordEntity entity)
+            {
+                if (entity.Id != DataManage.LoginUser.Id && DataManage.LoginUser.Id != 1)
+                {
+                    MsgHelper.ShowInfo(PromptHelper.D_UnAuthority);
+                    return false;
+                }
+            }
+            else
             {
                 MsgHelper.ShowInfo(PromptHelper.D_SELECT_DATAROW);
-                return false;
-            }
-
-            if (obj is DevelopRecordEntity entity && entity.Id != DataManage.LoginUser.Id && DataManage.LoginUser.Id != 1)
-            {
-                MsgHelper.ShowInfo(PromptHelper.D_UnAuthority);
                 return false;
             }
             return true;
@@ -985,8 +962,6 @@ namespace DLCodeRecord.DevelopForms
             frm.StartPosition = FormStartPosition.CenterScreen;
             frm.ShowDialog();
         }
-
         #endregion 窗口只显示一次
     }
-
 }

@@ -14,7 +14,7 @@ namespace DLCodeRecord.CustomerLocalizer
 
         public override string GetLocalizedString(GridStringId id)
         {
-            string ret = "";
+            string ret = string.Empty;
 
             switch (id)
             {

@@ -1,12 +1,10 @@
+ï»¿using System;
+using System.Data.Entity.Migrations;
+using System.Linq;
+using Common;
+using DataEntitys;
 namespace Services.Migrations
 {
-    using DataEntitys;
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
-
     internal sealed class Configuration : DbMigrationsConfiguration<Services.EFCodeFirst.RecordContext>
     {
         public Configuration()
@@ -16,16 +14,10 @@ namespace Services.Migrations
         }
 
         protected override void Seed(Services.EFCodeFirst.RecordContext context)
-
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data.
-
             try
             {
-                // ³õÊ¼»¯DevelopUsers Ä¬ÈÏÊı¾İ
+                // åˆå§‹åŒ–DevelopUsers é»˜è®¤æ•°æ®
                 context.DevelopUsers.AddOrUpdate(new DevelopUser()
                 {
                     Id = 1,
@@ -33,31 +25,30 @@ namespace Services.Migrations
                     Pwd = Common.UtilityHelper.MD5Encrypt("0"),
                 });
 
-
-                //³õÊ¼»¯DevelopUsers¶ÔÓ¦µÄÈ¨ÏŞ
+                // åˆå§‹åŒ–DevelopUserså¯¹åº”çš„æƒé™
                 DevelopFun[] funList = new DevelopFun[]
                 {
-                new DevelopFun{Id=1,Name="Ö÷²Ëµ¥",ImageIndex=0,ParentID=0},
-                new DevelopFun{Id=2,Name="°æ¿é¹ÜÀí",ImageIndex=0,ParentID=0},
-                new DevelopFun{Id=3,Name="Í³¼Æ",ImageIndex=0,ParentID=0},
-                new DevelopFun{Id=4,Name="ÉèÖÃ",ImageIndex=0,ParentID=0},
-                new DevelopFun{Id=5,Name="ÓÃ»§ÉèÖÃ",ImageIndex=7,ParentID=4},
-                new DevelopFun{Id=6,Name="ÆäËüÉèÖÃ",ImageIndex=6,ParentID=4},
-                new DevelopFun{Id=7,Name="ĞÂÔö",ImageIndex=0,ParentID=1},
-                new DevelopFun{Id=8,Name="ĞŞ¸Ä",ImageIndex=4,ParentID=1},
-                new DevelopFun{Id=9,Name="É¾³ı",ImageIndex=1,ParentID=1},
-                new DevelopFun{Id=10,Name="²éÑ¯Í³¼Æ",ImageIndex=9,ParentID=3},
-                new DevelopFun{Id=11,Name="°æ¿é¹ÜÀí",ImageIndex=8,ParentID=2},
-                new DevelopFun{Id=12,Name="´òÓ¡",ImageIndex=10,ParentID=1},
+                new DevelopFun{Id = 1, Name="ä¸»èœå•",ImageIndex=0,ParentID=0 },
+                new DevelopFun{Id = 2, Name="ç‰ˆå—ç®¡ç†",ImageIndex=0,ParentID=0 },
+                new DevelopFun{Id=3, Name="ç»Ÿè®¡",ImageIndex=0,ParentID=0 },
+                new DevelopFun{Id=4,Name="è®¾ç½®",ImageIndex=0,ParentID=0 },
+                new DevelopFun{Id=5,Name="ç”¨æˆ·è®¾ç½®",ImageIndex=7,ParentID=4 },
+                new DevelopFun{Id=6,Name="å…¶å®ƒè®¾ç½®",ImageIndex=6,ParentID=4 },
+                new DevelopFun{Id=7,Name="æ–°å¢",ImageIndex=0,ParentID=1 },
+                new DevelopFun{Id=8,Name="ä¿®æ”¹",ImageIndex=4,ParentID=1 },
+                new DevelopFun{Id=9,Name="åˆ é™¤",ImageIndex=1,ParentID=1 },
+                new DevelopFun{Id=10,Name="æŸ¥è¯¢ç»Ÿè®¡", ImageIndex=9,ParentID=3 },
+                new DevelopFun{Id=11,Name="ç‰ˆå—ç®¡ç†",ImageIndex=8,ParentID=2 },
+                new DevelopFun{Id=12,Name="æ‰“å°",ImageIndex=10,ParentID=1 },
                 };
                 context.DevelopFuns.AddOrUpdate(funList.ToArray());
                 context.SaveChanges();
             }
             catch (Exception ex)
             {
+                MsgHelper.ShowError(ex.Message);
                 Console.WriteLine(ex.Message);
             }
-
         }
     }
 }

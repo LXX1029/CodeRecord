@@ -15,6 +15,7 @@ using DevExpress.XtraLayout.Utils;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.API.Native;
 using DevExpress.XtraRichEdit.Services;
+using log4net;
 using static Common.LoggerHelper;
 using static Common.UtilityHelper;
 using static Services.Unity.UnityContainerManager;
@@ -33,7 +34,7 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 截屏类
         /// </summary>
-        private readonly RisCaptureLib.ScreenCaputre screenCaputre = new RisCaptureLib.ScreenCaputre();
+        private readonly RisCaptureLib.ScreenCaputre _screenCaputre = new RisCaptureLib.ScreenCaputre();
 
         /// <summary>
         /// 自定义记录类
@@ -48,12 +49,12 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 最终尺寸
         /// </summary>
-        private namespaceWin.Size? lastSize;
+        private namespaceWin.Size? _lastSize;
 
         /// <summary>
         /// 绑定实体类
         /// </summary>
-        private BindingSource bindingSource = new BindingSource();
+        private BindingSource _bindingSource = new BindingSource();
         #endregion 属性
 
         #region 构造函数
@@ -63,14 +64,14 @@ namespace DLCodeRecord.DevelopForms
             InitializeComponent();
             DevelopRecordEntity = new DevelopRecordEntity(DataManage.LoginUser.Id);
             this.Text = "操作窗口";
-            screenCaputre.ScreenCaputred -= OnScreenCaputred;
-            screenCaputre.ScreenCaputreCancelled -= OnScreenCaputreCancelled;
-            screenCaputre.ScreenCaputred -= OnScreenCaputred;
-            screenCaputre.ScreenCaputred += OnScreenCaputred;
-            screenCaputre.ScreenCaputreCancelled -= OnScreenCaputreCancelled;
-            screenCaputre.ScreenCaputreCancelled += OnScreenCaputreCancelled;
-            codeEditor.scintilla.TextChanged -= Scintilla_TextChanged;
-            codeEditor.scintilla.TextChanged += Scintilla_TextChanged;
+            _screenCaputre.ScreenCaputred -= OnScreenCaputred;
+            _screenCaputre.ScreenCaputreCancelled -= OnScreenCaputreCancelled;
+            _screenCaputre.ScreenCaputred -= OnScreenCaputred;
+            _screenCaputre.ScreenCaputred += OnScreenCaputred;
+            _screenCaputre.ScreenCaputreCancelled -= OnScreenCaputreCancelled;
+            _screenCaputre.ScreenCaputreCancelled += OnScreenCaputreCancelled;
+            codeEditor.Scintilla.TextChanged -= Scintilla_TextChanged;
+            codeEditor.Scintilla.TextChanged += Scintilla_TextChanged;
             this.Load -= new EventHandler(DevelopAddFrm_Load);
             this.Load += new EventHandler(DevelopAddFrm_Load);
             this.FormClosing -= DevelopFrm_FormClosing;
@@ -95,11 +96,10 @@ namespace DLCodeRecord.DevelopForms
             this.btnZipPath.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
         }
 
-
         #region 代码编辑改变
         private void Scintilla_TextChanged(object sender, EventArgs e)
         {
-            DevelopRecordEntity.Desc = codeEditor.scintilla.Text.Trim();
+            DevelopRecordEntity.Desc = codeEditor.Scintilla.Text.Trim();
         }
         #endregion
 
@@ -134,7 +134,6 @@ namespace DLCodeRecord.DevelopForms
             {
                 CatchLoadException(this, ex);
             }
-
         }
         #endregion 构造函数
 
@@ -146,12 +145,10 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private async Task InitialData()
         {
-
             try
             {
                 this.txtTitle.Focus();
-                ShowSplashScreenForm(this, PromptHelper.D_LOADINGDATA);
-                #region 加载类型数据
+                ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
                 // 加载大类
                 IList<DevelopType> parentTypes = await UnityDevelopTypeFacade.GetDevelopTypesByParentId(0);
                 if (parentTypes.Count() > 0)
@@ -161,19 +158,18 @@ namespace DLCodeRecord.DevelopForms
                         rgParentType.Properties.Items.Add(new RadioGroupItem()
                         {
                             Value = f.Id,
-                            Description = f.Name
+                            Description = f.Name,
                         });
                     }
                 }
                 rgParentType.SelectedIndex = 0;
-                #endregion 加载类型数据
                 #region 绑定developRecordEntity数据到控件
-                //this.rgParentType.DataBindings.Add("EditValue", DevelopRecordEntity, "ParentId", true, DataSourceUpdateMode.OnPropertyChanged);
-                //this.rdioGChildType.DataBindings.Add("EditValue", DevelopRecordEntity, "SubTypeId", true);
-                //this.codeEditor.scintilla.DataBindings.Add("Text", DevelopRecordEntity, "Desc", true, DataSourceUpdateMode.OnPropertyChanged);
+                // this.rgParentType.DataBindings.Add("EditValue", DevelopRecordEntity, "ParentId", true, DataSourceUpdateMode.OnPropertyChanged);
+                // this.rdioGChildType.DataBindings.Add("EditValue", DevelopRecordEntity, "SubTypeId", true);
+                // this.codeEditor.scintilla.DataBindings.Add("Text", DevelopRecordEntity, "Desc", true, DataSourceUpdateMode.OnPropertyChanged);
                 this.rgParentType.EditValue = DevelopRecordEntity.ParentId;
                 this.rdioGChildType.EditValue = DevelopRecordEntity.SubTypeId;
-                this.codeEditor.scintilla.Text = DevelopRecordEntity.Desc;
+                this.codeEditor.Scintilla.Text = DevelopRecordEntity.Desc;
 
                 this.txtTitle.DataBindings.Add(new Binding("EditValue", DevelopRecordEntity, "Title", true, DataSourceUpdateMode.OnPropertyChanged));
                 this.picImg.DataBindings.Add("EditValue", DevelopRecordEntity, "Picture", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -213,7 +209,7 @@ namespace DLCodeRecord.DevelopForms
                         this.rdioGChildType.Properties.Items.Add(new RadioGroupItem()
                         {
                             Value = f.Id,
-                            Description = f.Name
+                            Description = f.Name,
                         });
                     });
                     if (actionState == DevelopActiveState.Adding)
@@ -237,7 +233,6 @@ namespace DLCodeRecord.DevelopForms
         /// 选择小版块
         /// </summary>
         private void RdioGChildType_EditValueChanged(object sender, EventArgs e)
-
         {
             DevelopRecordEntity.SubTypeId = Convert.ToInt32(rdioGChildType.EditValue.ToString());
             SetDescValue();
@@ -248,7 +243,7 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private void SetDescValue()
         {
-            //developRecordEntity 表示新增，显示内容格式
+            // developRecordEntity 表示新增，显示内容格式
             if (actionState == DevelopActiveState.Adding)
             {
                 StringBuilder sb = new StringBuilder();
@@ -274,10 +269,9 @@ namespace DLCodeRecord.DevelopForms
                 sb.AppendLine("*/");
                 sb.AppendLine("#region 4.001 ");
                 sb.AppendLine("#endregion");
-                codeEditor.scintilla.Text = sb.ToString().Trim();
+                codeEditor.Scintilla.Text = sb.ToString().Trim();
             }
         }
-
 
         #endregion 选择大/小版块
 
@@ -291,7 +285,6 @@ namespace DLCodeRecord.DevelopForms
             this.Size = tuple.Item3;
             this.Location = tuple.Item4;
             await InitialData();
-
         }
 
         #endregion 窗体加载
@@ -358,7 +351,6 @@ namespace DLCodeRecord.DevelopForms
                     await UnityDevelopRecordFacade.UpdateEntity(this.LocalDevelopRecord);
                     MsgHelper.ShowInfo(PromptHelper.D_UPDATE_SUCCESS);
                     CloseNormal();
-
                 }
                 else if (actionState == DevelopActiveState.Adding)
                 {
@@ -414,7 +406,6 @@ namespace DLCodeRecord.DevelopForms
             {
                 CatchException(ex);
             }
-
         }
 
         #endregion 新增，修改保存
@@ -434,10 +425,7 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 关闭按钮事件
         /// </summary>
-        private void BtnClose_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        private void BtnClose_Click(object sender, EventArgs e) => this.Close();
 
         /// <summary>
         /// 下载图片
@@ -452,8 +440,8 @@ namespace DLCodeRecord.DevelopForms
             }
             try
             {
-                ShowSplashScreenForm(this, PromptHelper.D_LOADINGIMG);
-                using (var http = new HttpClient())
+                ShowSplashScreenForm(PromptHelper.D_LOADINGIMG);
+                using (var http = HttpClientFactory.Create())
                 {
                     var bytes = await http.GetByteArrayAsync(imgPath).ConfigureAwait(false);
                     this.picImg.Invoke(new Action(() =>
@@ -466,6 +454,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 CloseSplashScreenForm();
                 CatchException(ex);
+                Logger.Error(ex);
             }
             finally
             {
@@ -478,10 +467,10 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private void BtnSelectImg_ButtonClick(object sender, ButtonPressedEventArgs e)
         {
-            //根据选择图片 显示图片
+            // 根据选择图片 显示图片
             OpenFileDialog dialog = new OpenFileDialog
             {
-                Filter = "PNG|*.png|GIF|*.gif|JPG|*.jpg|JPEG|*.jpeg"
+                Filter = "PNG|*.png|GIF|*.gif|JPG|*.jpg|JPEG|*.jpeg",
             };
             if (dialog.ShowDialog() == namespaceFrm.DialogResult.OK)
             {
@@ -503,7 +492,7 @@ namespace DLCodeRecord.DevelopForms
             if (this.Owner != null)
                 this.Owner.Visible = false;
             this.Visible = false;
-            screenCaputre.StartCaputre(30, lastSize);
+            _screenCaputre.StartCaputre(30, _lastSize);
         }
 
         /// <summary>
@@ -511,7 +500,7 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private void OnScreenCaputreCancelled(object sender, System.EventArgs e)
         {
-            if (this.Text != "")
+            if (this.Text != string.Empty)
             {
                 if (this.Owner != null && !this.Owner.Visible)
                     this.Owner.Visible = true;
@@ -522,19 +511,19 @@ namespace DLCodeRecord.DevelopForms
 
         private void OnScreenCaputred(object sender, RisCaptureLib.ScreenCaputredEventArgs e)
         {
-            //设置最终尺寸
-            lastSize = new namespaceWin.Size(e.Bmp.Width, e.Bmp.Height);
+            // 设置最终尺寸
+            _lastSize = new namespaceWin.Size(e.Bmp.Width, e.Bmp.Height);
             this.StartPosition = FormStartPosition.Manual;
-            namespaceDraw.Rectangle ScreenArea = namespaceFrm.Screen.GetWorkingArea(this);
-            this.Location = new namespaceDraw.Point((ScreenArea.Width - this.Width) / 2, 0);
+            namespaceDraw.Rectangle screenArea = namespaceFrm.Screen.GetWorkingArea(this);
+            this.Location = new namespaceDraw.Point((screenArea.Width - this.Width) / 2, 0);
             Show();
             if (this.Owner != null)
                 this.Owner.Show();
-            //转换图片
+            // 转换图片
             namespaceWin.Media.Imaging.BitmapImage bitmapImage = BitMapSoruceToBitMapImage(e.Bmp);
             if (bitmapImage == null)
                 return;
-            //this.picImg.Image = ConvertByteToImg(BitMapImageToByteArray(bitmapImage));
+            // this.picImg.Image = ConvertByteToImg(BitMapImageToByteArray(bitmapImage));
             this.picImg.EditValue = BitMapImageToByteArray(bitmapImage);
         }
 
@@ -544,10 +533,10 @@ namespace DLCodeRecord.DevelopForms
 
         private void BtnUpLoadZip_Click(object sender, ButtonPressedEventArgs e)
         {
-            //根据选择图片 显示图片
+            // 根据选择图片 显示图片
             OpenFileDialog dialog = new OpenFileDialog
             {
-                Filter = "RAR|*.rar|ZIP|*.zip"
+                Filter = "RAR|*.rar|ZIP|*.zip",
             };
             if (dialog.ShowDialog() == namespaceFrm.DialogResult.OK)
             {
@@ -570,7 +559,7 @@ namespace DLCodeRecord.DevelopForms
         {
             if (this.Visible == false)
                 return;
-            base.FormClosingTip(e);
+            FormClosingTip(e);
         }
 
         #endregion
@@ -580,143 +569,140 @@ namespace DLCodeRecord.DevelopForms
         /// 初始化数据
         /// RichEditControl
         /// </summary>
-        private bool InitialData1()
-        {
-            this.Invoke(new Action(() =>
-            {
-                this.picImg.Properties.SizeMode = PictureSizeMode.Squeeze;
-                this.picImg.Properties.ShowZoomSubMenu = DevExpress.Utils.DefaultBoolean.True;
-                this.picImg.Properties.NullText = "暂无图像";
-                this.txtTitle.Focus();
-                if (!this.recDesc.InvokeRequired)
-                {
-                    InitialRichEditControl();
-                    this.recDesc.DragEnter += new namespaceFrm.DragEventHandler(RecDesc_DragEnter);
-                    this.recDesc.InitializeDocument += new EventHandler(RecDesc_InitializeDocument);
-                    if (DevelopRecordEntity == null)
-                    {
-                        recDesc.Text = "";
-                        recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.cs";
-                        recDesc.ReplaceService<ISyntaxHighlightService>(new CustomOtherSyntaxHighlightService(recDesc));
-                    }
-                    if (DevelopRecordEntity != null)
-                    {
-                        if (DevelopRecordEntity.ParentTypeName == "Sqlserver")
-                        {
-                            recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.cs";
-                            recDesc.ReplaceService<ISyntaxHighlightService>(new CustomSqlSyntaxHighlightService(recDesc.Document));
-                        }
-                        if (DevelopRecordEntity.ParentTypeName == "WPF")
-                        {
-                            recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.xaml";
-                            recDesc.ReplaceService<ISyntaxHighlightService>(new CustomOtherSyntaxHighlightService(recDesc));
-                        }
-                        if (DevelopRecordEntity.ParentTypeName == "C#" || DevelopRecordEntity.ParentTypeName == "Devexpress" || DevelopRecordEntity.ParentTypeName == "EF" || DevelopRecordEntity.ParentTypeName == "WCF")
-                        {
-                            recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.cs";
-                            recDesc.ReplaceService<ISyntaxHighlightService>(new CustomOtherSyntaxHighlightService(recDesc));
-                        }
-                    }
-                }
-            }));
-            return true;
-        }
+        //private bool InitialData1()
+        //{
+        //    this.Invoke(new Action(() =>
+        //    {
+        //        this.picImg.Properties.SizeMode = PictureSizeMode.Squeeze;
+        //        this.picImg.Properties.ShowZoomSubMenu = DevExpress.Utils.DefaultBoolean.True;
+        //        this.picImg.Properties.NullText = "暂无图像";
+        //        this.txtTitle.Focus();
+        //        if (!this.recDesc.InvokeRequired)
+        //        {
+        //            InitialRichEditControl();
+        //            this.recDesc.DragEnter += new namespaceFrm.DragEventHandler(RecDesc_DragEnter);
+        //            this.recDesc.InitializeDocument += new EventHandler(RecDesc_InitializeDocument);
+        //            if (DevelopRecordEntity == null)
+        //            {
+        //                recDesc.Text = "";
+        //                recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.cs";
+        //                recDesc.ReplaceService<ISyntaxHighlightService>(new CustomOtherSyntaxHighlightService(recDesc));
+        //            }
+        //            if (DevelopRecordEntity != null)
+        //            {
+        //                if (DevelopRecordEntity.ParentTypeName == "Sqlserver")
+        //                {
+        //                    recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.cs";
+        //                    recDesc.ReplaceService<ISyntaxHighlightService>(new CustomSqlSyntaxHighlightService(recDesc.Document));
+        //                }
+        //                if (DevelopRecordEntity.ParentTypeName == "WPF")
+        //                {
+        //                    recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.xaml";
+        //                    recDesc.ReplaceService<ISyntaxHighlightService>(new CustomOtherSyntaxHighlightService(recDesc));
+        //                }
+        //                if (DevelopRecordEntity.ParentTypeName == "C#" || DevelopRecordEntity.ParentTypeName == "Devexpress" || DevelopRecordEntity.ParentTypeName == "EF" || DevelopRecordEntity.ParentTypeName == "WCF")
+        //                {
+        //                    recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.cs";
+        //                    recDesc.ReplaceService<ISyntaxHighlightService>(new CustomOtherSyntaxHighlightService(recDesc));
+        //                }
+        //            }
+        //        }
+        //    }));
+        //    return true;
+        //}
         #endregion
 
         #region 初始化 RichEditControl--弃用
 
-        private void InitialRichEditControl()
-        {
-            try
-            {
-                //
-                // recDesc
-                //
-                this.recDesc.Name = "recDesc";
-                this.recDesc.ActiveViewType = DevExpress.XtraRichEdit.RichEditViewType.Draft;  // 简单视图模式
-                this.recDesc.Dock = System.Windows.Forms.DockStyle.Fill;
-                this.recDesc.LayoutUnit = DevExpress.XtraRichEdit.DocumentLayoutUnit.Pixel;
-                this.recDesc.Location = new System.Drawing.Point(2, 28);
-                this.recDesc.Options.AutoCorrect.DetectUrls = true;
-                this.recDesc.Options.AutoCorrect.ReplaceTextAsYouType = false;
-                this.recDesc.Options.Behavior.PasteLineBreakSubstitution = DevExpress.XtraRichEdit.LineBreakSubstitute.Paragraph;
-                this.recDesc.Options.DocumentCapabilities.Bookmarks = DevExpress.XtraRichEdit.DocumentCapability.Hidden;
-                this.recDesc.Options.DocumentCapabilities.CharacterStyle = DevExpress.XtraRichEdit.DocumentCapability.Hidden;
-                this.recDesc.Options.DocumentCapabilities.HeadersFooters = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
-                this.recDesc.Options.DocumentCapabilities.Hyperlinks = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
-                this.recDesc.Options.DocumentCapabilities.InlinePictures = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
-                this.recDesc.Options.DocumentCapabilities.Numbering.Bulleted = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
-                this.recDesc.Options.DocumentCapabilities.Numbering.MultiLevel = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
-                this.recDesc.Options.DocumentCapabilities.Numbering.Simple = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
-                this.recDesc.Options.DocumentCapabilities.ParagraphFormatting = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
-                this.recDesc.Options.DocumentCapabilities.Paragraphs = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
-                this.recDesc.Options.DocumentCapabilities.ParagraphStyle = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
-                this.recDesc.Options.DocumentCapabilities.Sections = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
-                this.recDesc.Options.DocumentCapabilities.Tables = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
-                this.recDesc.Options.DocumentCapabilities.TableStyle = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
-                this.recDesc.Options.DocumentCapabilities.ParagraphFormatting = DocumentCapability.Enabled;
-                this.recDesc.Options.DocumentCapabilities.Comments = DocumentCapability.Hidden;
-                this.recDesc.Options.DocumentCapabilities.EndNotes = DocumentCapability.Hidden;
-                this.recDesc.Options.Bookmarks.Visibility = RichEditBookmarkVisibility.Hidden;
-                this.recDesc.Options.HorizontalRuler.Visibility = DevExpress.XtraRichEdit.RichEditRulerVisibility.Visible;
-                this.recDesc.Views.DraftView.AllowDisplayLineNumbers = true;
-                // 显示行号 宽度
-                this.recDesc.Views.DraftView.Padding = new System.Windows.Forms.Padding(80, 4, 0, 0);
-                //this.recDesc.Views.SimpleView.Padding = new System.Windows.Forms.Padding(50, 4, 4, 0);
-            }
-            catch (Exception ex)
-            {
-                WriteException(ex.Message);
-                MsgHelper.ShowError(ex.Message);
-            }
-        }
+        //private void InitialRichEditControl()
+        //{
+        //    try
+        //    {
+        //        //
+        //        // recDesc
+        //        //
+        //        this.recDesc.Name = "recDesc";
+        //        this.recDesc.ActiveViewType = DevExpress.XtraRichEdit.RichEditViewType.Draft;  // 简单视图模式
+        //        this.recDesc.Dock = System.Windows.Forms.DockStyle.Fill;
+        //        this.recDesc.LayoutUnit = DevExpress.XtraRichEdit.DocumentLayoutUnit.Pixel;
+        //        this.recDesc.Location = new System.Drawing.Point(2, 28);
+        //        this.recDesc.Options.AutoCorrect.DetectUrls = true;
+        //        this.recDesc.Options.AutoCorrect.ReplaceTextAsYouType = false;
+        //        this.recDesc.Options.Behavior.PasteLineBreakSubstitution = DevExpress.XtraRichEdit.LineBreakSubstitute.Paragraph;
+        //        this.recDesc.Options.DocumentCapabilities.Bookmarks = DevExpress.XtraRichEdit.DocumentCapability.Hidden;
+        //        this.recDesc.Options.DocumentCapabilities.CharacterStyle = DevExpress.XtraRichEdit.DocumentCapability.Hidden;
+        //        this.recDesc.Options.DocumentCapabilities.HeadersFooters = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
+        //        this.recDesc.Options.DocumentCapabilities.Hyperlinks = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
+        //        this.recDesc.Options.DocumentCapabilities.InlinePictures = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
+        //        this.recDesc.Options.DocumentCapabilities.Numbering.Bulleted = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
+        //        this.recDesc.Options.DocumentCapabilities.Numbering.MultiLevel = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
+        //        this.recDesc.Options.DocumentCapabilities.Numbering.Simple = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
+        //        this.recDesc.Options.DocumentCapabilities.ParagraphFormatting = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
+        //        this.recDesc.Options.DocumentCapabilities.Paragraphs = DevExpress.XtraRichEdit.DocumentCapability.Enabled;
+        //        this.recDesc.Options.DocumentCapabilities.ParagraphStyle = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
+        //        this.recDesc.Options.DocumentCapabilities.Sections = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
+        //        this.recDesc.Options.DocumentCapabilities.Tables = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
+        //        this.recDesc.Options.DocumentCapabilities.TableStyle = DevExpress.XtraRichEdit.DocumentCapability.Disabled;
+        //        this.recDesc.Options.DocumentCapabilities.ParagraphFormatting = DocumentCapability.Enabled;
+        //        this.recDesc.Options.DocumentCapabilities.Comments = DocumentCapability.Hidden;
+        //        this.recDesc.Options.DocumentCapabilities.EndNotes = DocumentCapability.Hidden;
+        //        this.recDesc.Options.Bookmarks.Visibility = RichEditBookmarkVisibility.Hidden;
+        //        this.recDesc.Options.HorizontalRuler.Visibility = DevExpress.XtraRichEdit.RichEditRulerVisibility.Visible;
+        //        this.recDesc.Views.DraftView.AllowDisplayLineNumbers = true;
+        //        // 显示行号 宽度
+        //        this.recDesc.Views.DraftView.Padding = new System.Windows.Forms.Padding(80, 4, 0, 0);
+        //        //this.recDesc.Views.SimpleView.Padding = new System.Windows.Forms.Padding(50, 4, 4, 0);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        WriteException(ex.Message);
+        //        MsgHelper.ShowError(ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// 初始化文档
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RecDesc_InitializeDocument(object sender, EventArgs e)
-        {
-            DevExpress.XtraRichEdit.API.Native.Document document = recDesc.Document;
-            document.BeginUpdate();
-            try
-            {
-                document.DefaultCharacterProperties.FontName = "Courier New";
-                document.DefaultCharacterProperties.FontSize = 14;
-                document.Sections[0].Page.Width = Units.InchesToDocumentsF(100);
-                document.Sections[0].LineNumbering.CountBy = 1;
-                document.Sections[0].LineNumbering.RestartType = LineNumberingRestart.NewSection;
+        //private void RecDesc_InitializeDocument(object sender, EventArgs e)
+        //{
+        //    DevExpress.XtraRichEdit.API.Native.Document document = recDesc.Document;
+        //    document.BeginUpdate();
+        //    try
+        //    {
+        //        document.DefaultCharacterProperties.FontName = "Courier New";
+        //        document.DefaultCharacterProperties.FontSize = 14;
+        //        document.Sections[0].Page.Width = Units.InchesToDocumentsF(100);
+        //        document.Sections[0].LineNumbering.CountBy = 1;
+        //        document.Sections[0].LineNumbering.RestartType = LineNumberingRestart.NewSection;
 
-                namespaceDraw.SizeF tabSize = recDesc.MeasureSingleLineString("       ", document.DefaultCharacterProperties);
-                TabInfoCollection tabs = document.Paragraphs[0].BeginUpdateTabs(true);
-                try
-                {
-                    for (int i = 1; i <= 30; i++)
-                    {
-                        DevExpress.XtraRichEdit.API.Native.TabInfo tab = new DevExpress.XtraRichEdit.API.Native.TabInfo
-                        {
-                            Position = i * tabSize.Width
-                        };
-                        tabs.Add(tab);
-                    }
-                }
-                finally
-                {
-                    document.Paragraphs[0].EndUpdateTabs(tabs);
-                }
-            }
-            catch (Exception ex)
-            {
-                WriteException(ex.Message);
-                MsgHelper.ShowError(ex.Message);
-            }
-            finally
-            {
-                document.EndUpdate();
-            }
-        }
-
+        //        namespaceDraw.SizeF tabSize = recDesc.MeasureSingleLineString("       ", document.DefaultCharacterProperties);
+        //        TabInfoCollection tabs = document.Paragraphs[0].BeginUpdateTabs(true);
+        //        try
+        //        {
+        //            for (int i = 1; i <= 30; i++)
+        //            {
+        //                DevExpress.XtraRichEdit.API.Native.TabInfo tab = new DevExpress.XtraRichEdit.API.Native.TabInfo
+        //                {
+        //                    Position = i * tabSize.Width
+        //                };
+        //                tabs.Add(tab);
+        //            }
+        //        }
+        //        finally
+        //        {
+        //            document.Paragraphs[0].EndUpdateTabs(tabs);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        WriteException(ex.Message);
+        //        MsgHelper.ShowError(ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        document.EndUpdate();
+        //    }
+        //}
         #endregion 初始化 RichEditControl--舍弃
 
         #region 拖放文件到RichEditor -- 弃用
@@ -724,44 +710,43 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 拖放文件到 控件
         /// </summary>
-        private void RecDesc_DragEnter(object sender, namespaceFrm.DragEventArgs e)
-        {
-            try
-            {
-                this.recDesc.Text = "";
-                Array aryFiles = ((System.Array)e.Data.GetData(namespaceFrm.DataFormats.FileDrop));
+        //private void RecDesc_DragEnter(object sender, namespaceFrm.DragEventArgs e)
+        //{
+        //    try
+        //    {
+        //        this.recDesc.Text = "";
+        //        Array aryFiles = ((System.Array)e.Data.GetData(namespaceFrm.DataFormats.FileDrop));
 
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < aryFiles.Length; i++)
-                {
-                    // 设置当前拖放文件格式
-                    string ext = System.IO.Path.GetExtension(aryFiles.GetValue(i).ToString());
-                    if (ext == ".xaml")
-                        recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.xaml";
-                    if (ext == ".cs")
-                        recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.cs";
-                    if (ext == ".txt")
-                        recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.txt";
+        //        StringBuilder builder = new StringBuilder();
+        //        for (int i = 0; i < aryFiles.Length; i++)
+        //        {
+        //            // 设置当前拖放文件格式
+        //            string ext = System.IO.Path.GetExtension(aryFiles.GetValue(i).ToString());
+        //            if (ext == ".xaml")
+        //                recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.xaml";
+        //            if (ext == ".cs")
+        //                recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.cs";
+        //            if (ext == ".txt")
+        //                recDesc.Options.DocumentSaveOptions.CurrentFileName = "a.txt";
 
-                    string[] valuesArray = File.ReadAllLines(aryFiles.GetValue(i).ToString(), Encoding.UTF8);
-                    if (valuesArray.Length > 0)
-                    {
-                        valuesArray.ToList().ForEach(p =>
-                        {
-                            if (p != "")
-                                builder.Append(p + "\r\n");
-                        });
-                    }
-                }
-                this.recDesc.Text = builder.ToString();
-            }
-            catch (Exception ex)
-            {
-                MsgHelper.ShowError(ex.Message);
-                WriteException(ex.Message);
-            }
-        }
-
+        //            string[] valuesArray = File.ReadAllLines(aryFiles.GetValue(i).ToString(), Encoding.UTF8);
+        //            if (valuesArray.Length > 0)
+        //            {
+        //                valuesArray.ToList().ForEach(p =>
+        //                {
+        //                    if (p != "")
+        //                        builder.Append(p + "\r\n");
+        //                });
+        //            }
+        //        }
+        //        this.recDesc.Text = builder.ToString();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MsgHelper.ShowError(ex.Message);
+        //        WriteException(ex.Message);
+        //    }
+        //}
         #endregion 拖放文件到RichEditor -- 舍弃
     }
 }

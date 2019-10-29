@@ -61,7 +61,7 @@ namespace DLCodeRecord.CustomerLocalizer
                 case StringId.TextEditMenuUndo: return "撤销";
             }
 
-            return "";
+            return string.Empty;
         }
     }
 }

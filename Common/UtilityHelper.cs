@@ -20,12 +20,6 @@ namespace Common
     /// </summary>
     public sealed class UtilityHelper
     {
-        #region Private Fields
-
-        private const int SW_RESTORE = 9;
-
-        #endregion Private Fields
-
         #region 将BiteMapImage 转成byte[]
         /// <summary>
         /// 将BiteMapImage 转成byte[]
@@ -40,7 +34,6 @@ namespace Common
             byte[] bytearray = null;
             CatchException(() =>
             {
-                //设置当前位置
                 smarket.Position = 0;
                 using (BinaryReader br = new BinaryReader(smarket))
                     bytearray = br.ReadBytes((int)smarket.Length);
@@ -64,10 +57,8 @@ namespace Common
                 JpegBitmapEncoder encoder = new JpegBitmapEncoder();
                 MemoryStream memoryStream = new MemoryStream();
                 bImg = new BitmapImage();
-
                 encoder.Frames.Add(BitmapFrame.Create(source));
                 encoder.Save(memoryStream);
-
                 bImg.BeginInit();
                 bImg.StreamSource = new MemoryStream(memoryStream.ToArray());
                 bImg.EndInit();
@@ -89,17 +80,13 @@ namespace Common
             Bitmap img = null;
             CatchException(() =>
             {
-                /* 
+                /*
                  * 使用using(MemoryStream ms = new MemoryStream(bytes)){img = new Bitmap(ms);}
                  * 出现 Method  异常对象名称： Int32 SelectActiveFrame(System.Drawing.Imaging.FrameDimension, Int32)异常
                  */
-
                 MemoryStream ms = new MemoryStream(bytes);
-                //{
                 ms.Seek(0, SeekOrigin.Begin);
                 img = new Bitmap(ms);
-                //}
-
             });
             return img;
         }
@@ -124,13 +111,12 @@ namespace Common
                     string downLoadFilePath = downLoadPath;
                     if (!Directory.Exists(downLoadPath))
                         Directory.CreateDirectory(downLoadPath);
-                    downLoadPath = downLoadPath + fileName;
+                    downLoadPath += fileName;
                     using (FileStream fs = new FileStream(downLoadPath, FileMode.Create, FileAccess.Write))
                         fs.Write(zipByte, 0, zipByte.Length);
                     Process.Start(downLoadFilePath);
                 });
             });
-
         }
         #endregion
 
@@ -152,7 +138,6 @@ namespace Common
                     imagebytes = new byte[fs.Length];
                     imagebytes = br.ReadBytes(Convert.ToInt32(fs.Length));
                 }
-
             });
             return imagebytes;
         }
@@ -162,7 +147,7 @@ namespace Common
         /// <summary>
         ///  Image转成字节
         /// </summary>
-        /// <param name="pictureEdit">System.Drawing.Image 控件</param>
+        /// <param name="image">System.Drawing.Image 控件</param>
         /// <returns>byte[]</returns>
         public static byte[] ConvertImgToByte(Image image)
         {
@@ -198,7 +183,6 @@ namespace Common
                 // 获取屏幕Dpi
                 float dpiX = graphics.DpiX;
                 float dpiY = graphics.DpiY;
-
             }
 
             Rectangle rect = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
@@ -212,38 +196,6 @@ namespace Common
 
         #endregion 获取屏幕大小
 
-        #region 激活已打开的进程
-        [DllImport("user32.dll")]
-        private static extern bool IsIconic(IntPtr hWnd);
-        [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-
-        /// <summary>
-        /// 激活已打开的进程
-        /// </summary>
-        public static void RaiseOtherProcess()
-        {
-            Process proc = Process.GetCurrentProcess();
-            foreach (Process otherProc in
-                Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName))
-            {
-                if (proc.Id != otherProc.Id)
-                {
-                    IntPtr hWnd = otherProc.MainWindowHandle;
-                    if (IsIconic(hWnd))
-                    {
-                        ShowWindowAsync(hWnd, 9);
-                    }
-                    SetForegroundWindow(hWnd);
-                    break;
-                }
-            }
-        }
-
-        #endregion 激活已打开窗口
-
         #region 操作配置文件
 
         /// <summary>
@@ -251,10 +203,7 @@ namespace Common
         /// </summary>
         /// <param name="key">关键字</param>
         /// <returns>string</returns>
-        public static string GetConfigurationKeyValue(string key)
-        {
-            return ConfigurationManager.AppSettings[key];
-        }
+        public static string GetConfigurationKeyValue(string key) => ConfigurationManager.AppSettings[key];
 
         /// <summary>
         /// 设置Configuration 中的setting值
@@ -269,7 +218,7 @@ namespace Common
                 System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 config.AppSettings.Settings[key].Value = value;
                 config.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection("appSettings");//重新加载新的配置文件
+                ConfigurationManager.RefreshSection("appSettings"); // 重新加载新的配置文件
                 return true;
             }
             catch (Exception ex)
@@ -293,43 +242,38 @@ namespace Common
         /// <summary>
         /// MD5解密
         /// </summary>
-        /// <param name="pToEncrypt">字符串</param>
+        /// <param name="pToDecrypt">字符串</param>
         /// <param name="sKey">md5Key</param>
-        /// <returns></returns>
+        /// <returns>string</returns>
         public static string MD5Decrypt(string pToDecrypt, string sKey)
         {
             DESCryptoServiceProvider des = new DESCryptoServiceProvider();
-
             byte[] inputByteArray = new byte[pToDecrypt.Length / 2];
             for (int x = 0; x < pToDecrypt.Length / 2; x++)
             {
-                int i = (Convert.ToInt32(pToDecrypt.Substring(x * 2, 2), 16));
+                int i = Convert.ToInt32(pToDecrypt.Substring(x * 2, 2), 16);
                 inputByteArray[x] = (byte)i;
             }
-
             des.Key = ASCIIEncoding.ASCII.GetBytes(sKey);
             des.IV = ASCIIEncoding.ASCII.GetBytes(sKey);
             MemoryStream ms = new MemoryStream();
             CryptoStream cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
             cs.Write(inputByteArray, 0, inputByteArray.Length);
             cs.FlushFinalBlock();
-
-            StringBuilder ret = new StringBuilder();
-
             return System.Text.Encoding.Default.GetString(ms.ToArray());
         }
 
         /// <summary>
         /// 加密密码
         /// </summary>
-        /// <param name="pwd"></param>
-        /// <returns></returns>
+        /// <param name="pwd">密码</param>
+        /// <returns>string</returns>
         public static string MD5Encrypt(string pwd)
         {
-            byte[] upwd = (new ASCIIEncoding()).GetBytes(pwd);
-            MD5 md5 = MD5.Create();
+            byte[] upwd = ASCIIEncoding.ASCII.GetBytes(pwd);
+            using MD5 md5 = MD5.Create();
             byte[] mdpwdByte = md5.ComputeHash(upwd);
-            string mdpwdString = (new ASCIIEncoding()).GetString(mdpwdByte);
+            string mdpwdString = ASCIIEncoding.ASCII.GetString(mdpwdByte);
             return mdpwdString;
         }
 
@@ -338,7 +282,7 @@ namespace Common
         /// </summary>
         /// <param name="pToEncrypt">字符串</param>
         /// <param name="sKey">md5Key</param>
-        /// <returns></returns>
+        /// <returns>string</returns>
         public static string MD5Encrypt(string pToEncrypt, string sKey)
         {
             DESCryptoServiceProvider des = new DESCryptoServiceProvider();
@@ -369,19 +313,19 @@ namespace Common
         /// <returns>string</returns>
         public static string GetLocalIP()
         {
-            string LocalIP = null;
-            //获取本地IP
-            IPHostEntry IpEntry = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (IPAddress ip in IpEntry.AddressList)
+            string localIP = null;
+            // 获取本地IP
+            IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ip in ipEntry.AddressList)
             {
                 if (ip.AddressFamily.Equals(AddressFamily.InterNetwork))
                 {
-                    if (ip != null) { LocalIP = ip.ToString(); }
+                    if (ip != null) { localIP = ip.ToString(); }
                     break;
                 }
             }
-            if (string.IsNullOrEmpty(LocalIP)) { throw new Exception("读取IP为空"); }
-            return LocalIP;
+            if (string.IsNullOrEmpty(localIP)) { throw new Exception("读取IP为空"); }
+            return localIP;
         }
 
         #endregion 获取本地IP
@@ -409,6 +353,36 @@ namespace Common
             return description;
         }
         #endregion
-    }
 
+        #region 激活已打开的进程
+        /// <summary>
+        /// 激活已打开的进程
+        /// </summary>
+        public static void RaiseOtherProcess()
+        {
+            Process proc = Process.GetCurrentProcess();
+            foreach (Process otherProc in
+                Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName))
+            {
+                if (proc.Id != otherProc.Id)
+                {
+                    IntPtr hWnd = otherProc.MainWindowHandle;
+                    if (IsIconic(hWnd))
+                    {
+                        ShowWindowAsync(hWnd, 9);
+                    }
+                    SetForegroundWindow(hWnd);
+                    break;
+                }
+            }
+        }
+
+        [DllImport("user32.dll")]
+        private static extern bool IsIconic(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+        #endregion 激活已打开窗口
+    }
 }

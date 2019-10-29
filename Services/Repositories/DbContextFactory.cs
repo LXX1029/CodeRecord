@@ -1,34 +1,29 @@
-﻿using Services.EFCodeFirst;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Services.Repositories
+﻿namespace Services.Repositories
 {
+    using System;
+    using Services.EFCodeFirst;
+
     public sealed class DbContextFactory : IDisposable
     {
-        #region 单例
         private DbContextFactory() { }
-        private volatile static RecordContext DbContext;
+
+        private static volatile RecordContext dbContext;
         public static RecordContext Instance
         {
             get
             {
-                return DbContext ?? (DbContext = new RecordContext());
+                return dbContext ?? (dbContext = new RecordContext());
             }
         }
 
-        #endregion
         public void Dispose()
         {
-            DbContext?.Dispose();
-        }
-        ~DbContextFactory()
-        {
-            this.Dispose();
+            dbContext?.Dispose();
         }
 
+        ~DbContextFactory()
+        {
+            Dispose();
+        }
     }
 }

@@ -1,12 +1,10 @@
-﻿using DataEntitys;
-using Services.EFCodeFirst;
-using Services.Repositories;
-using Services.Unity.UnityControl;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-
+using DataEntitys;
+using Services.EFCodeFirst;
+using Services.Repositories;
 namespace Services.Unity
 {
     /// <summary>
@@ -14,8 +12,6 @@ namespace Services.Unity
     /// </summary>
     public sealed class UnityDevelopPowerFunFacade : Repository<DevelopPowerFun>, IUnityDevelopPowerFunFacade
     {
-        #region Public Methods
-
         /// <summary>
         /// 获取用户所有权限
         /// </summary>
@@ -26,6 +22,10 @@ namespace Services.Unity
                 return await context.DevelopPowerFuns.Include(i => i.DevelopFun).Where(w => w.UserId == userId).ToListAsync();
         }
 
+        /// <summary>
+        /// 保存权限设置
+        /// </summary>
+        /// <param name="developPowerFun">DevelopPowerFun</param>
         public async Task<DevelopPowerFun> SetDevelopPowerFun(DevelopPowerFun developPowerFun)
         {
             DevelopPowerFun currentDevelopPowerFun = null;
@@ -44,7 +44,5 @@ namespace Services.Unity
                 }
             }
         }
-
-        #endregion Public Methods
     }
 }

@@ -1,8 +1,4 @@
-﻿using Common;
-using DevExpress.Utils;
-using DevExpress.XtraCharts;
-using DataEntitys;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -12,6 +8,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Common;
+using DataEntitys;
+using DevExpress.Utils;
+using DevExpress.XtraCharts;
 using log4net;
 using static Services.Unity.UnityContainerManager;
 
@@ -23,9 +23,8 @@ namespace DLCodeRecord.DevelopForms
     public partial class DevelopReportFrm : BaseFrm
     {
         #region 属性
-        private ChartControl chartControl = new ChartControl();
+        private ChartControl _chartControl = new ChartControl();
         #endregion 属性
-
 
         #region 构造函数
         public DevelopReportFrm()
@@ -34,8 +33,8 @@ namespace DLCodeRecord.DevelopForms
 
             #region 初始化设置
             this.Text = "统计";
-            chartControl.Dock = DockStyle.Fill;
-            this.Controls.Add(chartControl);
+            _chartControl.Dock = DockStyle.Fill;
+            this.Controls.Add(_chartControl);
             #endregion 初始化设置
 
             #region 加载数据
@@ -62,7 +61,7 @@ namespace DLCodeRecord.DevelopForms
         {
             try
             {
-                ShowSplashScreenForm(this, PromptHelper.D_LOADINGDATA);
+                ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
                 await Task.Delay(1000);
                 CloseSplashScreenForm();
                 // 获取数据
@@ -72,7 +71,7 @@ namespace DLCodeRecord.DevelopForms
                     // 线
                     Series series1 = null;
                     // 点集合
-                    List<SeriesPoint> SeriesPointList = null;
+                    List<SeriesPoint> seriesPointList = null;
                     // 遍历排序后的集合
                     var result = from p in reportList
                                  group p by p.ParentTypeName into g
@@ -80,13 +79,13 @@ namespace DLCodeRecord.DevelopForms
                                  {
                                      ParentName = g.Key,
                                      ClickCount = g.Sum(s => s.ClickCount),
-                                     ParentId = g.Select(p => p.ParentTypeId).First()
+                                     ParentId = g.Select(p => p.ParentTypeId).First(),
                                  };
 
                     // 添加到控件显示
                     foreach (var i in result.OrderByDescending(o => o.ClickCount))
                     {
-                        SeriesPointList = new List<SeriesPoint>();
+                        seriesPointList = new List<SeriesPoint>();
                         SeriesPoint seriesPoint = new SeriesPoint(i.ParentName, new double[] { i.ClickCount });
 
                         List<ClickCountReportEntity> childrenTypeList =
@@ -96,18 +95,18 @@ namespace DLCodeRecord.DevelopForms
                              {
                                  ParentTypeName = c.ParentTypeName,
                                  SubTypeName = c.SubTypeName,
-                                 ClickCount = c.ClickCount
+                                 ClickCount = c.ClickCount,
                              }).ToList();
                         seriesPoint.Tag = childrenTypeList;
-                        SeriesPointList.Add(seriesPoint);
+                        seriesPointList.Add(seriesPoint);
                         series1 = new Series(i.ParentName + ":" + i.ClickCount, ViewType.Bar)
                         {
                             ShowInLegend = true,
                             ToolTipPointPattern = string.Format("次数：{0}", i.ClickCount),
                         };
-                        series1.Points.AddRange(SeriesPointList.ToArray());
+                        series1.Points.AddRange(seriesPointList.ToArray());
                         series1.Label.TextPattern = "{A}:{V:F1}";
-                        chartControl.Series.Add(series1);
+                        _chartControl.Series.Add(series1);
                     }
                 }
                 else
@@ -129,43 +128,45 @@ namespace DLCodeRecord.DevelopForms
         private void InitialChartControl()
         {
             // 设置标题
-            chartControl.Titles.AddRange(new ChartTitle[] { new ChartTitle() { Text = "查询次数统计" } });
+            _chartControl.Titles.AddRange(new ChartTitle[] { new ChartTitle() { Text = "查询次数统计" } });
             // 设置chartControl 说明属性
-            chartControl.Legend.Visibility = DefaultBoolean.True;
-            chartControl.Legend.Border.Color = Color.Black;
-            chartControl.Legend.MarkerVisible = true;
+            _chartControl.Legend.Visibility = DefaultBoolean.True;
+            _chartControl.Legend.Border.Color = Color.Black;
+            _chartControl.Legend.MarkerVisible = true;
 
-            //chartControl.BackColor = Color.LightBlue;
-            chartControl.CrosshairEnabled = DevExpress.Utils.DefaultBoolean.False;
+            // chartControl.BackColor = Color.LightBlue;
+            _chartControl.CrosshairEnabled = DevExpress.Utils.DefaultBoolean.False;
             // 设置ToolTip可用
-            chartControl.ToolTipEnabled = DevExpress.Utils.DefaultBoolean.True;
+            _chartControl.ToolTipEnabled = DevExpress.Utils.DefaultBoolean.True;
             // 设置ToolTip显示位置方式
-            chartControl.ToolTipOptions.ToolTipPosition = new ToolTipMousePosition();
+            _chartControl.ToolTipOptions.ToolTipPosition = new ToolTipMousePosition();
 
             // 提示控件
             ToolTipController toolTipController = new ToolTipController
             {
                 Rounded = true,
                 ShowBeak = true,
+
                 // 设置显示位置
                 ToolTipLocation = ToolTipLocation.TopRight,
+
                 // 设置显示时间
                 AutoPopDelay = 5000,
                 // 单击关闭
-                CloseOnClick = DefaultBoolean.True
+                CloseOnClick = DefaultBoolean.True,
             };
             toolTipController.BeforeShow += new ToolTipControllerBeforeShowEventHandler(ToolTipController_BeforeShow);
-            chartControl.ToolTipController = toolTipController;
+            _chartControl.ToolTipController = toolTipController;
 
             ContextMenu contextMenu = new System.Windows.Forms.ContextMenu();
             System.Windows.Forms.MenuItem rotatedItem = new MenuItem("旋转", RotatedItem_Click);
-            System.Windows.Forms.MenuItem LegendItem = new MenuItem("说明", RotatedItem_Click)
+            System.Windows.Forms.MenuItem legendItem = new MenuItem("说明", RotatedItem_Click)
             {
-                Checked = true
+                Checked = true,
             };
             contextMenu.MenuItems.Add(rotatedItem);
-            contextMenu.MenuItems.Add(LegendItem);
-            chartControl.ContextMenu = contextMenu;
+            contextMenu.MenuItems.Add(legendItem);
+            _chartControl.ContextMenu = contextMenu;
         }
 
         #endregion 加载报表数据
@@ -182,22 +183,22 @@ namespace DLCodeRecord.DevelopForms
                 string text = menuItem.Text;
                 if (text == "旋转")
                 {
-                    bool rotated = !((XYDiagram)chartControl.Diagram).Rotated;
-                    ((XYDiagram)chartControl.Diagram).Rotated = rotated;
+                    bool rotated = !((XYDiagram)_chartControl.Diagram).Rotated;
+                    ((XYDiagram)_chartControl.Diagram).Rotated = rotated;
                     menuItem.Checked = rotated;
                 }
                 if (text == "说明")
                 {
                     bool visible = true;
-                    if (chartControl.Legend.Visibility == DefaultBoolean.True)
+                    if (_chartControl.Legend.Visibility == DefaultBoolean.True)
                     {
                         visible = false;
-                        chartControl.Legend.Visibility = DefaultBoolean.False;
+                        _chartControl.Legend.Visibility = DefaultBoolean.False;
                     }
                     else
                     {
                         visible = true;
-                        chartControl.Legend.Visibility = DefaultBoolean.True;
+                        _chartControl.Legend.Visibility = DefaultBoolean.True;
                     }
                     menuItem.Checked = visible;
                 }
@@ -217,16 +218,15 @@ namespace DLCodeRecord.DevelopForms
             if (toolTipChartDataSource == null || toolTipChartDataSource.Count == 0) return null;
             ChartControl chart = new ChartControl();
             chart.BorderOptions.Visibility = DefaultBoolean.False;
-            //chart.BackColor = Color.Yellow;
+            // chart.BackColor = Color.Yellow;
             chart.Series.Add(new Series("小版块", ViewType.Line));
             chart.DataSource = toolTipChartDataSource;
             chart.Series[0].ValueDataMembers.AddRange("ClickCount");
             chart.Series[0].ArgumentDataMember = "SubTypeName";
-            //
             // 显示线---数值
             chart.Series[0].LabelsVisibility = DefaultBoolean.True;
             chart.Series[0].ShowInLegend = true;
-            //chart.Series[0].View.Color = seriesColor;
+            // chart.Series[0].View.Color = seriesColor;
             chart.Series[0].ArgumentScaleType = ScaleType.Auto;
             chart.Series[0].ValueScaleType = ScaleType.Numerical;
             chart.Legend.Visibility = DefaultBoolean.False;
@@ -255,7 +255,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 string chartTitle = list[0].ParentTypeName;
                 e.ToolTipImage = CreateChart(list);
-                e.ToolTip = "";
+                e.ToolTip = string.Empty;
             }
         }
         #endregion 构建toolTip 显示数据

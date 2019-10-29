@@ -1,8 +1,6 @@
-﻿using Common;
-using DataEntitys;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
+using DataEntitys;
 
 namespace DLCodeRecord.DevelopForms
 {
@@ -11,18 +9,17 @@ namespace DLCodeRecord.DevelopForms
     /// </summary>
     public sealed class DataManage
     {
-        #region Private Fields
-        private DataManage()
-        { }
-        private static readonly object obj = new object();
-        #endregion Private Fields
-
-        #region 单例模式
+        #region 字段
         /// <summary>
         /// 默认登陆用户
         /// </summary>
         public static DevelopUser LoginUser = new DevelopUser();
+        #endregion 字段
 
+        #region 单例模式
+        private static readonly object Obj = new object();
+        private DataManage()
+        { }
         /// <summary>
         /// 单例模式
         /// </summary>
@@ -34,7 +31,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 if (dataManage == null)
                 {
-                    lock (obj)
+                    lock (Obj)
                     {
                         if (dataManage == null)
                             dataManage = new DataManage();
@@ -68,15 +65,14 @@ namespace DLCodeRecord.DevelopForms
 
         #endregion
 
-        //由GC调用
-        //~DataManage()
-        //{
-        //    DevelopUserList?.Clear();
-        //    DevelopRecordEntityList?.Clear();
-        //    DevelopPowerFunList?.Clear();
-        //    DevelopFunList?.Clear();
-        //    LoggerHelper.WriteOperation("已清理所有数据集合");
-        //}
+        // 由GC调用
+        /*~DataManage()
+        {
+            DevelopUserList?.Clear();
+            DevelopRecordEntityList?.Clear();
+            DevelopPowerFunList?.Clear();
+            DevelopFunList?.Clear();
+            LoggerHelper.WriteOperation("已清理所有数据集合");
+        }*/
     }
-
 }

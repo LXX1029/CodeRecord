@@ -1,5 +1,5 @@
-﻿using DevExpress.XtraWaitForm;
-using System;
+﻿using System;
+using DevExpress.XtraWaitForm;
 
 namespace Common
 {

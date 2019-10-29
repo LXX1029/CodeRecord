@@ -22,8 +22,5 @@ namespace DataEntitys
         public int FunId { get; set; }
         [ForeignKey("FunId")]
         public virtual DevelopFun DevelopFun { get; set; }
-
-
-
     }
 }

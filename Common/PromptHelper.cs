@@ -9,6 +9,7 @@ namespace DLCodeRecord
     public sealed class PromptHelper
     {
         #region 公共提示
+
         /// <summary>
         /// 添加成功
         /// </summary>
@@ -40,7 +41,7 @@ namespace DLCodeRecord
         /// <summary>
         /// 确定退出
         /// </summary>
-        public static string D_EXIST_CONFIRM = "确定退出?";
+        public static string D_EXIST_CONFIRM { get; } = "确定退出?";
 
         /// <summary>
         /// 请选择要操作的数据行
@@ -50,12 +51,12 @@ namespace DLCodeRecord
         /// <summary>
         /// 正在生成数据
         /// </summary>
-        public static string D_LOADINGDATA = "正在生成数据";
+        public static string D_LOADINGDATA { get; } = "正在生成数据";
 
         /// <summary>
         /// 正在加载图片
         /// </summary>
-        public static string D_LOADINGIMG = "正在加载图片";
+        public static string D_LOADINGIMG { get; } = "正在加载图片";
         #endregion
 
         #region 主窗体
@@ -67,26 +68,25 @@ namespace DLCodeRecord
         /// <summary>
         /// 请选择要打印的数据行
         /// </summary>
-        public static string D_SELECT_PRINTEDDATAROW { get; set; } = "请选择要打印的数据行";
+        public static string D_SELECT_PRINTEDDATAROW { get; } = "请选择要打印的数据行";
 
         /// <summary>
         /// 暂未提供可下载的文件包
         /// </summary>
-        public static string D_NOPACKAGE = "暂未提供可下载的文件包";
+        public static string D_NOPACKAGE { get; } = "暂未提供可下载的文件包";
         /// <summary>
         /// 正在获取文件包
         /// </summary>
-        public static string D_DOWNLOADINGPACKAGE = "正在获取文件包...";
+        public static string D_DOWNLOADINGPACKAGE { get; } = "正在获取文件包...";
         /// <summary>
         /// 获取成功
         /// </summary>
-        public static string D_DOWNLOADING_SUCCESS = "获取成功";
-
+        public static string D_DOWNLOADING_SUCCESS { get; } = "获取成功";
 
         /// <summary>
         /// 暂无数据
         /// </summary>
-        public static string D_NODATA = "暂无数据";
+        public static string D_NODATA { get; } = "暂无数据";
 
         #endregion
 

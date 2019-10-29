@@ -1,8 +1,8 @@
-﻿using DevExpress.XtraWaitForm;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DevExpress.XtraWaitForm;
 
 namespace DLInitialDB
 {
@@ -53,13 +53,10 @@ namespace DLInitialDB
             try
             {
                 //string connectionStr = ConfigurationManager.ConnectionStrings["dbConnectionString"].ConnectionString;
-
                 // 还原脚本命令
                 //string SqlPath = AppDomain.CurrentDomain.BaseDirectory + "AllData.sql";
                 //string sqlCmd = $"sqlcmd -S . -d RecordDB -i {SqlPath}";
-
                 string delCmd = $"sqlcmd -S . -d master -Q \"DROP DATABASE RecordDB\"";
-
                 // 还原bak命令
                 string bakPath = AppDomain.CurrentDomain.BaseDirectory + "RecordDB.bak";
                 string bakCmd = $"sqlcmd -S . -d master -Q \"RESTORE DATABASE RecordDB from disk = '{bakPath}' with replace\"";

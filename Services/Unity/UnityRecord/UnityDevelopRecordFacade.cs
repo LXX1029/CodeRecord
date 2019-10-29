@@ -1,21 +1,19 @@
-﻿using DataEntitys;
-using Services.Repositories;
-//using Services.Singleton.ISingRecord;
-using Services.Unity.UnityControl;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Threading.Tasks;
-using System.Linq;
-using Services.EFCodeFirst;
-
-namespace Services.Unity
+﻿namespace Services.Unity
 {
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using DataEntitys;
+    using Services.EFCodeFirst;
+    using Services.Repositories;
+    using Services.Unity.UnityControl;
+
     /// <summary>
     /// 记录项数据层
     /// </summary>
     public sealed class UnityDevelopRecordFacade : Repository<DevelopRecord>, IUnityDevelopRecordFacade
     {
-        #region 记录操作
         /// <summary>
         /// 批量 加载数据
         /// </summary>
@@ -41,8 +39,7 @@ namespace Services.Unity
                                   UserId = p.DevelopUser.Id,
                                   UserName = p.DevelopUser.Name,
                                   CreatedTime = p.CreatedTime,
-                                  UpdatedTime = p.UpdatedTime
-
+                                  UpdatedTime = p.UpdatedTime,
                               }).OrderByDescending(m => m.CreatedTime).Skip(pageIndex * pageCount).Take(pageCount).ToListAsync();
             }
         }
@@ -79,7 +76,5 @@ namespace Services.Unity
             using (var context = new RecordContext())
                 return await context.DevelopRecords.MaxAsync(m => m.Id);
         }
-        #endregion 记录操作
-
     }
 }

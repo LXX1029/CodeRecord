@@ -1,21 +1,20 @@
-﻿using DataEntitys;
-using Services.EFCodeFirst;
-using Services.Unity.UnityControl;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-
-namespace Services.Unity
+﻿namespace Services.Unity
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+    using DataEntitys;
+    using Services.EFCodeFirst;
+    using Services.Unity.UnityControl;
+
     /// <summary>
     /// 用户模块数据层
     /// </summary>
     public sealed class UnityUserFacade : Repositories.Repository<DevelopUser>, IUnityUserFacade
     {
-        #region 用户管理
         /// <summary>
         /// 获取用户
         /// </summary>
@@ -42,6 +41,5 @@ namespace Services.Unity
                     return await context.DevelopUsers.Include(m => m.DevelopPowerFuns).Where(predicate).ToListAsync();
             }
         }
-        #endregion 用户管理
     }
 }

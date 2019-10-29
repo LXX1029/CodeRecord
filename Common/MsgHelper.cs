@@ -1,7 +1,6 @@
-﻿using DevExpress.XtraEditors;
+﻿using System.Windows.Forms;
+using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
-using System;
-using System.Windows.Forms;
 
 namespace Common
 {
@@ -24,7 +23,6 @@ namespace Common
         /// 错误提示信息，包含一个Ok按钮
         /// </summary>
         /// <param name="text">提示信息</param>
-        /// <returns>DialogResult:OK</returns>
         public static void ShowError(string text)
         {
             XtraMessageBox.Show(text, "提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -34,7 +32,6 @@ namespace Common
         /// 一般提示信息，包含一个Ok按钮
         /// </summary>
         /// <param name="text">提示信息</param>
-        /// <returns>DialogResult:OK</returns>
         public static void ShowInfo(string text)
         {
             XtraMessageBox.Show(text, "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -44,8 +41,7 @@ namespace Common
         /// 显示SplashScreen进度窗体
         /// </summary>
         /// <param name="mainForm">拥有进度窗口的主窗口</param>
-        /// <param name="content">显示的文字内容,默认：正在生成窗口</param>
-        public static void ShowSplashScreenForm(XtraForm mainForm, string content = "正在生成窗口")
+        public static void ShowSplashScreenForm(XtraForm mainForm, string content)
         {
             SplashScreenManager.ShowForm(mainForm, typeof(SplashScreenFrm), false, false, false);
         }
@@ -67,7 +63,8 @@ namespace Common
         {
             SplashScreenManager.ShowForm(mainForm, typeof(WaitFrm), false, false, false);
             SplashScreenManager.Default.SetWaitFormCaption(content);
-            //SplashScreenManager.Default.SetWaitFormDescription();
+
+            // SplashScreenManager.Default.SetWaitFormDescription();
         }
     }
 }

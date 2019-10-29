@@ -1,8 +1,11 @@
-﻿using DevExpress.XtraSplashScreen;
-using System;
+﻿using System;
+using DevExpress.XtraSplashScreen;
 
 namespace Common
 {
+    /// <summary>
+    /// SplashScreenFrm
+    /// </summary>
     public partial class SplashScreenFrm : SplashScreen
     {
         public SplashScreenFrm()
@@ -19,9 +22,5 @@ namespace Common
         }
 
         #endregion Overrides
-
-        public enum SplashScreenCommand
-        {
-        }
     }
 }

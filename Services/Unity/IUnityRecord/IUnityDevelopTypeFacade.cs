@@ -1,8 +1,7 @@
-﻿using DataEntitys;
-using Services.Repositories;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using DataEntitys;
+using Services.Repositories;
 namespace Services.Unity
 {
     /// <summary>
@@ -10,11 +9,9 @@ namespace Services.Unity
     /// </summary>
     public interface IUnityDevelopTypeFacade : IRepository<DevelopType>
     {
-        #region Public Methods
         Task<IList<DevelopType>> GetDevelopTypeListByFilter(string name, int parentId);
         Task<IList<DevelopType>> GetDevelopTypesByParentId(int parentId);
         Task<DevelopType> GetDevelopTypeByParentId(int parentId);
         Task<int> GetMaxDevelopTypeId();
-        #endregion Public Methods
     }
 }

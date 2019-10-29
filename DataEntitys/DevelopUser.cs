@@ -10,9 +10,11 @@ namespace DataEntitys
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [MaxLength(15), Required]
+        [MaxLength(15)]
+        [Required]
         public string Name { get; set; }
-        [MaxLength(50), Required]
+        [MaxLength(50)]
+        [Required]
         public string Pwd { get; set; } = "111111";
         [MaxLength(2)]
         public string Sex { get; set; }

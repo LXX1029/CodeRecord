@@ -1,12 +1,12 @@
-﻿using DevExpress.CodeParser;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using DevExpress.CodeParser;
 using DevExpress.LookAndFeel;
 using DevExpress.Skins;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.API.Native;
 using DevExpress.XtraRichEdit.Services;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 
 namespace DLCodeRecord
 {
@@ -22,64 +22,64 @@ namespace DLCodeRecord
     /// </summary>
     public class CustomOtherSyntaxHighlightService : ISyntaxHighlightService
     {
-        private readonly RichEditControl syntaxEditor;
-        private SyntaxHighlightProperties commentProperties;
-        private SyntaxHighlightProperties keywordProperties;
-        private SyntaxHighlightProperties lineProperties;
-        private SyntaxHighlightProperties stringProperties;
-        private SyntaxColors syntaxColors;
-        private SyntaxHighlightProperties textProperties;
-        private SyntaxHighlightProperties xmlCommentProperties;
+        private readonly RichEditControl _syntaxEditor;
+        private readonly SyntaxColors _syntaxColors;
+        private SyntaxHighlightProperties _commentProperties;
+        private SyntaxHighlightProperties _keywordProperties;
+        private SyntaxHighlightProperties _lineProperties;
+        private SyntaxHighlightProperties _stringProperties;
+        private SyntaxHighlightProperties _textProperties;
+        private SyntaxHighlightProperties _xmlCommentProperties;
 
         public CustomOtherSyntaxHighlightService(RichEditControl syntaxEditor)
         {
-            this.syntaxEditor = syntaxEditor;
-            syntaxColors = new SyntaxColors(UserLookAndFeel.Default);
+            this._syntaxEditor = syntaxEditor;
+            _syntaxColors = new SyntaxColors(UserLookAndFeel.Default);
         }
 
         private void HighlightCategorizedToken(CategorizedToken token, List<SyntaxHighlightToken> syntaxTokens)
         {
-            Color backColor = syntaxEditor.ActiveView.BackColor;
+            Color backColor = _syntaxEditor.ActiveView.BackColor;
             TokenCategory category = token.Category;
             if (category == TokenCategory.Comment)
-                syntaxTokens.Add(SetTokenColor(token, commentProperties, backColor));
+                syntaxTokens.Add(SetTokenColor(token, _commentProperties, backColor));
             else if (category == TokenCategory.Keyword)
-                syntaxTokens.Add(SetTokenColor(token, keywordProperties, backColor));
+                syntaxTokens.Add(SetTokenColor(token, _keywordProperties, backColor));
             else if (category == TokenCategory.String)
-                syntaxTokens.Add(SetTokenColor(token, stringProperties, backColor));
+                syntaxTokens.Add(SetTokenColor(token, _stringProperties, backColor));
             else if (category == TokenCategory.XmlComment)
-                syntaxTokens.Add(SetTokenColor(token, xmlCommentProperties, backColor));
+                syntaxTokens.Add(SetTokenColor(token, _xmlCommentProperties, backColor));
             else if (category == TokenCategory.Number)
-                syntaxTokens.Add(SetTokenColor(token, lineProperties, backColor));
+                syntaxTokens.Add(SetTokenColor(token, _lineProperties, backColor));
             else
-                syntaxTokens.Add(SetTokenColor(token, textProperties, backColor));
+                syntaxTokens.Add(SetTokenColor(token, _textProperties, backColor));
         }
 
         private void HighlightSyntax(TokenCollection tokens)
         {
-            commentProperties = new SyntaxHighlightProperties();
-            commentProperties.ForeColor = syntaxColors.CommentColor;
+            _commentProperties = new SyntaxHighlightProperties();
+            _commentProperties.ForeColor = _syntaxColors.CommentColor;
 
-            keywordProperties = new SyntaxHighlightProperties();
-            keywordProperties.ForeColor = syntaxColors.KeywordColor;
+            _keywordProperties = new SyntaxHighlightProperties();
+            _keywordProperties.ForeColor = _syntaxColors.KeywordColor;
 
-            stringProperties = new SyntaxHighlightProperties();
-            stringProperties.ForeColor = syntaxColors.StringColor;
+            _stringProperties = new SyntaxHighlightProperties();
+            _stringProperties.ForeColor = _syntaxColors.StringColor;
 
-            xmlCommentProperties = new SyntaxHighlightProperties();
-            xmlCommentProperties.ForeColor = syntaxColors.XmlCommentColor;
+            _xmlCommentProperties = new SyntaxHighlightProperties();
+            _xmlCommentProperties.ForeColor = _syntaxColors.XmlCommentColor;
 
-            textProperties = new SyntaxHighlightProperties();
-            textProperties.ForeColor = syntaxColors.TextColor;
+            _textProperties = new SyntaxHighlightProperties();
+            _textProperties.ForeColor = _syntaxColors.TextColor;
 
             // 数字 颜色
-            lineProperties = new SyntaxHighlightProperties();
-            lineProperties.ForeColor = syntaxColors.LineNumberColor;
+            _lineProperties = new SyntaxHighlightProperties();
+            _lineProperties.ForeColor = _syntaxColors.LineNumberColor;
 
             if (tokens == null || tokens.Count == 0)
                 return;
 
-            Document document = syntaxEditor.Document;
+            Document document = _syntaxEditor.Document;
             CharacterProperties cp = document.BeginUpdateCharacters(0, 1);
             List<SyntaxHighlightToken> syntaxTokens = new List<SyntaxHighlightToken>(tokens.Count);
             foreach (Token token in tokens)
@@ -92,15 +92,15 @@ namespace DLCodeRecord
 
         private SyntaxHighlightToken SetTokenColor(Token token, SyntaxHighlightProperties foreColor, Color backColor)
         {
-            if (syntaxEditor.Document.Paragraphs.Count < token.Range.Start.Line)
+            if (_syntaxEditor.Document.Paragraphs.Count < token.Range.Start.Line)
                 return null;
-            int paragraphStart = DocumentHelper.GetParagraphStart(syntaxEditor.Document.Paragraphs[token.Range.Start.Line - 1]);
+            int paragraphStart = DocumentHelper.GetParagraphStart(_syntaxEditor.Document.Paragraphs[token.Range.Start.Line - 1]);
             int tokenStart = paragraphStart + token.Range.Start.Offset - 1;
             if (token.Range.End.Line != token.Range.Start.Line)
-                paragraphStart = DocumentHelper.GetParagraphStart(syntaxEditor.Document.Paragraphs[token.Range.End.Line - 1]);
+                paragraphStart = DocumentHelper.GetParagraphStart(_syntaxEditor.Document.Paragraphs[token.Range.End.Line - 1]);
 
             int tokenEnd = paragraphStart + token.Range.End.Offset - 1;
-            Debug.Assert(tokenEnd > tokenStart);
+            //Debug.Assert(tokenEnd > tokenStart);
             return new SyntaxHighlightToken(tokenStart, tokenEnd - tokenStart, foreColor);
         }
 
@@ -108,10 +108,10 @@ namespace DLCodeRecord
 
         public void Execute()
         {
-            string newText = syntaxEditor.Text;
+            string newText = _syntaxEditor.Text;
 
             // Determine language by file extension.
-            string ext = System.IO.Path.GetExtension(syntaxEditor.Options.DocumentSaveOptions.CurrentFileName);
+            string ext = System.IO.Path.GetExtension(_syntaxEditor.Options.DocumentSaveOptions.CurrentFileName);
             ParserLanguageID lang_ID = ParserLanguage.FromFileExtension(ext);
             // Do not parse HTML or XML.
             //if (lang_ID == ParserLanguageID.Html ||
@@ -137,11 +137,11 @@ namespace DLCodeRecord
     /// </summary>
     public class SyntaxColors
     {
-        private UserLookAndFeel lookAndFeel;
+        private UserLookAndFeel _lookAndFeel;
 
         public SyntaxColors(UserLookAndFeel lookAndFeel)
         {
-            this.lookAndFeel = lookAndFeel;
+            this._lookAndFeel = lookAndFeel;
         }
 
         public Color CommentColor { get { return GetCommonColorByName(CommonSkins.SkinInformationColor, DefaultCommentColor); } }
@@ -165,7 +165,7 @@ namespace DLCodeRecord
 
         private Color GetCommonColorByName(string colorName, Color defaultColor)
         {
-            Skin skin = CommonSkins.GetSkin(lookAndFeel);
+            Skin skin = CommonSkins.GetSkin(_lookAndFeel);
             if (skin == null)
                 return defaultColor;
             return skin.Colors[colorName];

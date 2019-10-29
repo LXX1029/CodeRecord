@@ -1,12 +1,11 @@
-﻿using DataEntitys;
-using Services.EFCodeFirst;
-using Services.Repositories;
-//using Services.Singleton.ISingRecord;
-using Services.Unity.UnityControl;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
+using DataEntitys;
+using Services.EFCodeFirst;
+using Services.Repositories;
+using Services.Unity.UnityControl;
 
 namespace Services.Unity
 {
@@ -15,8 +14,6 @@ namespace Services.Unity
     /// </summary>
     public sealed class UnityDevelopTypeFacade : Repository<DevelopType>, IUnityDevelopTypeFacade
     {
-
-        #region 记录类型操作
         /// <summary>
         /// parentId 获取类型对象
         /// </summary>
@@ -34,10 +31,11 @@ namespace Services.Unity
         /// </summary>
         /// <param name="name">类型名称</param>
         /// <param name="parentId">父Id</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [UnityException]
         public async Task<IList<DevelopType>> GetDevelopTypeListByFilter(string name, int parentId)
         {
-            return await GetEntities(m => m.Name == name && m.ParentId == parentId);
+            return await this.GetEntities(m => m.Name == name && m.ParentId == parentId);
         }
 
         /// <summary>
@@ -46,7 +44,7 @@ namespace Services.Unity
         [UnityException]
         public async Task<IList<DevelopType>> GetDevelopTypesByParentId(int parentId)
         {
-            return await GetEntities(m => m.ParentId == parentId);
+            return await this.GetEntities(m => m.ParentId == parentId);
         }
 
         /// <summary>
@@ -63,7 +61,7 @@ namespace Services.Unity
         {
             if (t == null) return false;
             using (var context = new RecordContext())
-            using (DbContextTransaction trans = context.Database.BeginTransaction())
+            using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
@@ -73,6 +71,7 @@ namespace Services.Unity
                         foreach (var item in removeRecordList)
                             context.Entry<DevelopRecord>(item).State = EntityState.Deleted;
                     }
+
                     context.Entry<DevelopType>(t).State = EntityState.Deleted;
                     await context.SaveChangesAsync();
                     trans.Commit();
@@ -85,6 +84,5 @@ namespace Services.Unity
                 }
             }
         }
-        #endregion 记录类型操作
     }
 }

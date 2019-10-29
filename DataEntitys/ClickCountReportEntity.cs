@@ -18,7 +18,7 @@
         /// <summary>
         /// 查看次数
         /// </summary>
-        public int ClickCount { get; set; } = 0;
+        public int ClickCount { get; set; }
         /// <summary>
         /// 大版块类型Id
         /// </summary>

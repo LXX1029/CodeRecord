@@ -41,12 +41,12 @@ namespace Services.Unity
         /// <typeparam name="T">数据接口类名称</typeparam>
         /// <param name="registerName">实现类继承自同一个接口时进行RegisterType命名的别名</param>
         /// <returns>数据接口</returns>
-        public static T GetUnityFacade<T>(string registerName = "") where T : class
+        public static T GetUnityFacade<T>(string registerName = "")
+            where T : class
         {
             return UnityContainer.Resolve<T>(registerName);
         }
         #endregion
-
 
         #region 数据接口层
         public static IUnityDevelopFunFacade UnityDevelopFunFacade => GetUnityFacade<IUnityDevelopFunFacade>();

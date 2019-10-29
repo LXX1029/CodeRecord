@@ -1,6 +1,6 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.IO;
+using log4net;
 
 namespace Common
 {
@@ -10,6 +10,7 @@ namespace Common
     public sealed class ExceptionHelper
     {
         private static ILog Logger => LogManager.GetLogger("DevelopUserFrm");
+
         /// <summary>
         /// 捕获异常 参数可为方法名称或方法体
         /// 捕获异常并抛出
@@ -23,10 +24,13 @@ namespace Common
             {
                 action();
             }
-            //catch (DbUpdateConcurrencyException ex) 
-            //{
-            //    ex.Entries.Single().Reload();
-            //}
+
+            /*
+            catch (DbUpdateConcurrencyException ex)
+            {
+                ex.Entries.Single().Reload();
+            }
+            */
             catch (Exception ex)
             {
                 catchAction?.Invoke(ex);

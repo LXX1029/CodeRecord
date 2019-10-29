@@ -12,16 +12,11 @@ namespace DLCodeRecord.DevelopForms
     /// </summary>
     public partial class DevelopSettingFrm : BaseFrm
     {
-
         #region 构造函数
         public DevelopSettingFrm()
         {
             InitializeComponent();
-
-            #region 初始化设置
             this.Text = "设置";
-
-            #endregion 初始化设置
             this.Load -= DevelopSettingFrm_Load;
             this.Load += DevelopSettingFrm_Load;
         }
@@ -33,7 +28,7 @@ namespace DLCodeRecord.DevelopForms
             var tuple = UtilityHelper.GetWorkingAreaSize(0.6, 0.6);
             this.Size = tuple.Item3;
             this.Location = tuple.Item4;
-            ShowSplashScreenForm(this, PromptHelper.D_LOADINGDATA);
+            ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
             await Task.Delay(1000);
             CloseSplashScreenForm();
             InitialLayOut();
@@ -117,7 +112,6 @@ namespace DLCodeRecord.DevelopForms
             this.txtPwd.Focus();
             this.txtNewPwd.ResetText();
         }
-
         #endregion 重置密码
     }
 }

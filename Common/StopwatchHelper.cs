@@ -14,7 +14,6 @@ namespace Common
             sw.Start();
             action.Invoke();
             sw.Stop();
-            //return sw.ElapsedMilliseconds.ToString();
             string methodName = action.Method.Name;
             Console.WriteLine($"{methodName} 执行耗时：{sw.ElapsedMilliseconds} ms");
         }

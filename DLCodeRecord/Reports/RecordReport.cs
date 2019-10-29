@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
-using DevExpress.XtraReports.UI;
+using System.Drawing;
 using Common;
 using DataEntitys;
 using DevExpress.XtraPrinting.Drawing;
+using DevExpress.XtraReports.UI;
 
 namespace DLCodeRecord.Reports
 {
+    /// <summary>
+    /// RecordReport
+    /// </summary>
     public partial class RecordReport : DevExpress.XtraReports.UI.XtraReport
     {
         public RecordReport()
@@ -38,7 +41,7 @@ namespace DLCodeRecord.Reports
             xrpbLogo.ImageUrl = UtilityHelper.AppLaunchPath + @"\Images\Bug.ico";
             xrpbLogo.SizeF = new SizeF(40, 40);
 
-            this.xrlbTitle.Font = new Font("宋体", 15, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))));
+            this.xrlbTitle.Font = new Font("宋体", 15, FontStyle.Bold | FontStyle.Underline);
             this.xrlbTitle.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
             this.xrlbTitle.Text = entity?.Title;
             this.xrrtDesc.Text = entity?.Desc;
@@ -58,7 +61,6 @@ namespace DLCodeRecord.Reports
                 xrlbImg.LocationF = new PointF(10, 370);
                 xrlbImg.SizeF = new SizeF(70, 30);
 
-
                 XRPictureBox xrPb = new XRPictureBox();
                 xrPb.WidthF = this.PageWidth - 50;
                 xrPb.HeightF = (float)entity?.BitMap.Height;
@@ -72,7 +74,7 @@ namespace DLCodeRecord.Reports
             // 改变Detail中的label颜色
             foreach (XRControl control in this.Detail.Controls)
             {
-                XRLabel lb = control as XRLabel;
+                var lb = control as XRLabel;
                 if (lb != null)
                     lb.ForeColor = Color.OrangeRed;
             }

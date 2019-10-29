@@ -44,7 +44,7 @@ namespace Common
         /// <summary>
         /// 操作日志记录
         /// </summary>
-        /// <param name="operation"></param>
+        /// <param name="operation">操作记录</param>
         public static void WriteOperation(string operation)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory + "peration.txt";

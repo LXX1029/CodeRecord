@@ -1,11 +1,7 @@
-﻿using Common;
-using DataEntitys;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Common;
+using DataEntitys;
 using Unity.Interception.PolicyInjection.Pipeline;
 namespace Services.Unity.UnityControl
 {
@@ -22,8 +18,8 @@ namespace Services.Unity.UnityControl
             if (message.Exception != null)
             {
                 MethodInfo obj = (MethodInfo)input.MethodBase;
-                Type CurrentType = obj.ReturnType;
-                if (CurrentType.IsValueType)
+                Type currentType = obj.ReturnType;
+                if (currentType.IsValueType)
                 {
                     message.ReturnValue = 0;
                 }
@@ -55,7 +51,6 @@ namespace Services.Unity.UnityControl
                     string operationMsg = $"用户{UtilityHelper.GetConfigurationKeyValue("userName")}    添加了用户，名称为：{user.Name}";
                     LoggerHelper.WriteOperation(operationMsg);
                 }
-
             }
             return message;
         }

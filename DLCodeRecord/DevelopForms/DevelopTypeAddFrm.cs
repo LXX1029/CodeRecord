@@ -30,7 +30,7 @@ namespace DLCodeRecord.DevelopForms
             this.txtChild.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
             this.txtRoot.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
             this.tlDevelopList.OptionsFind.AllowFindPanel = true;
-            //this.tlDevelopList.ExpandAll();
+            // this.tlDevelopList.ExpandAll();
             this.tlDevelopList.FocusedNodeChanged -= tlDevelopList_FocusedNodeChanged;
             this.tlDevelopList.FocusedNodeChanged += tlDevelopList_FocusedNodeChanged;
             this.txtRoot.TextChanged -= Txt_TextChanged;
@@ -46,8 +46,6 @@ namespace DLCodeRecord.DevelopForms
             this.FormClosing += DevelopTypeAddFrm_FormClosing;
             #endregion 窗体加载/关闭
         }
-
-
         #endregion
 
         #region 版块信息文本改变
@@ -66,7 +64,7 @@ namespace DLCodeRecord.DevelopForms
             var tuple = UtilityHelper.GetWorkingAreaSize(0.4, 0.5);
             this.Size = tuple.Item3;
             this.Location = tuple.Item4;
-            ShowSplashScreenForm(this, PromptHelper.D_LOADINGDATA);
+            ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
             await LoadDevelopType();
             CloseSplashScreenForm();
         }
@@ -74,10 +72,7 @@ namespace DLCodeRecord.DevelopForms
         #endregion 窗口加载事件
 
         #region 窗口关闭
-        private void DevelopTypeAddFrm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            base.FormClosingTip(e);
-        }
+        private void DevelopTypeAddFrm_FormClosing(object sender, FormClosingEventArgs e) => FormClosingTip(e);
         #endregion
 
         #region 选择项改变，设置对象到按钮
@@ -141,10 +136,10 @@ namespace DLCodeRecord.DevelopForms
                 }
                 DevelopType type = new DevelopType()
                 {
-                    Name = name
+                    Name = name,
                 };
                 await UnityDevelopTypeFacade.AddEntity(type);
-                this.txtRoot.Text = "";
+                this.txtRoot.Text = string.Empty;
                 await LoadDevelopType();
                 MsgHelper.ShowInfo(PromptHelper.D_ADD_SUCCESS);
                 FocusedNode(name);
@@ -201,10 +196,10 @@ namespace DLCodeRecord.DevelopForms
                 {
                     Name = name,
                     ParentId = parentType.Id,
-                    CreatedTime = DateTime.Now
+                    CreatedTime = DateTime.Now,
                 };
                 await UnityDevelopTypeFacade.AddEntity(type);
-                txtChild.Text = "";
+                txtChild.Text = string.Empty;
                 await LoadDevelopType();
                 tlDevelopList.FocusedNode.ExpandAll();
                 MsgHelper.ShowInfo(PromptHelper.D_ADD_SUCCESS);
@@ -240,11 +235,11 @@ namespace DLCodeRecord.DevelopForms
                         if (result)
                         {
                             await LoadDevelopType();
-                            txtNode.Text = "";
-                            //删除事件
+                            txtNode.Text = string.Empty;
+                            // 删除事件
                             var handler = DeleteNodeHandler;
                             handler?.Invoke(this, new DeleteEventArgs() { TypeId = type.Id });
-                            //如果存在ParentNode 选中
+                            // 如果存在ParentNode 选中
                             DevelopType parentType = tlDevelopList.GetDataRecordByNode(parentNode) as DevelopType;
                             FocusedNode(parentType?.Name);
                             MsgHelper.ShowInfo(PromptHelper.D_DELETE_SUCCESS);
@@ -260,13 +255,10 @@ namespace DLCodeRecord.DevelopForms
             {
                 CatchException(ex);
             }
-
         }
-
         #endregion 删除节点
 
         #region 修改节点
-
         private async void btnEdit_Click(object sender, EventArgs e)
         {
             try
@@ -293,7 +285,7 @@ namespace DLCodeRecord.DevelopForms
                         await UnityDevelopTypeFacade.UpdateEntity(type);
                         await LoadDevelopType();
                         FocusedNode(type.Name);
-                        txtNode.Text = "";
+                        txtNode.Text = string.Empty;
                         this.txtNode.Properties.ReadOnly = true;
                         this.chkEnable.Checked = false;
                         MsgHelper.ShowInfo(PromptHelper.D_UPDATE_SUCCESS);
@@ -305,7 +297,6 @@ namespace DLCodeRecord.DevelopForms
             {
                 CatchException(ex);
             }
-
         }
 
         #endregion 修改节点

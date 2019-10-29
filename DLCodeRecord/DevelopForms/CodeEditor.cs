@@ -1,33 +1,34 @@
-﻿using Common;
-using ScintillaNET;
-using System;
+﻿using System;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
+using Common;
+using ScintillaNET;
 using namespaceFrm = System.Windows.Forms;
-
 using Win = System.Drawing;
 
 namespace DLCodeRecord.DevelopForms
 {
+    /// <summary>
+    /// CodeEditor
+    /// </summary>
     public partial class CodeEditor : UserControl
     {
-        public Scintilla scintilla = new Scintilla();
+        public Scintilla Scintilla = new Scintilla();
 
         public CodeEditor()
         {
             InitializeComponent();
-
-
             InitialScintilla();
-
-            scintilla.UpdateUI += Scintilla_UpdateUI;
-            scintilla.CharAdded += scintilla_CharAdded;
-            scintilla.DragEnter += new namespaceFrm.DragEventHandler(scintilla_DragEnter);
-            this.Controls.Add(scintilla);
+            Scintilla.UpdateUI -= Scintilla_UpdateUI;
+            Scintilla.CharAdded -= scintilla_CharAdded;
+            Scintilla.DragEnter -= new namespaceFrm.DragEventHandler(scintilla_DragEnter);
+            Scintilla.UpdateUI += Scintilla_UpdateUI;
+            Scintilla.CharAdded += scintilla_CharAdded;
+            Scintilla.DragEnter += new namespaceFrm.DragEventHandler(scintilla_DragEnter);
+            this.Controls.Add(Scintilla);
         }
 
         #region 初始化scintilla
@@ -57,148 +58,143 @@ namespace DLCodeRecord.DevelopForms
             System.Collections.Generic.IEnumerable<string> strArray = totalKeywords.Split(' ').OrderBy(o => o).Where(s => s.Contains(key));
             totalKeywords = string.Join(" ", strArray).Trim();
             return totalKeywords;
-
         }
+
         private void InitialScintilla()
         {
-
             #region 初始化
-            scintilla.AllowDrop = true;
-            this.scintilla.AdditionalCaretsBlink = false;
-            this.scintilla.AnnotationVisible = ScintillaNET.Annotation.Boxed;
-            this.scintilla.AutoCChooseSingle = true;
-            this.scintilla.CaretLineVisible = true;
-            this.scintilla.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scintilla.EdgeColor = System.Drawing.Color.Maroon;
-            this.scintilla.EdgeColumn = 2;
-            this.scintilla.IdleStyling = ScintillaNET.IdleStyling.ToVisible;
-            this.scintilla.Location = new System.Drawing.Point(0, 0);
-            this.scintilla.Name = "scintilla";
-            this.scintilla.Size = new System.Drawing.Size(713, 581);
-            this.scintilla.TabIndex = 0;
+            Scintilla.AllowDrop = true;
+            this.Scintilla.AdditionalCaretsBlink = false;
+            this.Scintilla.AnnotationVisible = ScintillaNET.Annotation.Boxed;
+            this.Scintilla.AutoCChooseSingle = true;
+            this.Scintilla.CaretLineVisible = true;
+            this.Scintilla.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Scintilla.EdgeColor = System.Drawing.Color.Maroon;
+            this.Scintilla.EdgeColumn = 2;
+            this.Scintilla.IdleStyling = ScintillaNET.IdleStyling.ToVisible;
+            this.Scintilla.Location = new System.Drawing.Point(0, 0);
+            this.Scintilla.Name = "scintilla";
+            this.Scintilla.Size = new System.Drawing.Size(713, 581);
+            this.Scintilla.TabIndex = 0;
 
-            this.scintilla.WrapIndentMode = ScintillaNET.WrapIndentMode.Indent;
-            this.scintilla.WrapMode = ScintillaNET.WrapMode.Word;
-            this.scintilla.WrapVisualFlagLocation = ScintillaNET.WrapVisualFlagLocation.StartByText;
-            this.scintilla.WrapVisualFlags = ((ScintillaNET.WrapVisualFlags)(((ScintillaNET.WrapVisualFlags.End | ScintillaNET.WrapVisualFlags.Start)
-            | ScintillaNET.WrapVisualFlags.Margin)));
+            this.Scintilla.WrapIndentMode = ScintillaNET.WrapIndentMode.Indent;
+            this.Scintilla.WrapMode = ScintillaNET.WrapMode.Word;
+            this.Scintilla.WrapVisualFlagLocation = ScintillaNET.WrapVisualFlagLocation.StartByText;
+            this.Scintilla.WrapVisualFlags = (ScintillaNET.WrapVisualFlags.End | ScintillaNET.WrapVisualFlags.Start)
+            | ScintillaNET.WrapVisualFlags.Margin;
 
-            scintilla.StyleResetDefault();
-            scintilla.Styles[Style.Default].Font = "Consolas";
-            scintilla.Styles[Style.Default].Size = 14;
+            Scintilla.StyleResetDefault();
+            Scintilla.Styles[Style.Default].Font = "Consolas";
+            Scintilla.Styles[Style.Default].Size = 14;
 
-            scintilla.StyleClearAll();
-            scintilla.AllowDrop = true;
-            scintilla.BorderStyle = BorderStyle.FixedSingle;
-            this.scintilla.Margins[0].Width = 30;
+            Scintilla.StyleClearAll();
+            Scintilla.AllowDrop = true;
+            Scintilla.BorderStyle = BorderStyle.FixedSingle;
+            this.Scintilla.Margins[0].Width = 30;
 
             // C#
-            scintilla.Lexer = Lexer.Cpp;
+            Scintilla.Lexer = Lexer.Cpp;
             #endregion
 
             #region 设置行号
-            scintilla.Styles[Style.LineNumber].ForeColor = Win.Color.FromArgb(72, 145, 175);
+            Scintilla.Styles[Style.LineNumber].ForeColor = Win.Color.FromArgb(72, 145, 175);
             #endregion
 
             #region 代码折叠
-            scintilla.SetProperty("tab.timmy.whinge.level", "0");
-            scintilla.SetProperty("fold", "1");
+            Scintilla.SetProperty("tab.timmy.whinge.level", "0");
+            Scintilla.SetProperty("fold", "1");
 
-            scintilla.SetProperty("fold.compact", "0");
+            Scintilla.SetProperty("fold.compact", "0");
             // //{   //} 形式折叠
-            scintilla.SetProperty("fold.comment", "1");
+            Scintilla.SetProperty("fold.comment", "1");
             // 设置#region #endregion 垂直线显示
-            scintilla.SetProperty("fold.preprocessor", "1");
-
+            Scintilla.SetProperty("fold.preprocessor", "1");
 
             // 折叠显示符号
-            scintilla.Margins[2].Type = MarginType.Symbol;
-            scintilla.Margins[2].Mask = Marker.MaskFolders;
-            scintilla.Margins[2].Sensitive = true;
-            scintilla.Margins[2].Width = 20;
+            Scintilla.Margins[2].Type = MarginType.Symbol;
+            Scintilla.Margins[2].Mask = Marker.MaskFolders;
+            Scintilla.Margins[2].Sensitive = true;
+            Scintilla.Margins[2].Width = 20;
 
             for (int i = Marker.FolderEnd - 1; i <= Marker.FolderOpen; i++)
             {
-                scintilla.Markers[i].SetForeColor(Win.SystemColors.ControlLightLight);
-                scintilla.Markers[i].SetBackColor(Win.SystemColors.ControlDark);
+                Scintilla.Markers[i].SetForeColor(Win.SystemColors.ControlLightLight);
+                Scintilla.Markers[i].SetBackColor(Win.SystemColors.ControlDark);
             }
             // 折叠块符号
-            scintilla.Markers[Marker.Folder].Symbol = MarkerSymbol.BoxPlus;
+            Scintilla.Markers[Marker.Folder].Symbol = MarkerSymbol.BoxPlus;
             // 展开符号
-            scintilla.Markers[Marker.FolderOpen].Symbol = MarkerSymbol.BoxMinus;
-            scintilla.Markers[Marker.Folder].SetBackColor(Win.SystemColors.ControlText);
+            Scintilla.Markers[Marker.FolderOpen].Symbol = MarkerSymbol.BoxMinus;
+            Scintilla.Markers[Marker.Folder].SetBackColor(Win.SystemColors.ControlText);
 
             // 中间嵌套区折叠域符号
-            scintilla.Markers[Marker.FolderMidTail].Symbol = MarkerSymbol.VLine;
-            scintilla.Markers[Marker.FolderOpenMid].Symbol = MarkerSymbol.VLine;
+            Scintilla.Markers[Marker.FolderMidTail].Symbol = MarkerSymbol.VLine;
+            Scintilla.Markers[Marker.FolderOpenMid].Symbol = MarkerSymbol.VLine;
 
-            scintilla.Markers[Marker.FolderSub].Symbol = MarkerSymbol.VLine;
+            Scintilla.Markers[Marker.FolderSub].Symbol = MarkerSymbol.VLine;
             // 结束线样式
-            scintilla.Markers[Marker.FolderTail].Symbol = MarkerSymbol.LCorner;
+            Scintilla.Markers[Marker.FolderTail].Symbol = MarkerSymbol.LCorner;
 
-            scintilla.AutomaticFold = AutomaticFold.Click;
-            scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
+            Scintilla.AutomaticFold = AutomaticFold.Click;
+            Scintilla.ViewWhitespace = WhitespaceMode.VisibleAlways;
             // 设置折叠区域margin颜色
-            scintilla.SetFoldMarginColor(false, Win.Color.FromArgb(106, 226, 108));
-            scintilla.LineEndTypesAllowed = LineEndType.Default;
-            scintilla.LineFromPosition(2);
-            scintilla.SetFoldFlags(FoldFlags.LineAfterContracted);
+            Scintilla.SetFoldMarginColor(false, Win.Color.FromArgb(106, 226, 108));
+            Scintilla.LineEndTypesAllowed = LineEndType.Default;
+            Scintilla.LineFromPosition(2);
+            Scintilla.SetFoldFlags(FoldFlags.LineAfterContracted);
             #endregion
 
             #region 设置备注
 
-            scintilla.Styles[Style.Cpp.Comment].ForeColor = Win.Color.FromArgb(0, 128, 0); // Green
-            scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Win.Color.FromArgb(0, 128, 0); // Green
+            Scintilla.Styles[Style.Cpp.Comment].ForeColor = Win.Color.FromArgb(0, 128, 0); // Green
+            Scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Win.Color.FromArgb(0, 128, 0); // Green
             //scintilla.Styles[Style.Cpp.CommentLine].Size = 20;
-            scintilla.Styles[Style.Cpp.CommentLineDoc].ForeColor = Win.Color.FromArgb(128, 128, 128); // Gray
+            Scintilla.Styles[Style.Cpp.CommentLineDoc].ForeColor = Win.Color.FromArgb(128, 128, 128); // Gray
             #endregion
 
             #region 其它设置
-            scintilla.Styles[Style.Cpp.Default].ForeColor = Win.Color.Silver;
+            Scintilla.Styles[Style.Cpp.Default].ForeColor = Win.Color.Silver;
 
             // 数字样式
-            scintilla.Styles[Style.Cpp.Number].Bold = false;
-            scintilla.Styles[Style.Cpp.Number].ForeColor = Win.Color.Black;
+            Scintilla.Styles[Style.Cpp.Number].Bold = false;
+            Scintilla.Styles[Style.Cpp.Number].ForeColor = Win.Color.Black;
 
-            scintilla.Styles[Style.Cpp.Word].ForeColor = Win.Color.Blue;
+            Scintilla.Styles[Style.Cpp.Word].ForeColor = Win.Color.Blue;
             //scintilla.Styles[Style.Cpp.Word].Size = 16;
-            scintilla.Styles[Style.Cpp.Word2].ForeColor = Win.Color.Blue;
-            scintilla.Styles[Style.Cpp.String].ForeColor = Win.Color.FromArgb(163, 21, 21); // Red
+            Scintilla.Styles[Style.Cpp.Word2].ForeColor = Win.Color.Blue;
+            Scintilla.Styles[Style.Cpp.String].ForeColor = Win.Color.FromArgb(163, 21, 21); // Red
 
             // 字符串设置
-            scintilla.Styles[Style.Cpp.String].ForeColor = Win.Color.FromArgb(207, 103, 21);
-            scintilla.Styles[Style.Cpp.String].BackColor = Win.Color.Transparent;
-            scintilla.Styles[Style.Cpp.String].Hotspot = true;
-            scintilla.Styles[Style.Cpp.String].Underline = false;
+            Scintilla.Styles[Style.Cpp.String].ForeColor = Win.Color.FromArgb(207, 103, 21);
+            Scintilla.Styles[Style.Cpp.String].BackColor = Win.Color.Transparent;
+            Scintilla.Styles[Style.Cpp.String].Hotspot = true;
+            Scintilla.Styles[Style.Cpp.String].Underline = false;
 
             // 输入字符设定
-            scintilla.Styles[Style.Cpp.Character].ForeColor = Win.Color.Black;
-            scintilla.Styles[Style.Cpp.Character].BackColor = Win.Color.White;
+            Scintilla.Styles[Style.Cpp.Character].ForeColor = Win.Color.Black;
+            Scintilla.Styles[Style.Cpp.Character].BackColor = Win.Color.White;
 
             //scintilla.Styles[Style.Cpp.Verbatim].ForeColor = Color.Black;
             //scintilla.Styles[Style.Cpp.Verbatim].BackColor = Color.White;
 
             // 操作符前景色
-            scintilla.Styles[Style.Cpp.Operator].ForeColor = Win.Color.Purple;
-            scintilla.Styles[Style.Cpp.Preprocessor].ForeColor = Win.Color.Maroon;
-
+            Scintilla.Styles[Style.Cpp.Operator].ForeColor = Win.Color.Purple;
+            Scintilla.Styles[Style.Cpp.Preprocessor].ForeColor = Win.Color.Maroon;
 
             // 正则表达式
-            scintilla.Styles[Style.Cpp.Regex].ForeColor = Win.Color.Blue;
+            Scintilla.Styles[Style.Cpp.Regex].ForeColor = Win.Color.Blue;
 
-            scintilla.AnnotationVisible = Annotation.Boxed;
-            scintilla.DocLineFromVisible(1);
+            Scintilla.AnnotationVisible = Annotation.Boxed;
+            Scintilla.DocLineFromVisible(1);
 
-
-            scintilla.Styles[Style.Cpp.StringRaw].FillLine = true;
-            scintilla.Styles[Style.Cpp.StringRaw].BackColor = Win.Color.Yellow;
+            Scintilla.Styles[Style.Cpp.StringRaw].FillLine = true;
+            Scintilla.Styles[Style.Cpp.StringRaw].BackColor = Win.Color.Yellow;
 
             // 设置匹配框高度
-            scintilla.AutoCMaxHeight = 15;
+            Scintilla.AutoCMaxHeight = 15;
             /* 增加行space
             scintilla.ExtraAscent = 5;
             scintilla.ExtraDescent = 5;*/
-
 
             //scintilla.MultipleSelection = true;
             //scintilla.MouseSelectionRectangularSwitch = true;
@@ -216,32 +212,34 @@ namespace DLCodeRecord.DevelopForms
             scintilla.Zoom = 15; // */
 
             // 输入匹配长度
-            scintilla.WhitespaceSize = 1;
+            Scintilla.WhitespaceSize = 1;
 
-            scintilla.WrapMode = WrapMode.Whitespace;
-            scintilla.WrapVisualFlagLocation = WrapVisualFlagLocation.Default;
+            Scintilla.WrapMode = WrapMode.Whitespace;
+            Scintilla.WrapVisualFlagLocation = WrapVisualFlagLocation.Default;
             #endregion
 
             #region 大括号设置
-            scintilla.IndentationGuides = IndentView.LookBoth;
-            scintilla.Styles[Style.BraceLight].BackColor = Win.Color.LightGray;
-            scintilla.Styles[Style.BraceLight].ForeColor = Win.Color.BlueViolet;
-            scintilla.Styles[Style.BraceBad].ForeColor = Win.Color.Red;
+            Scintilla.IndentationGuides = IndentView.LookBoth;
+            Scintilla.Styles[Style.BraceLight].BackColor = Win.Color.LightGray;
+            Scintilla.Styles[Style.BraceLight].ForeColor = Win.Color.BlueViolet;
+            Scintilla.Styles[Style.BraceBad].ForeColor = Win.Color.Red;
             #endregion
 
             #region 设置关键字
 
-            scintilla.SetKeywords(0, FirstKeyWords);
-            scintilla.SetKeywords(1, SecondKeyWords);
-            scintilla.FontQuality = FontQuality.LcdOptimized;
+            Scintilla.SetKeywords(0, FirstKeyWords);
+            Scintilla.SetKeywords(1, SecondKeyWords);
+            Scintilla.FontQuality = FontQuality.LcdOptimized;
 
             #endregion
 
             #region 事件
-            scintilla.CharAdded += scintilla_CharAdded;
-            scintilla.UpdateUI += Scintilla_UpdateUI;
+            Scintilla.CharAdded -= scintilla_CharAdded;
+            Scintilla.UpdateUI -= Scintilla_UpdateUI;
+            Scintilla.CharAdded += scintilla_CharAdded;
+            Scintilla.UpdateUI += Scintilla_UpdateUI;
 
-            scintilla.WrapVisualFlags = WrapVisualFlags.Margin;
+            Scintilla.WrapVisualFlags = WrapVisualFlags.Margin;
             #endregion
 
         }
@@ -251,7 +249,7 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 最后一次光标位置
         /// </summary>
-        private int lastCaretPos { get; set; } = 0;
+        private int LastCaretPos { get; set; }
         private static bool IsBrace(int c)
         {
             switch (c)
@@ -273,39 +271,39 @@ namespace DLCodeRecord.DevelopForms
         private void Scintilla_UpdateUI(object sender, UpdateUIEventArgs e)
         {
             // Has the caret changed position?
-            var caretPos = scintilla.CurrentPosition;
-            if (lastCaretPos != caretPos)
+            var caretPos = Scintilla.CurrentPosition;
+            if (LastCaretPos != caretPos)
             {
-                lastCaretPos = caretPos;
+                LastCaretPos = caretPos;
                 var bracePos1 = -1;
                 var bracePos2 = -1;
 
                 // Is there a brace to the left or right?
-                if (caretPos > 0 && IsBrace(scintilla.GetCharAt(caretPos - 1)))
-                    bracePos1 = (caretPos - 1);
-                else if (IsBrace(scintilla.GetCharAt(caretPos)))
+                if (caretPos > 0 && IsBrace(Scintilla.GetCharAt(caretPos - 1)))
+                    bracePos1 = caretPos - 1;
+                else if (IsBrace(Scintilla.GetCharAt(caretPos)))
                     bracePos1 = caretPos;
 
                 if (bracePos1 >= 0)
                 {
                     // Find the matching brace
-                    bracePos2 = scintilla.BraceMatch(bracePos1);
+                    bracePos2 = Scintilla.BraceMatch(bracePos1);
                     if (bracePos2 == Scintilla.InvalidPosition)
                     {
-                        scintilla.BraceBadLight(bracePos1);
-                        scintilla.HighlightGuide = 0;
+                        Scintilla.BraceBadLight(bracePos1);
+                        Scintilla.HighlightGuide = 0;
                     }
                     else
                     {
-                        scintilla.BraceHighlight(bracePos1, bracePos2);
-                        scintilla.HighlightGuide = scintilla.GetColumn(bracePos1);
+                        Scintilla.BraceHighlight(bracePos1, bracePos2);
+                        Scintilla.HighlightGuide = Scintilla.GetColumn(bracePos1);
                     }
                 }
                 else
                 {
                     // Turn off brace matching
-                    scintilla.BraceHighlight(Scintilla.InvalidPosition, Scintilla.InvalidPosition);
-                    scintilla.HighlightGuide = 0;
+                    Scintilla.BraceHighlight(Scintilla.InvalidPosition, Scintilla.InvalidPosition);
+                    Scintilla.HighlightGuide = 0;
                 }
             }
         }
@@ -315,21 +313,22 @@ namespace DLCodeRecord.DevelopForms
         private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
         {
             // Find the word start
-            var currentPos = scintilla.CurrentPosition;
-            var wordStartPos = scintilla.WordStartPosition(currentPos, true);
+            var currentPos = Scintilla.CurrentPosition;
+            var wordStartPos = Scintilla.WordStartPosition(currentPos, true);
 
             // 显示匹配列表
             var lenEntered = currentPos - wordStartPos;
-            if (lenEntered > 0)  // 匹配开始长度
+            // 匹配开始长度
+            if (lenEntered > 0)
             {
-                if (!scintilla.AutoCActive)
+                if (!Scintilla.AutoCActive)
                 {
                     // 取得键盘输入字符的ascii码，并转换为相应的字符
                     int ascii = e.Char;
                     ASCIIEncoding asciiEncoding = new ASCIIEncoding();
                     byte[] btNumber = new byte[] { (byte)ascii };
                     string key = asciiEncoding.GetString(btNumber);
-                    scintilla.AutoCShow(lenEntered, AutoComplateCharWords(key));
+                    Scintilla.AutoCShow(lenEntered, AutoComplateCharWords(key));
                 }
             }
         }
@@ -341,14 +340,12 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 拖放文件到 控件
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void scintilla_DragEnter(object sender, namespaceFrm.DragEventArgs e)
         {
             try
             {
-                this.scintilla.Text = "";
-                Array aryFiles = ((System.Array)e.Data.GetData(namespaceFrm.DataFormats.FileDrop));
+                this.Scintilla.Text = string.Empty;
+                Array aryFiles = (System.Array)e.Data.GetData(namespaceFrm.DataFormats.FileDrop);
 
                 StringBuilder builder = new StringBuilder();
                 for (int i = 0; i < aryFiles.Length; i++)
@@ -358,12 +355,12 @@ namespace DLCodeRecord.DevelopForms
                     {
                         valuesArray.ToList().ForEach(p =>
                         {
-                            if (p != "")
+                            if (!Common.VerifyHelper.IsEmptyOrNullOrWhiteSpace(p))
                                 builder.Append(p + "\r\n");
                         });
                     }
                 }
-                this.scintilla.Text = builder.ToString();
+                this.Scintilla.Text = builder.ToString();
             }
             catch (Exception ex)
             {

@@ -30,22 +30,22 @@
         {
             this.SuspendLayout();
 
-            this.scintilla.AdditionalCaretsBlink = false;
-            this.scintilla.AnnotationVisible = ScintillaNET.Annotation.Boxed;
-            this.scintilla.AutoCChooseSingle = true;
-            this.scintilla.CaretLineVisible = true;
-            this.scintilla.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scintilla.EdgeColor = System.Drawing.Color.Maroon;
-            this.scintilla.EdgeColumn = 2;
-            this.scintilla.IdleStyling = ScintillaNET.IdleStyling.ToVisible;
-            this.scintilla.Location = new System.Drawing.Point(0, 0);
-            this.scintilla.Name = "scintilla";
-            this.scintilla.Size = new System.Drawing.Size(713, 581);
-            this.scintilla.TabIndex = 0;
-            this.scintilla.WrapIndentMode = ScintillaNET.WrapIndentMode.Indent;
-            this.scintilla.WrapMode = ScintillaNET.WrapMode.Word;
-            this.scintilla.WrapVisualFlagLocation = ScintillaNET.WrapVisualFlagLocation.StartByText;
-            this.scintilla.WrapVisualFlags = ((ScintillaNET.WrapVisualFlags)(((ScintillaNET.WrapVisualFlags.End | ScintillaNET.WrapVisualFlags.Start)
+            this.Scintilla.AdditionalCaretsBlink = false;
+            this.Scintilla.AnnotationVisible = ScintillaNET.Annotation.Boxed;
+            this.Scintilla.AutoCChooseSingle = true;
+            this.Scintilla.CaretLineVisible = true;
+            this.Scintilla.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Scintilla.EdgeColor = System.Drawing.Color.Maroon;
+            this.Scintilla.EdgeColumn = 2;
+            this.Scintilla.IdleStyling = ScintillaNET.IdleStyling.ToVisible;
+            this.Scintilla.Location = new System.Drawing.Point(0, 0);
+            this.Scintilla.Name = "scintilla";
+            this.Scintilla.Size = new System.Drawing.Size(713, 581);
+            this.Scintilla.TabIndex = 0;
+            this.Scintilla.WrapIndentMode = ScintillaNET.WrapIndentMode.Indent;
+            this.Scintilla.WrapMode = ScintillaNET.WrapMode.Word;
+            this.Scintilla.WrapVisualFlagLocation = ScintillaNET.WrapVisualFlagLocation.StartByText;
+            this.Scintilla.WrapVisualFlags = ((ScintillaNET.WrapVisualFlags)(((ScintillaNET.WrapVisualFlags.End | ScintillaNET.WrapVisualFlags.Start)
             | ScintillaNET.WrapVisualFlags.Margin)));
 
 

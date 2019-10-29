@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using DataEntitys;
 namespace Services.EFCodeFirst
 {
     public class RecordContext : DbContext
     {
-        public RecordContext() : base("name=RecordDBConnectionString")
+        public RecordContext()
+            : base("name=RecordDBConnectionString")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, Migrations.Configuration>());
         }
@@ -25,9 +21,10 @@ namespace Services.EFCodeFirst
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //modelBuilder.Configurations.Add(new DevelopUserConfiguration());
-            //modelBuilder.Configurations.Add(new DevelopTypeConfiguration());
-            //modelBuilder.Configurations.Add(new DevelopPowerFunConfiguration());
+
+            // modelBuilder.Configurations.Add(new DevelopUserConfiguration());
+            // modelBuilder.Configurations.Add(new DevelopTypeConfiguration());
+            // modelBuilder.Configurations.Add(new DevelopPowerFunConfiguration());
         }
 
         public DbSet<DevelopUser> DevelopUsers { get; set; }

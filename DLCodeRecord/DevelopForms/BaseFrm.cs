@@ -1,11 +1,11 @@
-﻿using DevExpress.XtraEditors;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Common;
-using static Common.UtilityHelper;
-using static Common.ExceptionHelper;
+using DevExpress.XtraEditors;
 using log4net;
+using static Common.ExceptionHelper;
+using static Common.UtilityHelper;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -19,7 +19,7 @@ namespace DLCodeRecord.DevelopForms
         /// 默认窗口活动状态为Normal
         /// </summary>
         protected DevelopActiveState actionState = DevelopActiveState.Normal;
-        protected static ILog Logger => LogManager.GetLogger("DevelopUserFrm");
+        protected static ILog Logger => LogManager.GetLogger("BaseFrm");
         #endregion Protected Fields
 
         #region Public Constructors
@@ -27,19 +27,16 @@ namespace DLCodeRecord.DevelopForms
         public BaseFrm()
         {
             InitializeComponent();
-            //DevExpress.Data.CurrencyDataController.DisableThreadingProblemsDetection = true;
             try
             {
                 this.MaximizeBox = true;
                 this.MinimizeBox = true;
                 this.LookAndFeel.UseDefaultLookAndFeel = true;
-
                 this.Size = UtilityHelper.GetWorkingAreaSize().Item5;
-
-                string _iconPath = AppLaunchPath + "DevelopForms\\Bug.ico";
-                if (System.IO.File.Exists(_iconPath))
+                string iconPath = AppLaunchPath + "DevelopForms\\Bug.ico";
+                if (System.IO.File.Exists(iconPath))
                 {
-                    this.Icon = new Icon(_iconPath, new Size(48, 48));
+                    this.Icon = new Icon(iconPath, new Size(48, 48));
                     this.ShowIcon = true;
                 }
                 // 禁止改变窗体大小
@@ -63,7 +60,7 @@ namespace DLCodeRecord.DevelopForms
         /// <param name="actionCancel">取消关闭之后的操作</param>
         protected void FormClosingTip(FormClosingEventArgs e, Action actionOk = null, Action actionCancel = null)
         {
-            //  判断窗体数据状态
+            // 判断窗体数据状态
             if (actionState != DevelopActiveState.Normal)
             {
                 if (MsgHelper.ShowConfirm() == DialogResult.Cancel)
@@ -86,30 +83,28 @@ namespace DLCodeRecord.DevelopForms
         /// <param name="form">显示进度提示条的窗体</param>
         /// <param name="action">在窗体加载中执行的委托方法</param>
         /// <param name="content">提示进度条的内容</param>
-        protected void FormLoadingTipAsync(XtraForm form, Action action
-        , string content = "正在生成窗口")
+        protected void FormLoadingTipAsync(XtraForm form, Action action, string content = "正在生成窗口")
         {
             MsgHelper.ShowSplashScreenForm(this, content);
-            CatchUIException(() =>
+            CatchUIException(
+                () =>
             {
                 ExecuteAction(action, form);
             }, (ex) =>
             {
-
             }, () =>
             {
-                BeginInvoke((Action)delegate
+                BeginInvoke(new Action(() =>
                 {
                     MsgHelper.CloseSplashScreenForm();
-                });
+                }));
             });
         }
 
         /// <summary>
         /// 显示进度提示
         /// </summary>
-        /// <param name="form">要显示的Form</param>
-        protected void ShowSplashScreenForm(XtraForm form, string message = "")
+        protected void ShowSplashScreenForm(string message = "")
         {
             MsgHelper.ShowSplashScreenForm(this, message);
         }
@@ -135,43 +130,38 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 捕获异常
         /// </summary>
-        /// <param name="ex"></param>
+        /// <param name="ex">ex</param>
         protected void CatchException(Exception ex)
         {
             if (actionState != DevelopActiveState.Normal)
                 actionState = DevelopActiveState.Normal;
             Logger.Error(ex);
             MsgHelper.ShowError(ex.Message);
-
         }
-
 
         /// <summary>
         /// 执行一个委托方法
         /// </summary>
-        /// <param name="form">执行Action的窗体</param>
         /// <param name="action">匿名委托方法</param>
+        /// <param name="form">执行Action的窗体</param>
         /// <returns>bool</returns>
         protected bool ExecuteAction(Action action, XtraForm form = null)
         {
             var result = false;
             CatchUIException(() =>
             {
-                Invoke((Action)delegate
-                {
-                    action?.Invoke();
-                });
+                Invoke(new Action(() => { action?.Invoke(); }));
                 result = true;
             }, (ex) =>
             {
                 if (form != null)
                 {
-                    form.BeginInvoke((Action)delegate
+                    form.BeginInvoke(new Action(() =>
                     {
                         form.Hide();
                         MsgHelper.CloseSplashScreenForm();
                         form.Close();
-                    });
+                    }));
                 }
             });
             return result;
@@ -181,29 +171,25 @@ namespace DLCodeRecord.DevelopForms
         #region  自定义事件
         protected void AttatchedEvent(EventHandler origionEvent, EventHandler targetEvent)
         {
-            if (targetEvent == null)
-                return;
-            if (origionEvent.GetType() != targetEvent.GetType())
-                return;
+            if (targetEvent == null) return;
+            if (origionEvent.GetType() != targetEvent.GetType()) return;
             origionEvent -= targetEvent;
             origionEvent += targetEvent;
         }
         #endregion
 
         #region 数据接口层
-        //protected virtual IUnityDevelopFunFacade UnityDevelopFunFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopFunFacade>();
+        // protected virtual IUnityDevelopFunFacade UnityDevelopFunFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopFunFacade>();
 
-        //protected virtual IUnityDevelopPowerFunFacade UnityDevelopPowerFunFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopPowerFunFacade>();
+        // protected virtual IUnityDevelopPowerFunFacade UnityDevelopPowerFunFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopPowerFunFacade>();
 
-        //protected virtual IUnityDevelopRecordFacade UnityDevelopRecordFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopRecordFacade>();
+        // protected virtual IUnityDevelopRecordFacade UnityDevelopRecordFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopRecordFacade>();
 
-        //protected virtual IUnityDevelopTypeFacade UnityDevelopTypeFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopTypeFacade>();
+        // protected virtual IUnityDevelopTypeFacade UnityDevelopTypeFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopTypeFacade>();
 
-        //protected virtual IUnityStatisticsFacade UnityStatisticsFacade => UnityContainerManager.GetUnityFacade<IUnityStatisticsFacade>();
+        // protected virtual IUnityStatisticsFacade UnityStatisticsFacade => UnityContainerManager.GetUnityFacade<IUnityStatisticsFacade>();
 
-        //protected virtual IUnityUserFacade UnityUserFacade => UnityContainerManager.GetUnityFacade<IUnityUserFacade>();
+        // protected virtual IUnityUserFacade UnityUserFacade => UnityContainerManager.GetUnityFacade<IUnityUserFacade>();
         #endregion
     }
-
-
 }

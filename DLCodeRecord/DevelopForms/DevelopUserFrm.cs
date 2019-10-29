@@ -20,33 +20,32 @@ namespace DLCodeRecord.DevelopForms
     /// </summary>
     public partial class DevelopUserFrm : BaseFrm
     {
-        #region 属性声明
+        #region 属性
 
         /// <summary>
         /// 数据管理类
         /// </summary>
-        private DataManage dataManage = null;
+        private DataManage _dataManage = null;
 
         /// <summary>
         /// 拼接 设置权限内容
         /// </summary>
-        private StringBuilder powerBuilder = new StringBuilder();
+        private StringBuilder _powerBuilder = new StringBuilder();
 
         /// <summary>
         /// 当前选择的User
         /// </summary>
-        public DevelopUser SelectedUser { get; set; }
+        public DevelopUser selectedUser { get; set; }
 
-        #endregion 属性声明
+        #endregion 属性
 
         #region 构造函数
         public DevelopUserFrm()
         {
             InitializeComponent();
-
             #region 初始化设置
             this.Text = "用户权限管理";
-            dataManage = DataManage.Instance;
+            _dataManage = DataManage.Instance;
             InitialGridControl();
             InitialTreeList();
             #endregion 初始化设置
@@ -62,8 +61,8 @@ namespace DLCodeRecord.DevelopForms
         {
             FormClosingTip(e, () =>
             {
-                dataManage?.DevelopUserList.Clear();
-                dataManage?.DevelopFunList.Clear();
+                _dataManage?.DevelopUserList.Clear();
+                _dataManage?.DevelopFunList.Clear();
             });
         }
         #endregion
@@ -87,26 +86,26 @@ namespace DLCodeRecord.DevelopForms
         private void InitialGridControl()
         {
             // 用户数据源绑定
-            this.gcUser.DataBindings.Add(new Binding("DataSource", dataManage, "DevelopUserList", true, DataSourceUpdateMode.OnPropertyChanged));
+            this.gcUser.DataBindings.Add(new Binding("DataSource", _dataManage, "DevelopUserList", true, DataSourceUpdateMode.OnPropertyChanged));
             this.gcUser.BeginInit();
             // Id 列
-            GridColumn IdCol = new GridColumn
+            GridColumn idCol = new GridColumn
             {
                 VisibleIndex = -1,
                 Caption = "编号",
-                FieldName = "UserId"
+                FieldName = "UserId",
             };
 
-            //姓名列
+            // 姓名列
             GridColumn nameCol = new GridColumn
             {
                 VisibleIndex = 0,
                 Caption = "姓名",
-                MinWidth = 100
+                MinWidth = 100,
             };
             nameCol.OptionsColumn.AllowMove = false;
             nameCol.FieldName = "Name";
-            //性别列.
+            // 性别列
             GridColumn sexCol = new GridColumn
             {
                 VisibleIndex = 1,
@@ -117,12 +116,12 @@ namespace DLCodeRecord.DevelopForms
             RepositoryItemComboBox repositoryComboBox = new RepositoryItemComboBox
             {
                 NullValuePrompt = "请选择",
-                TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
+                TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor,
             };
             repositoryComboBox.Items.AddRange(new string[] { "男", "女" });
             sexCol.ColumnEdit = repositoryComboBox;
-            //this.gcUser.RepositoryItems.Add(repositoryComboBox);
-            //工作年限列
+            // this.gcUser.RepositoryItems.Add(repositoryComboBox);
+            // 工作年限列
             GridColumn developAgeCol = new GridColumn
             {
                 VisibleIndex = 2,
@@ -131,7 +130,7 @@ namespace DLCodeRecord.DevelopForms
                 MinWidth = 100,
             };
             // 添加到列集合
-            this.gvUser.Columns.AddRange(new GridColumn[] { IdCol, nameCol, sexCol, developAgeCol });
+            this.gvUser.Columns.AddRange(new GridColumn[] { idCol, nameCol, sexCol, developAgeCol });
             this.gvUser.OptionsBehavior.AllowAddRows = DevExpress.Utils.DefaultBoolean.True;
             this.gvUser.OptionsView.NewItemRowPosition = DevExpress.XtraGrid.Views.Grid.NewItemRowPosition.Top;
             this.gvUser.NewItemRowText = "点击请输入";
@@ -153,8 +152,6 @@ namespace DLCodeRecord.DevelopForms
             this.gcUser.EndInit();
         }
 
-
-
         /// <summary>
         /// 选择行改变事件 显示对应权限
         /// </summary>
@@ -162,16 +159,14 @@ namespace DLCodeRecord.DevelopForms
         {
             try
             {
-                SelectedUser = gvUser.GetFocusedRow() as DevelopUser;
-                if (SelectedUser == null)
-                    return;
-                SetUserFun(SelectedUser);
+                selectedUser = gvUser.GetFocusedRow() as DevelopUser;
+                if (selectedUser == null) return;
+                SetUserFun(selectedUser);
             }
             catch (Exception ex)
             {
                 CatchException(ex);
             }
-
         }
 
         /// <summary>
@@ -194,12 +189,11 @@ namespace DLCodeRecord.DevelopForms
             {
                 object obj = gvUser.GetFocusedRow();
                 // 触发行数据验证事件，未验证成功，不执行修改操作
-                bool valid = gvUser.UpdateCurrentRow();
-                if (valid == false) return;
-                SelectedUser = gvUser.GetFocusedRow() as DevelopUser;
-                if (SelectedUser?.Id > 0)
+                if (gvUser.UpdateCurrentRow() == false) return;
+                selectedUser = gvUser.GetFocusedRow() as DevelopUser;
+                if (selectedUser?.Id > 0)
                 {
-                    await UnityUserFacade.UpdateEntity(SelectedUser);
+                    await UnityUserFacade.UpdateEntity(selectedUser);
                     ShowInfo("修改成功");
                 }
                 actionState = DevelopActiveState.Normal;
@@ -212,7 +206,6 @@ namespace DLCodeRecord.DevelopForms
             {
                 await ReLoadDevelopUser();
             }
-
         }
 
         /// <summary>
@@ -223,32 +216,32 @@ namespace DLCodeRecord.DevelopForms
         {
             GridView view = sender as GridView;
             // 名字不能为空
-            SelectedUser = e.Row as DevelopUser;
-            if (string.IsNullOrEmpty(SelectedUser.Name))
+            selectedUser = e.Row as DevelopUser;
+            if (string.IsNullOrEmpty(selectedUser.Name))
             {
                 e.Valid = false;
-                //view.SetColumnError(view.Columns[0], "用户名不能为空");
+                // view.SetColumnError(view.Columns[0], "用户名不能为空");
                 MsgHelper.ShowError("姓名不能为空");
                 return;
             }
             // 名称是否存在
-            if (dataManage.DevelopUserList.Count(u => u.Name == SelectedUser.Name) == 2)
+            if (_dataManage.DevelopUserList.Count(u => u.Name == selectedUser.Name) == 2)
             {
                 MsgHelper.ShowError("该名称已存在");
                 e.Valid = false;
                 return;
             }
-            if (!VerifyHelper.IsNumberic(SelectedUser.DevelopAge.ToString()))
+            if (!VerifyHelper.IsNumberic(selectedUser.DevelopAge.ToString()))
             {
                 e.Valid = false;
-                //view.SetColumnError(view.Columns[0], "格式输入不正确");
+                // view.SetColumnError(view.Columns[0], "格式输入不正确");
                 MsgHelper.ShowError("年龄格式输入不正确");
                 return;
             }
-            if (SelectedUser.Id == 0)
+            if (selectedUser.Id == 0)
             {
-                SelectedUser.Pwd = UtilityHelper.MD5Encrypt("111111");
-                var result = await UnityUserFacade.AddEntity(SelectedUser);
+                selectedUser.Pwd = UtilityHelper.MD5Encrypt("111111");
+                var result = await UnityUserFacade.AddEntity(selectedUser);
                 if (result.Id > 0)
                 {
                     MsgHelper.ShowInfo("添加成功");
@@ -266,16 +259,16 @@ namespace DLCodeRecord.DevelopForms
         {
             try
             {
-                ShowSplashScreenForm(this, PromptHelper.D_LOADINGDATA);
+                ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
                 IList<DevelopUser> userArray = await UnityUserFacade.GetDevelopUsers(m => m.Id != 1);
                 IList<DevelopFun> funList = await UnityDevelopFunFacade.GetEntities();
-                dataManage.DevelopUserList.Clear();
+                _dataManage.DevelopUserList.Clear();
                 foreach (DevelopUser user in userArray)
-                    dataManage?.DevelopUserList.Add(user);
+                    _dataManage?.DevelopUserList.Add(user);
                 if (funList.Count() == 0) return;
-                dataManage?.DevelopFunList.Clear();
+                _dataManage?.DevelopFunList.Clear();
                 foreach (DevelopFun fun in funList)
-                    dataManage?.DevelopFunList.Add(fun);
+                    _dataManage?.DevelopFunList.Add(fun);
                 funList.Clear();
                 CloseSplashScreenForm();
             }
@@ -298,14 +291,14 @@ namespace DLCodeRecord.DevelopForms
         private void InitialTreeList()
         {
             // 用户数据源绑定
-            tlUserPower.DataBindings.Add("DataSource", dataManage, "DevelopFunList", true, DataSourceUpdateMode.OnPropertyChanged, "暂无数据");
+            tlUserPower.DataBindings.Add("DataSource", _dataManage, "DevelopFunList", true, DataSourceUpdateMode.OnPropertyChanged, "暂无数据");
             tlUserPower.BeginInit();
             TreeListColumn idCol = new TreeListColumn()
             {
                 VisibleIndex = -1,
                 FieldName = "FunId",
             };
-            //功能名称列
+            // 功能名称列
             TreeListColumn nameCol = new TreeListColumn()
             {
                 VisibleIndex = 0,
@@ -342,9 +335,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 node.Checked = isChecked;
                 if (node != null && node.HasChildren)
-                {
                     SetTreeListNodeCheck(node, isChecked);
-                }
             }
         }
 
@@ -358,16 +349,15 @@ namespace DLCodeRecord.DevelopForms
                 SetTreeListNodeCheck(node, false);
             // 根据用户Id 获取对应权限
             List<DevelopPowerFun> developPowerFuns = user.DevelopPowerFuns.ToList();
-            dataManage?.DevelopPowerFunList.Clear();
+            _dataManage?.DevelopPowerFunList.Clear();
             foreach (DevelopPowerFun powerFun in developPowerFuns)
             {
                 if (powerFun == null) continue;
                 TreeListNode node = tlUserPower.FindNodeByKeyID(powerFun.FunId);
-                if (node == null)
-                    continue;
+                if (node == null) continue;
                 node.Checked = powerFun.IsEnabled;
                 // 添加到集合
-                dataManage?.DevelopPowerFunList.Add(powerFun);
+                _dataManage?.DevelopPowerFunList.Add(powerFun);
             }
             this.tlUserPower.ExpandAll();
         }
@@ -427,7 +417,7 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private async void BtnSave_Click(object sender, EventArgs e)
         {
-            if (SelectedUser == null)
+            if (selectedUser == null)
             {
                 MsgHelper.ShowInfo("请选择要设置权限的用户");
                 return;
@@ -435,12 +425,9 @@ namespace DLCodeRecord.DevelopForms
             try
             {
                 TreeListNodes nodeList = this.tlUserPower.Nodes;
-                if (nodeList.Count == 0)
-                    return;
+                if (nodeList.Count == 0) return;
                 foreach (TreeListNode node in nodeList)
-                {
                     await SaveTreeListNode(node);
-                }
                 MsgHelper.ShowInfo(PromptHelper.D_SETTING_SUCCESS);
                 await ReLoadDevelopUser();
             }
@@ -452,7 +439,6 @@ namespace DLCodeRecord.DevelopForms
             {
                 actionState = DevelopActiveState.Normal;
             }
-
         }
 
         /// <summary>
@@ -462,20 +448,20 @@ namespace DLCodeRecord.DevelopForms
         private async Task SaveTreeListNode(TreeListNode treeListNode)
         {
             bool isChecked = treeListNode.Checked;
-            if (tlUserPower.GetDataRecordByNode(treeListNode) is DevelopFun powerFun && powerFun != null && SelectedUser != null)
+            if (tlUserPower.GetDataRecordByNode(treeListNode) is DevelopFun powerFun && selectedUser != null)
             {
                 DevelopPowerFun developPowerFun = await UnityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
                 {
                     FunId = powerFun.Id,
-                    UserId = SelectedUser.Id,
-                    IsEnabled = treeListNode.Checked
+                    UserId = selectedUser.Id,
+                    IsEnabled = treeListNode.Checked,
                 });
                 if (developPowerFun != null)
                 {
                     if (isChecked)
-                        Logger.InfoFormat($"用户名为：{SelectedUser.Name}，添加权限：{powerFun.Name}");
+                        Logger.InfoFormat($"用户名为：{selectedUser.Name}，添加权限：{powerFun.Name}");
                     else
-                        Logger.InfoFormat($"用户名为：{SelectedUser.Name}，移除权限：{powerFun.Name}");
+                        Logger.InfoFormat($"用户名为：{selectedUser.Name}，移除权限：{powerFun.Name}");
                 }
                 foreach (TreeListNode node in treeListNode.Nodes)
                 {
@@ -485,15 +471,15 @@ namespace DLCodeRecord.DevelopForms
                         developPowerFun = await UnityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
                         {
                             FunId = powerFunData.Id,
-                            UserId = SelectedUser.Id,
-                            IsEnabled = node.Checked
+                            UserId = selectedUser.Id,
+                            IsEnabled = node.Checked,
                         });
                         if (developPowerFun != null)
                         {
                             if (isChecked)
-                                Logger.InfoFormat($"用户名为：{SelectedUser.Name}，添加权限：{powerFun.Name}-{powerFunData.Name}");
+                                Logger.InfoFormat($"用户名为：{selectedUser.Name}，添加权限：{powerFun.Name}-{powerFunData.Name}");
                             else
-                                Logger.InfoFormat($"用户名为：{SelectedUser.Name}，移除权限：{powerFun.Name}-{powerFunData.Name}");
+                                Logger.InfoFormat($"用户名为：{selectedUser.Name}，移除权限：{powerFun.Name}-{powerFunData.Name}");
                         }
                         if (node != null && node.HasChildren)
                             await SaveTreeListNode(node);
@@ -508,14 +494,14 @@ namespace DLCodeRecord.DevelopForms
         {
             try
             {
-                if (SelectedUser == null)
+                if (selectedUser == null)
                 {
                     MsgHelper.ShowInfo(PromptHelper.D_SELECT_DATAROW);
                     return;
                 }
                 if (MsgHelper.ShowConfirm(PromptHelper.D_DELETE_CONFIRM) == DialogResult.OK)
                 {
-                    bool result = await UnityUserFacade.RemoveEntity(SelectedUser);
+                    bool result = await UnityUserFacade.RemoveEntity(selectedUser);
                     if (result)
                     {
                         await ReLoadDevelopUser();
