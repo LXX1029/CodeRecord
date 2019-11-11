@@ -332,8 +332,10 @@ namespace DLCodeRecord.DevelopForms
                 DevelopRecordEntity.Title = title;
                 DevelopRecordEntity.Desc = codeEditor.Scintilla.Text.Trim();
                 DevelopRecordEntity.Picture = ConvertImgToByte(picImg.Image);
-                DevelopRecordEntity.SubTypeName = rdioGChildType.Properties.Items[rdioGChildType.SelectedIndex].Description;
-                DevelopRecordEntity.ParentTypeName = rgParentType.Properties.Items[rgParentType.SelectedIndex].Description;
+                if (rdioGChildType.SelectedIndex != -1)
+                    DevelopRecordEntity.SubTypeName = rdioGChildType.Properties.Items[rdioGChildType.SelectedIndex].Description;
+                if (rgParentType.SelectedIndex != -1)
+                    DevelopRecordEntity.ParentTypeName = rgParentType.Properties.Items[rgParentType.SelectedIndex].Description;
                 DevelopRecordEntity.UpdatedTime = editTime;
 
                 this.LocalDevelopRecord.Title = DevelopRecordEntity.Title;
