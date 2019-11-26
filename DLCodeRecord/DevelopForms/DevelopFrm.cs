@@ -162,7 +162,7 @@ namespace DLCodeRecord.DevelopForms
                         });
                     }
                 }
-                rgParentType.SelectedIndex = 0;
+
                 #region 绑定developRecordEntity数据到控件
                 // this.rgParentType.DataBindings.Add("EditValue", DevelopRecordEntity, "ParentId", true, DataSourceUpdateMode.OnPropertyChanged);
                 // this.rdioGChildType.DataBindings.Add("EditValue", DevelopRecordEntity, "SubTypeId", true);
@@ -399,9 +399,13 @@ namespace DLCodeRecord.DevelopForms
                         rgParentType.Focus();
                         rgParentType.SelectedIndex = 0;
                         rdioGChildType.SelectedIndex = 0;
-                        this.btnSelectImg.Text = string.Empty;
-                        this.txtTitle.DataBindings[0].ReadValue();
-                        this.picImg.DataBindings[0].ReadValue();
+                        this.btnSelectImg.ResetText();
+                        this.txtTitle.ResetText();
+                        this.picImg.Reset();
+                        this.picImg.EditValue = null;
+                        this.btnZipPath.ResetText();
+                        //this.txtTitle.DataBindings[0].ReadValue();
+                        //this.picImg.DataBindings[0].ReadValue();
                         SetDescValue();
                         actionState = DevelopActiveState.Adding;
                     }
@@ -409,6 +413,7 @@ namespace DLCodeRecord.DevelopForms
                     {
                         CloseNormal();
                     }
+
                 }
             }
             catch (Exception ex)
@@ -442,14 +447,19 @@ namespace DLCodeRecord.DevelopForms
         private async void BtnDownLoad_Click(object sender, EventArgs e)
         {
             string imgPath = this.btnSelectImg.Text.Trim();
-            if (string.IsNullOrEmpty(imgPath) || !File.Exists(imgPath))
+            if (string.IsNullOrEmpty(imgPath))
+            {
+                this.btnSelectImg.ErrorText = "图片路径不合法";
+                return;
+            }
+            else if (!imgPath.Contains("http") || !imgPath.Contains("https"))
             {
                 this.btnSelectImg.ErrorText = "图片路径不合法";
                 return;
             }
             try
             {
-                ShowSplashScreenForm(PromptHelper.D_LOADINGIMG);
+                MsgHelper.ShowWaitingForm(this, PromptHelper.D_LOADINGIMG);
                 using (var http = HttpClientFactory.Create())
                 {
                     var bytes = await http.GetByteArrayAsync(imgPath).ConfigureAwait(false);

@@ -1,15 +1,15 @@
-﻿namespace Services.Unity
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Threading.Tasks;
-    using DataEntitys;
-    using Services.EFCodeFirst;
-    using Services.Unity.UnityControl;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using DataEntitys;
+using Services.EFCodeFirst;
+using Services.Unity.UnityControl;
 
+namespace Services.Unity
+{
     /// <summary>
     /// 用户模块数据层
     /// </summary>
@@ -20,7 +20,6 @@
         /// </summary>
         /// <param name="name">名称</param>
         /// <param name="pwd">密码</param>
-        [UnityException]
         public async Task<DevelopUser> GetDevelopUser(string name, string pwd)
         {
             using (var context = new RecordContext())
@@ -30,7 +29,6 @@
         /// <summary>
         /// 加载所有用户
         /// </summary>
-        [UnityException]
         public async Task<IList<DevelopUser>> GetDevelopUsers(Expression<Func<DevelopUser, bool>> predicate = null)
         {
             using (var context = new RecordContext())

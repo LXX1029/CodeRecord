@@ -20,7 +20,6 @@ namespace Common
         {
             base.ProcessCommand(cmd, arg);
         }
-
         #endregion Overrides
     }
 }

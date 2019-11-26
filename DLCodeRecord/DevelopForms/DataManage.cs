@@ -64,15 +64,5 @@ namespace DLCodeRecord.DevelopForms
         public BindingList<DevelopUser> DevelopUserList { get; set; } = new BindingList<DevelopUser>();
 
         #endregion
-
-        // 由GC调用
-        /*~DataManage()
-        {
-            DevelopUserList?.Clear();
-            DevelopRecordEntityList?.Clear();
-            DevelopPowerFunList?.Clear();
-            DevelopFunList?.Clear();
-            LoggerHelper.WriteOperation("已清理所有数据集合");
-        }*/
     }
 }

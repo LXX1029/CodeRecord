@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Entity.Migrations;
+using System.Data.Entity.Validation;
 using System.Linq;
 using Common;
 using DataEntitys;
@@ -46,6 +47,16 @@ namespace Services.Migrations
             }
             catch (Exception ex)
             {
+                if (ex is DbEntityValidationException dbEntity)
+                {
+                    dbEntity.EntityValidationErrors.ToList().ForEach(f =>
+                    {
+                        f.ValidationErrors.ToList().ForEach(m =>
+                        {
+                            Console.WriteLine(m.ErrorMessage);
+                        });
+                    });
+                }
                 MsgHelper.ShowError(ex.Message);
                 Console.WriteLine(ex.Message);
             }

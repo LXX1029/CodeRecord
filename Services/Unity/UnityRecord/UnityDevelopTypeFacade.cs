@@ -19,7 +19,7 @@ namespace Services.Unity
         /// </summary>
         /// <param name="parentId">parentId</param>
         /// <returns>DevelopType</returns>
-        [UnityException]
+
         public async Task<DevelopType> GetDevelopTypeByParentId(int parentId)
         {
             using (var context = new RecordContext())
@@ -32,7 +32,7 @@ namespace Services.Unity
         /// <param name="name">类型名称</param>
         /// <param name="parentId">父Id</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        [UnityException]
+
         public async Task<IList<DevelopType>> GetDevelopTypeListByFilter(string name, int parentId)
         {
             return await this.GetEntities(m => m.Name == name && m.ParentId == parentId);
@@ -41,7 +41,7 @@ namespace Services.Unity
         /// <summary>
         /// 获取类型集合
         /// </summary>
-        [UnityException]
+
         public async Task<IList<DevelopType>> GetDevelopTypesByParentId(int parentId)
         {
             return await this.GetEntities(m => m.ParentId == parentId);
@@ -50,7 +50,6 @@ namespace Services.Unity
         /// <summary>
         /// 获取最大类型Id
         /// </summary>
-        [UnityException]
         public async Task<int> GetMaxDevelopTypeId()
         {
             using (var context = new RecordContext())

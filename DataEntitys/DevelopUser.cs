@@ -21,7 +21,6 @@ namespace DataEntitys
 
         public decimal DevelopAge { get; set; }
 
-        [Timestamp]
         public byte[] RowVersion { get; set; }
 
         public virtual ICollection<DevelopRecord> DevelopRecords { get; set; }

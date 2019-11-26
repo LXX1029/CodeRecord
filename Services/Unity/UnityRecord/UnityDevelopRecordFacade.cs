@@ -26,11 +26,12 @@
             using (var context = new RecordContext())
             {
                 return await (from p in context.DevelopRecords.Include("DevelopType")
+                              join q in context.DevelopTypes on p.DevelopType.ParentId equals q.Id
                               select new DevelopRecordEntity
                               {
                                   Id = p.Id,
                                   ParentId = p.DevelopType.ParentId,
-                                  ParentTypeName = context.DevelopTypes.FirstOrDefault(m => m.Id == p.DevelopType.ParentId).Name,
+                                  ParentTypeName = q.Name,
                                   SubTypeId = p.DevelopType.Id,
                                   SubTypeName = p.DevelopType.Name,
                                   Title = p.Title,
@@ -57,7 +58,6 @@
         /// 更新记录点击次数
         /// </summary>
         /// <param name="recordId">记录Id</param>
-        [UnityException]
         public async Task<bool> UpdateDevelopRecordClickCount(int recordId)
         {
             var entity = await GetEntity(recordId);
@@ -70,7 +70,6 @@
         /// <summary>
         /// 获取最大Develop Id 值
         /// </summary>
-        [UnityException]
         public async Task<int> GetMaxDevelopId()
         {
             using (var context = new RecordContext())

@@ -104,9 +104,9 @@ namespace DLCodeRecord.DevelopForms
         /// <summary>
         /// 显示进度提示
         /// </summary>
-        protected void ShowSplashScreenForm(string message = "")
+        protected void ShowSplashScreenForm(string content = "")
         {
-            MsgHelper.ShowSplashScreenForm(this, message);
+            MsgHelper.ShowSplashScreenForm(this, content);
         }
         /// <summary>
         /// 关闭进度提示
@@ -136,7 +136,7 @@ namespace DLCodeRecord.DevelopForms
             if (actionState != DevelopActiveState.Normal)
                 actionState = DevelopActiveState.Normal;
             Logger.Error(ex);
-            MsgHelper.ShowError(ex.Message);
+            MsgHelper.ShowError("操作出错");
         }
 
         /// <summary>

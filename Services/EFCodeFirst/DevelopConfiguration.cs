@@ -18,9 +18,7 @@
             this.Property(m => m.Pwd).HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
             this.Property(m => m.Sex).HasColumnType("nchar").HasMaxLength(2);
             this.Property(m => m.DevelopAge).HasColumnType("decimal").HasPrecision(9, 2);
-            this.Property(m => m.RowVersion).IsConcurrencyToken(true).IsRequired();
-
-            // this.Property(m => m.address).HasColumnType("nvarchar").HasMaxLength(100);
+            //this.Property(m => m.RowVersion).IsConcurrencyToken(true);
         }
     }
 
@@ -54,6 +52,33 @@
             this.Property(m => m.IsEnabled).HasColumnType("bit").IsRequired();
             this.Property(m => m.UserId).HasColumnType("int").IsRequired();
             this.Property(m => m.FunId).HasColumnType("int").IsRequired();
+        }
+    }
+
+    /// <summary>
+    /// DevelopFun表配置
+    /// </summary>
+    public class DevelopFunConfiguration : EntityTypeConfiguration<DevelopFun>
+    {
+        public DevelopFunConfiguration()
+        {
+            this.ToTable("DevelopFuns");
+            this.HasKey(m => m.Id).Property(m => m.Id).HasColumnType("int")
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+        }
+    }
+
+    /// <summary>
+    /// DevelopFun表配置
+    /// </summary>
+    public class DevelopRecordConfiguration : EntityTypeConfiguration<DevelopRecord>
+    {
+        public DevelopRecordConfiguration()
+        {
+            this.ToTable("DevelopRecords");
+            this.HasKey(m => m.Id).Property(m => m.Id).HasColumnType("int")
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            //this.Property(m => m.RowVersion).IsConcurrencyToken().HasColumnType("");
         }
     }
 }

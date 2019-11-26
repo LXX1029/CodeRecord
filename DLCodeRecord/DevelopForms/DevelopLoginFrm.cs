@@ -28,11 +28,9 @@ namespace DLCodeRecord.DevelopForms
                 Application.Exit();
             }
         }
-
         public DevelopLoginFrm()
         {
             InitializeComponent();
-
             #region 汉化
 
             // 汉化

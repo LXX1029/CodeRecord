@@ -63,8 +63,6 @@ namespace Common
         {
             SplashScreenManager.ShowForm(mainForm, typeof(WaitFrm), false, false, false);
             SplashScreenManager.Default.SetWaitFormCaption(content);
-
-            // SplashScreenManager.Default.SetWaitFormDescription();
         }
     }
 }

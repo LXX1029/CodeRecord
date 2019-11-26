@@ -14,23 +14,22 @@
     /// </summary>
     public sealed class UnityStatisticsFacade : Repository<ClickCountReportEntity>, IUnityStatisticsFacade
     {
-        /// <inheritdoc/>
-        [UnityException]
         public async Task<List<ClickCountReportEntity>> GetClickCountReport()
         {
             using (var context = new RecordContext())
             {
-                return await (from p in context.DevelopRecords
-                              group p by new { p.TypeId, p.DevelopType } into g
-                              let parentType = context.DevelopTypes.FirstOrDefault(s => s.Id == g.Key.DevelopType.ParentId)
+                return await (from p in context.DevelopRecords.Include(m => m.DevelopType)
+                              join q in context.DevelopTypes on p.DevelopType.ParentId equals q.Id
+                              group p by new { q.Name, p.DevelopType } into g
                               select new ClickCountReportEntity
                               {
-                                  ParentTypeId = parentType.Id,
-                                  ParentTypeName = parentType.Name,
+                                  ParentTypeId = g.Key.DevelopType.ParentId,
+                                  ParentTypeName = g.Key.Name,
                                   SubTypeId = g.Key.DevelopType.Id,
                                   SubTypeName = g.Key.DevelopType.Name,
                                   ClickCount = g.Sum(s => s.ClickCount),
                               }).ToListAsync();
+
             }
         }
     }

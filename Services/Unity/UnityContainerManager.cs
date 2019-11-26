@@ -1,7 +1,4 @@
 ﻿using Unity;
-using Unity.Interception;
-using Unity.Interception.ContainerIntegration;
-using Unity.Interception.Interceptors.InstanceInterceptors.InterfaceInterception;
 
 namespace Services.Unity
 {
@@ -13,7 +10,7 @@ namespace Services.Unity
         static UnityContainerManager()
         {
             // 注册接口实现
-            UnityContainer = new UnityContainer().AddNewExtension<Interception>()
+            UnityContainer = new UnityContainer()
                 .RegisterType<IUnityUserFacade, UnityUserFacade>()
                 .RegisterType<IUnityDevelopPowerFunFacade, UnityDevelopPowerFunFacade>()
                 .RegisterType<IUnityDevelopRecordFacade, UnityDevelopRecordFacade>()
@@ -21,13 +18,6 @@ namespace Services.Unity
                 .RegisterType<IUnityStatisticsFacade, UnityStatisticsFacade>()
                 .RegisterType<IUnityDevelopFunFacade, UnityDevelopFunFacade>();
 
-            // 拦截接口
-            UnityContainer.Configure<Interception>().SetInterceptorFor<IUnityUserFacade>(new InterfaceInterceptor());
-            UnityContainer.Configure<Interception>().SetInterceptorFor<IUnityDevelopPowerFunFacade>(new InterfaceInterceptor());
-            UnityContainer.Configure<Interception>().SetInterceptorFor<IUnityDevelopRecordFacade>(new InterfaceInterceptor());
-            UnityContainer.Configure<Interception>().SetInterceptorFor<IUnityDevelopTypeFacade>(new InterfaceInterceptor());
-            UnityContainer.Configure<Interception>().SetInterceptorFor<IUnityStatisticsFacade>(new InterfaceInterceptor());
-            UnityContainer.Configure<Interception>().SetInterceptorFor<IUnityDevelopFunFacade>(new InterfaceInterceptor());
         }
         /// <summary>
         /// Unity容器
@@ -49,17 +39,18 @@ namespace Services.Unity
         #endregion
 
         #region 数据接口层
-        public static IUnityDevelopFunFacade UnityDevelopFunFacade => GetUnityFacade<IUnityDevelopFunFacade>();
+        public static IUnityDevelopFunFacade UnityDevelopFunFacade => GetUnityFacade<UnityDevelopFunFacade>();
 
-        public static IUnityDevelopPowerFunFacade UnityDevelopPowerFunFacade => GetUnityFacade<IUnityDevelopPowerFunFacade>();
+        public static IUnityDevelopPowerFunFacade UnityDevelopPowerFunFacade => GetUnityFacade<UnityDevelopPowerFunFacade>();
 
-        public static IUnityDevelopRecordFacade UnityDevelopRecordFacade => GetUnityFacade<IUnityDevelopRecordFacade>();
+        public static IUnityDevelopRecordFacade UnityDevelopRecordFacade => GetUnityFacade<UnityDevelopRecordFacade>();
 
-        public static IUnityDevelopTypeFacade UnityDevelopTypeFacade => GetUnityFacade<IUnityDevelopTypeFacade>();
+        public static IUnityDevelopTypeFacade UnityDevelopTypeFacade => GetUnityFacade<UnityDevelopTypeFacade>();
 
-        public static IUnityStatisticsFacade UnityStatisticsFacade => GetUnityFacade<IUnityStatisticsFacade>();
+        public static IUnityStatisticsFacade UnityStatisticsFacade => GetUnityFacade<UnityStatisticsFacade>();
 
-        public static IUnityUserFacade UnityUserFacade => GetUnityFacade<IUnityUserFacade>();
+        public static IUnityUserFacade UnityUserFacade => GetUnityFacade<UnityUserFacade>();
+
         #endregion
 
     }

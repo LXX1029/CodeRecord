@@ -21,7 +21,6 @@ namespace DataEntitys
         public DateTime UpdatedTime { get; set; } = DateTime.Now;
         public byte[] Picture { get; set; }
         public byte[] Zip { get; set; }
-        [Timestamp]
         public byte[] RowVersion { get; set; }
         public int UserId { get; set; }
         [ForeignKey("UserId")]

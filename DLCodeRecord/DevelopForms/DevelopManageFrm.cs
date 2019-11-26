@@ -396,6 +396,7 @@ namespace DLCodeRecord.DevelopForms
         {
             if (_timer.Enabled)
                 _timer.Stop();
+            this.Hide();
             Application.Exit();
         }
         /// <summary>
@@ -716,7 +717,7 @@ namespace DLCodeRecord.DevelopForms
                 }
                 if (id == (int)DevelopFunCaptions.DevelopSetting)
                 {
-                    DevelopSettingFrm frm = new DevelopSettingFrm();
+                    var frm = new DevelopSettingFrm();
                     if (!IsExistForm(frm))
                         ShowForm(frm);
                 }
@@ -785,12 +786,12 @@ namespace DLCodeRecord.DevelopForms
                     if (TotalCount > 0)
                         frm?.Show();
                 }));
-
-                await Task.Run(async () =>
+                //int count = 0;
+                for (int i = 0; i < TotalPagerCount; i++)
                 {
-                    for (int i = 0; i < TotalPagerCount; i++)
+                    if (cts.IsCancellationRequested) break;
+                    await Task.Run(async () =>
                     {
-                        if (cts.IsCancellationRequested) break;
                         int pageIndex = i;
                         IList<DevelopRecordEntity> entitys = await UnityDevelopRecordFacade.GetDevelopRecordListByPager(pageIndex, StepCount).ConfigureAwait(false);
                         int entityCount = entitys.Count();
@@ -803,9 +804,12 @@ namespace DLCodeRecord.DevelopForms
                             if (frm.Visible == false)
                                 frm.ShowDialog();
                         }));
-                        await Task.Delay(10);
-                    }
-                }, cts);
+
+                        //await Task.Delay(10);
+                    }, cts);
+                    //Interlocked.Increment(ref count);
+                }
+
                 this.BeginInvoke(new Action(() =>
                 {
                     frm.Close();
@@ -861,6 +865,7 @@ namespace DLCodeRecord.DevelopForms
                     {
                         _dataManage.DevelopRecordEntityList.Remove(entity);
                         MsgHelper.ShowInfo(PromptHelper.D_DELETE_SUCCESS);
+
                     }
                     else
                     {
