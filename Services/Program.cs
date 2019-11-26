@@ -13,7 +13,7 @@ namespace Services
                 Console.WriteLine("开始迁移数据库");
                 using (var context = new RecordContext())
                 {
-                    //context.Database.Initialize(true);
+                    context.Database.Initialize(true);
                     Console.WriteLine("数据库迁移完毕");
                 }
 

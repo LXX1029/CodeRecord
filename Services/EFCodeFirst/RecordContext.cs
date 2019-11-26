@@ -12,13 +12,19 @@ namespace Services.EFCodeFirst
         public RecordContext()
           : base($"name={(GetConfigurationKeyValue("IsUsedSqlite") == "1" ? GetConfigurationKeyValue("SqliteName") : GetConfigurationKeyValue("SqlserverName"))}")
         {
-            if (Common.UtilityHelper.GetConfigurationKeyValue("IsUsedSqlite") == "1")
+            // 判断是否已经进行了Migrate操作
+            var isInitializer = GetConfigurationKeyValue("IsInitializer");
+            if (isInitializer == "0")
             {
-                Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, SqliteConfiguration>());
-            }
-            else
-            {
-                Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, SqlserverConfiguration>());
+                if (GetConfigurationKeyValue("IsUsedSqlite") == "1")
+                {
+                    Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, SqliteConfiguration>());
+                }
+                else
+                {
+                    Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, SqlserverConfiguration>());
+                }
+                SetConfigurationKeyValue("IsInitializer", "1");
             }
         }
 
