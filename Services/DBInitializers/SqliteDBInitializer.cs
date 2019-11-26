@@ -14,12 +14,11 @@ using SQLite.CodeFirst;
 
 namespace Services.Migrations
 {
-    public sealed class SqliteConfiguration : DbMigrationsConfiguration<RecordContext>
+    public sealed class SqliteDBInitializer : DbMigrationsConfiguration<RecordContext>
     {
-        public SqliteConfiguration()
+        public SqliteDBInitializer()
         {
             AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
             SetSqlGenerator("System.Data.SQLite", new SQLiteMigrationSqlGenerator());
         }
 

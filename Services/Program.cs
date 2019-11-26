@@ -11,16 +11,12 @@ namespace Services
             {
                 /*自动进行数据库迁移*/
                 Console.WriteLine("开始迁移数据库");
-                using (RecordContext recordContext = new RecordContext())
+                using (var context = new RecordContext())
                 {
-                    if (!recordContext.Database.Exists())
-                    {
-                        recordContext.Database.Create();
-                    }
-
-                    recordContext.Database.Initialize(true);
+                    //context.Database.Initialize(true);
                     Console.WriteLine("数据库迁移完毕");
                 }
+
             }
             catch (Exception ex)
             {

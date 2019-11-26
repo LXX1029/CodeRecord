@@ -100,7 +100,7 @@
   <ItemGroup>
     <Compile Include="EFCodeFirst\DevelopConfiguration.cs" />
     <Compile Include="EFCodeFirst\RecordContext.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\SqlserverConfiguration.cs" />
     <Compile Include="Migrations\SqliteConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

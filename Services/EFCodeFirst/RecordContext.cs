@@ -4,14 +4,23 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using DataEntitys;
 using Services.Migrations;
 using SQLite.CodeFirst;
-
+using static Common.UtilityHelper;
 namespace Services.EFCodeFirst
 {
     public class RecordContext : DbContext
     {
         public RecordContext()
-          : base($"name={(Common.UtilityHelper.GetConfigurationKeyValue("IsUsedSqlite") == "1" ? "RecordDbSqlite" : "SqlServerConnectionString")}")
-        { }
+          : base($"name={(GetConfigurationKeyValue("IsUsedSqlite") == "1" ? GetConfigurationKeyValue("SqliteName") : GetConfigurationKeyValue("SqlserverName"))}")
+        {
+            if (Common.UtilityHelper.GetConfigurationKeyValue("IsUsedSqlite") == "1")
+            {
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, SqliteConfiguration>());
+            }
+            else
+            {
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, SqlserverConfiguration>());
+            }
+        }
 
         public new Database Database
         {
@@ -29,15 +38,11 @@ namespace Services.EFCodeFirst
             modelBuilder.Configurations.Add(new DevelopFunConfiguration());
             modelBuilder.Configurations.Add(new DevelopRecordConfiguration());
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-            if (Common.UtilityHelper.GetConfigurationKeyValue("IsUsedSqlite") == "1")
-            {
-                Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, SqliteConfiguration>());
-            }
-            else
+            if (Common.UtilityHelper.GetConfigurationKeyValue("IsUsedSqlite") == "0")
             {
                 modelBuilder.Entity<DevelopUser>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion().IsConcurrencyToken();
                 modelBuilder.Entity<DevelopRecord>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion().IsConcurrencyToken();
-                Database.SetInitializer(new MigrateDatabaseToLatestVersion<RecordContext, Configuration>());
+
             }
             base.OnModelCreating(modelBuilder);
         }
