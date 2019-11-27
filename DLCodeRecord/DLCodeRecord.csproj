@@ -46,7 +46,7 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -240,6 +240,10 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="RisCaptureLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dll\RisCaptureLib.dll</HintPath>
+    </Reference>
     <Reference Include="ScintillaNet, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="SQLite.CodeFirst, Version=1.5.3.29, Culture=neutral, PublicKeyToken=eb96ba0a78d831a7, processorArchitecture=MSIL">
       <HintPath>..\packages\SQLite.CodeFirst.1.5.3.29\lib\net45\SQLite.CodeFirst.dll</HintPath>
@@ -490,10 +494,6 @@
       <Project>{d8cd2b4c-15e7-40e6-a8fc-a8f1424d6dca}</Project>
       <Name>DataEntitys</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RisCaptureLib\RisCaptureLib.csproj">
-      <Project>{AD485D02-C843-4A2A-8046-AC3BC8218849}</Project>
-      <Name>RisCaptureLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Services\DataServices.csproj">
       <Project>{872F8107-0ADD-459E-A208-46A5F90EFFD8}</Project>
       <Name>DataServices</Name>
@@ -650,6 +650,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Dll\DevExpress.XtraTreeList.v15.2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Dll\RisCaptureLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Images\Bug.ico">
