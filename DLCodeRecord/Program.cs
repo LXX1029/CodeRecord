@@ -26,6 +26,7 @@ namespace DLCodeRecord
             //    }
             //    recordContext.Database.Initialize(true);
             //}
+            log4net.Config.XmlConfigurator.Configure();
 
             // 创建新的地方化culture
             // zh-Hans 文件夹在Debug或者Release文件夹下
