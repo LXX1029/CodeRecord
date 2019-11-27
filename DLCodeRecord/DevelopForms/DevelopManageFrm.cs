@@ -280,6 +280,9 @@ namespace DLCodeRecord.DevelopForms
             this.gvDevelop.FocusedRowChanged -= GvDevelop_FocusedRowChanged;
             this.gvDevelop.FocusedRowChanged += GvDevelop_FocusedRowChanged;
             this.gcDevelop.DataBindings.Add("DataSource", _dataManage, "DevelopRecordEntityList", true, DataSourceUpdateMode.OnPropertyChanged, "暂无数据");
+
+            _dataManage.DevelopRecordEntityList.ListChanged -= DevelopRecordEntityList_ListChanged;
+            _dataManage.DevelopRecordEntityList.ListChanged += DevelopRecordEntityList_ListChanged;
             #endregion 构建columns
 
             #region 构建菜单项,显示当前用户
@@ -311,6 +314,24 @@ namespace DLCodeRecord.DevelopForms
             sw.Stop();
             Console.WriteLine("=======" + sw.ElapsedMilliseconds);
             _timer.Start();
+        }
+
+        /// <summary>
+        /// 集合改变
+        /// </summary>
+        private void DevelopRecordEntityList_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType == ListChangedType.ItemChanged)
+            {
+                gcDevelop.RefreshDataSource();
+                gvDevelop.FocusedRowHandle = this.SelectedRowIndex;
+            }
+            else if (e.ListChangedType == ListChangedType.ItemAdded)
+            {
+                gcDevelop.RefreshDataSource();
+                gvDevelop.FocusedRowHandle = 0;
+                this.Activate();
+            }
         }
 
         /// <summary>
@@ -673,17 +694,6 @@ namespace DLCodeRecord.DevelopForms
                         StartPosition = FormStartPosition.CenterParent,
                     };
                     addFrm.ShowDialog();
-                    _dataManage.DevelopRecordEntityList.AddingNew += (m, n) =>
-                    {
-                        gcDevelop.RefreshDataSource();
-                        gvDevelop.FocusedRowHandle = 0;
-                        this.Activate();
-                    };
-                    _dataManage.DevelopRecordEntityList.ListChanged += (m, n) =>
-                    {
-                        gcDevelop.RefreshDataSource();
-                        gvDevelop.FocusedRowHandle = 0;
-                    };
                 }
                 if (id == (int)DevelopFunCaptions.DevelopTypeAdd)
                 {
@@ -881,7 +891,10 @@ namespace DLCodeRecord.DevelopForms
         #endregion 删除事件
 
         #region 修改事件
-
+        /// <summary>
+        /// 当前选中行索引
+        /// </summary>
+        private int SelectedRowIndex { get; set; }
         /// <summary>
         /// 修改
         /// </summary>
@@ -890,8 +903,9 @@ namespace DLCodeRecord.DevelopForms
             if (HandleVerify() == false) return;
             if (this.gvDevelop.GetFocusedRow() is DevelopRecordEntity entity)
             {
-                DevelopFrm frm = new DevelopFrm(entity) { Owner = this };
-                frm.Show();
+                this.SelectedRowIndex = this.gvDevelop.FocusedRowHandle;
+                var frm = new DevelopFrm(entity) { Owner = this };
+                frm.ShowDialog();
                 this.Activate();
             }
         }

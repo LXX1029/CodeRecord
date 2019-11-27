@@ -53,10 +53,17 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         public List<DevelopPowerFun> DevelopPowerFunList { get; set; } = new List<DevelopPowerFun>();
 
+        private BindingList<DevelopRecordEntity> _developRecordEntityList;
         /// <summary>
         /// 记录数据集合
         /// </summary>
-        public BindingList<DevelopRecordEntity> DevelopRecordEntityList { get; set; } = new BindingList<DevelopRecordEntity>();
+        public BindingList<DevelopRecordEntity> DevelopRecordEntityList
+        {
+            get
+            {
+                return _developRecordEntityList ?? (_developRecordEntityList = new BindingList<DevelopRecordEntity>());
+            }
+        }
 
         /// <summary>
         /// 用户集合

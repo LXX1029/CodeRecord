@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using Common;
 namespace DataEntitys
@@ -6,7 +7,7 @@ namespace DataEntitys
     /// <summary>
     /// 记录类
     /// </summary>
-    public class DevelopRecordEntity
+    public class DevelopRecordEntity : INotifyPropertyChanged
     {
         public DevelopRecordEntity()
         { }
@@ -46,10 +47,25 @@ namespace DataEntitys
         /// </summary>
         public DateTime? UpdatedTime { get; set; } = default(DateTime);
 
+        private string _desc;
         /// <summary>
         /// 描述
         /// </summary>
-        public string Desc { get; set; }
+        public string Desc
+        {
+            get
+            {
+                return _desc;
+            }
+            set
+            {
+                if (_desc != value)
+                {
+                    _desc = value;
+                    NotifyPropertyChanged("Desc");
+                }
+            }
+        }
 
         /// <summary>
         /// 记录Id
@@ -88,5 +104,12 @@ namespace DataEntitys
         /// 添加记录的用户名称
         /// </summary>
         public string UserName { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string info)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
+        }
     }
 }
