@@ -136,7 +136,10 @@ namespace DLCodeRecord.DevelopForms
             if (actionState != DevelopActiveState.Normal)
                 actionState = DevelopActiveState.Normal;
             Logger.Error("BaseFrm", ex);
-            MsgHelper.ShowError("操作出错");
+            if (ex.GetType() != typeof(OperationCanceledException))
+            {
+                //MsgHelper.ShowError("操作出错");
+            }
         }
 
         /// <summary>

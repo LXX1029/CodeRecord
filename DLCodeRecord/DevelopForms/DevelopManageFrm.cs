@@ -310,9 +310,9 @@ namespace DLCodeRecord.DevelopForms
             OnCloseLoginFrmHandler();
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-            LoadDevelopRecord();
+            await LoadDevelopRecord(CancellationToken.None);
             sw.Stop();
-            Console.WriteLine("=======" + sw.ElapsedMilliseconds);
+            Console.WriteLine($"loaded time:{sw.ElapsedMilliseconds}");
             _timer.Start();
         }
 
@@ -736,7 +736,7 @@ namespace DLCodeRecord.DevelopForms
                 if (id == (int)DevelopFunCaptions.DevelopDelete)
                     await Delete();
                 if (id == (int)DevelopFunCaptions.ReLoadData)
-                    ReLoadData();
+                    await ReLoadData();
                 if (id == (int)DevelopFunCaptions.Exist)
                     this.Close();
                 if (id == (int)DevelopFunCaptions.Print)
@@ -762,96 +762,86 @@ namespace DLCodeRecord.DevelopForms
 
         #region 数据加载方法
         // 加载数据方法
-        private async void LoadDevelopRecord()
+        private async Task LoadDevelopRecord(CancellationToken cts)
         {
             // 查询重新刷新按钮
             BarItem item = this.ribbonControl1.Items.FindById(501);
-            if (item != null)
-                item.Enabled = false;
+            //if (item != null)
+            //    item.Enabled = false;
             // 初始化取消操作标识
-            CancellationTokenSource source = new CancellationTokenSource();
-            CancellationToken cts = source.Token;
             cts.Register(() =>
             {
-                source?.Dispose();
-                this.Close();
-                Application.Exit();
+                Console.WriteLine("##cancell");
             });
             WaitingFrm frm = null;
-
+            _dataManage.DevelopRecordEntityList.Clear();
             try
             {
-                _dataManage.DevelopRecordEntityList.Clear();
-
-                TotalCount = await UnityDevelopRecordFacade.GetDevelopRecordListCount();
-                PagerCount = TotalCount / StepCount;
-                TotalPagerCount = (TotalCount % StepCount) > 0 ? PagerCount + 1 : PagerCount;
-                // 显示进度窗体
-                frm = new WaitingFrm(TotalPagerCount)
+                await Task.Run(async () =>
                 {
-                    Owner = this,
-                };
-                this.BeginInvoke(new Action(() =>
-                {
-                    if (TotalCount > 0)
-                        frm?.Show();
-                }));
-                //int count = 0;
-                for (int i = 0; i < TotalPagerCount; i++)
-                {
-                    if (cts.IsCancellationRequested) break;
-                    await Task.Run(async () =>
+                    TotalCount = await UnityDevelopRecordFacade.GetDevelopRecordListCount().ConfigureAwait(false);
+                    PagerCount = TotalCount / StepCount;
+                    TotalPagerCount = (TotalCount % StepCount) > 0 ? PagerCount + 1 : PagerCount;
+                    this.BeginInvoke(new Action(() =>
                     {
+                        frm = new WaitingFrm(TotalPagerCount)
+                        {
+                            Owner = this,
+                        };
+                    }));
+
+                    for (int i = 0; i < TotalPagerCount; i++)
+                    {
+                        if (cts.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                        var result = await UnityDevelopRecordFacade.GetDevelopRecordListByPager(i, StepCount).ConfigureAwait(false);
                         int pageIndex = i;
-                        IList<DevelopRecordEntity> entitys = await UnityDevelopRecordFacade.GetDevelopRecordListByPager(pageIndex, StepCount).ConfigureAwait(false);
-                        int entityCount = entitys.Count();
-                        this.BeginInvoke(new Action(() =>
+                        Console.WriteLine($"PageIndex:{pageIndex}");
+                        Console.WriteLine($"result:{result.Count}");
+                        this.Invoke(new Action(() =>
                         {
                             frm.Percent = pageIndex + 1;
-                            for (int j = 0; j < entityCount; j++)
-                                _dataManage.DevelopRecordEntityList.Add(entitys[j]);
-                            entitys.Clear();
+                            Console.WriteLine($"frm.Percent:{frm.Percent}");
                             if (frm.Visible == false)
-                                frm.ShowDialog();
+                                frm.Show();
+                            for (int j = 0; j < result.Count; j++)
+                            {
+                                if (cts.IsCancellationRequested)
+                                {
+                                    break;
+                                }
+                                _dataManage.DevelopRecordEntityList.Add(result[j]);
+                            }
+                            Console.WriteLine($"DevelopRecordEntityList:{_dataManage.DevelopRecordEntityList.Count}");
                         }));
-
-                        //await Task.Delay(10);
-                    }, cts);
-                    //Interlocked.Increment(ref count);
-                }
-
-                this.BeginInvoke(new Action(() =>
-                {
-                    frm.Close();
-                }));
-                if (item != null)
-                    item.Enabled = true;
+                    }
+                    this.Invoke(new Action(() =>
+                    {
+                        frm?.Close();
+                    }));
+                }, cts);
             }
             catch (Exception ex)
             {
                 CatchException(ex);
                 frm?.Close();
                 _dataManage?.DevelopRecordEntityList.Clear();
-                source?.Cancel();
-            }
-            finally
-            {
-                source?.Dispose();
             }
         }
-
         #endregion 数据加载方法 async await
 
         #region 重新加载
-
+        private CancellationTokenSource _source = new CancellationTokenSource();
         /// <summary>
         /// 重新加载数据
         /// </summary>
-        private void ReLoadData()
+        private async Task ReLoadData()
         {
             this.gvDevelop.FindFilterText = string.Empty;
-            _dataManage?.DevelopRecordEntityList.Clear();
-            LoadDevelopRecord();
+            Interlocked.Exchange(ref _source, new CancellationTokenSource()).Cancel();
+            await LoadDevelopRecord(_source.Token);
         }
 
         #endregion 重新加载
