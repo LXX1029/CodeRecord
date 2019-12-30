@@ -765,13 +765,12 @@ namespace DLCodeRecord.DevelopForms
         private async Task LoadDevelopRecord(CancellationToken cts)
         {
             // 查询重新刷新按钮
-            BarItem item = this.ribbonControl1.Items.FindById(501);
+            //BarItem item = this.ribbonControl1.Items.FindById(501);
             //if (item != null)
             //    item.Enabled = false;
-            // 初始化取消操作标识
             cts.Register(() =>
             {
-                Console.WriteLine("##cancell");
+                Console.WriteLine("##cancel");
             });
             WaitingFrm frm = null;
             _dataManage.DevelopRecordEntityList.Clear();
@@ -789,7 +788,6 @@ namespace DLCodeRecord.DevelopForms
                             Owner = this,
                         };
                     }));
-
                     for (int i = 0; i < TotalPagerCount; i++)
                     {
                         if (cts.IsCancellationRequested)
@@ -799,7 +797,7 @@ namespace DLCodeRecord.DevelopForms
                         var result = await UnityDevelopRecordFacade.GetDevelopRecordListByPager(i, StepCount).ConfigureAwait(false);
                         int pageIndex = i;
                         Console.WriteLine($"PageIndex:{pageIndex}");
-                        Console.WriteLine($"result:{result.Count}");
+                        Console.WriteLine($"Result:{result.Count}");
                         this.Invoke(new Action(() =>
                         {
                             frm.Percent = pageIndex + 1;

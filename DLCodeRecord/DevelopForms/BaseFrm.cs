@@ -138,7 +138,7 @@ namespace DLCodeRecord.DevelopForms
             Logger.Error("BaseFrm", ex);
             if (ex.GetType() != typeof(OperationCanceledException))
             {
-                //MsgHelper.ShowError("操作出错");
+                MsgHelper.ShowError("操作出错");
             }
         }
 
