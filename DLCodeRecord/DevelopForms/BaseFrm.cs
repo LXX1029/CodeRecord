@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Castle.Windsor;
 using Common;
+using DataEntitys;
 using DevExpress.XtraEditors;
 using log4net;
+using Services.CastleWindsor;
+using Services.Repositories;
+using Services.Unity;
 using static Common.ExceptionHelper;
 using static Common.UtilityHelper;
 namespace DLCodeRecord.DevelopForms
@@ -20,6 +25,7 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         protected DevelopActiveState actionState = DevelopActiveState.Normal;
         protected static ILog Logger => LogManager.GetLogger("BaseFrm");
+        //pro
         #endregion Protected Fields
 
         #region Public Constructors
@@ -27,6 +33,19 @@ namespace DLCodeRecord.DevelopForms
         public BaseFrm()
         {
             InitializeComponent();
+
+            var container = new WindsorContainer();
+            container.Install(new WindSorInstaller());
+            // 方法1
+            var userService = container.Resolve<IUserService>();
+
+            // 方法2 通过工厂获取,只能调用Repository中的方法，不能调用扩展方法
+            //var factory = container.Resolve<IServiceFactory>();
+            //var userService = factory.Create<IUserService>();
+
+            // 方法3 通过named获取,只能调用Repository中的方法，不能调用扩展方法
+            //var factory = container.Resolve<IServiceFactory>();
+            //var recordService = factory.GetDevelopRecordService();
             try
             {
                 this.MaximizeBox = true;

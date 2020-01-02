@@ -8,6 +8,7 @@ using DevExpress.XtraEditors;
 using DevExpress.XtraTreeList.Nodes;
 using static Common.VerifyHelper;
 using static Services.Unity.UnityContainerManager;
+
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -16,6 +17,7 @@ namespace DLCodeRecord.DevelopForms
     public partial class DevelopTypeAddFrm : BaseFrm
     {
         #region 构造函数
+
         public DevelopTypeAddFrm()
         {
             InitializeComponent();
@@ -37,25 +39,31 @@ namespace DLCodeRecord.DevelopForms
             this.txtRoot.TextChanged += Txt_TextChanged;
             this.txtChild.TextChanged -= Txt_TextChanged;
             this.txtChild.TextChanged += Txt_TextChanged;
+
             #endregion 初始化设置
 
             #region 窗体加载/关闭
+
             this.Load -= DevelopTypeAddFrm_Load;
             this.Load += DevelopTypeAddFrm_Load;
             this.FormClosing -= DevelopTypeAddFrm_FormClosing;
             this.FormClosing += DevelopTypeAddFrm_FormClosing;
+
             #endregion 窗体加载/关闭
         }
-        #endregion
+
+        #endregion 构造函数
 
         #region 版块信息文本改变
+
         private void Txt_TextChanged(object sender, EventArgs e)
         {
             TextEdit te = (TextEdit)sender;
             if (actionState != DevelopActiveState.Adding && !IsEmptyOrNullOrWhiteSpace(te.Text))
                 actionState = DevelopActiveState.Adding;
         }
-        #endregion
+
+        #endregion 版块信息文本改变
 
         #region 窗口加载事件
 
@@ -72,8 +80,10 @@ namespace DLCodeRecord.DevelopForms
         #endregion 窗口加载事件
 
         #region 窗口关闭
+
         private void DevelopTypeAddFrm_FormClosing(object sender, FormClosingEventArgs e) => FormClosingTip(e);
-        #endregion
+
+        #endregion 窗口关闭
 
         #region 选择项改变，设置对象到按钮
 
@@ -104,6 +114,7 @@ namespace DLCodeRecord.DevelopForms
                 CatchLoadException(this, ex);
             }
         }
+
         #endregion 加载大小板块
 
         #region 添加大版块
@@ -215,6 +226,7 @@ namespace DLCodeRecord.DevelopForms
         #endregion 添加子版块
 
         #region 删除节点
+
         /// <summary>
         /// 删除事件
         /// </summary>
@@ -256,9 +268,11 @@ namespace DLCodeRecord.DevelopForms
                 CatchException(ex);
             }
         }
+
         #endregion 删除节点
 
         #region 修改节点
+
         private async void btnEdit_Click(object sender, EventArgs e)
         {
             try
@@ -322,6 +336,7 @@ namespace DLCodeRecord.DevelopForms
         #endregion 启动修改功能
 
         #region 选中节点
+
         /// <summary>
         /// 选中节点
         /// </summary>
@@ -334,6 +349,7 @@ namespace DLCodeRecord.DevelopForms
             tln.Checked = true;
             tln.ExpandAll();
         }
-        #endregion
+
+        #endregion 选中节点
     }
 }
