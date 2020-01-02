@@ -12,7 +12,7 @@ namespace Services.CastleWindsor
     /// <summary>
     /// 用户模块数据层
     /// </summary>
-    public class DevelopUserService : Repository, IUserService
+    public sealed class DevelopUserService : Repository, IUserService
     {
         /// <summary>
         /// 获取用户
