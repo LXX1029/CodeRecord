@@ -1,6 +1,4 @@
-﻿using DataEntitys;
-using Services.Repositories;
-using Unity;
+﻿using Unity;
 
 namespace Services.Unity
 {
@@ -19,7 +17,6 @@ namespace Services.Unity
                 .RegisterType<IUnityDevelopTypeFacade, UnityDevelopTypeFacade>()
                 .RegisterType<IUnityStatisticsFacade, UnityStatisticsFacade>()
                 .RegisterType<IUnityDevelopFunFacade, UnityDevelopFunFacade>();
-            // .RegisterType(typeof(IRepository<>), typeof(Repository<>));
 
         }
         /// <summary>
