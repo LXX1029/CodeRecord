@@ -64,9 +64,10 @@ namespace Services.Repositories
                         await context.SaveChangesAsync();
                         trans.Commit();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         trans.Rollback();
+                        throw ex;
                     }
                 }
                 return t;
@@ -93,9 +94,10 @@ namespace Services.Repositories
                         affectedRows = await context.SaveChangesAsync();
                         trans.Commit();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         trans.Rollback();
+                        throw ex;
                     }
                 }
             }
@@ -120,9 +122,10 @@ namespace Services.Repositories
                         affectedRows = await context.SaveChangesAsync();
                         trans.Commit();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         trans.Rollback();
+                        throw ex;
                     }
                 }
             }

@@ -95,14 +95,6 @@ namespace DLCodeRecord.DevelopForms
             this.btnSelectImg.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
             this.btnZipPath.ErrorIconAlignment = ErrorIconAlignment.MiddleRight;
         }
-
-        #region 代码编辑改变
-        private void Scintilla_TextChanged(object sender, EventArgs e)
-        {
-            //DevelopRecordEntity.Desc = codeEditor.Scintilla.Text.Trim();
-        }
-        #endregion
-
         /// <summary>
         /// 修改操作构造函数
         /// </summary>
@@ -136,6 +128,13 @@ namespace DLCodeRecord.DevelopForms
             }
         }
         #endregion 构造函数
+
+        #region 代码编辑改变
+        private void Scintilla_TextChanged(object sender, EventArgs e)
+        {
+            DevelopRecordEntity.Desc = codeEditor.Scintilla.Text.Trim();
+        }
+        #endregion
 
         #region 初始化数据
 
@@ -329,47 +328,51 @@ namespace DLCodeRecord.DevelopForms
                 DateTime editTime = DateTime.Now;
                 if (this.LocalDevelopRecord == null)
                     this.LocalDevelopRecord = new DevelopRecord();
-                DevelopRecordEntity.Title = title;
-                DevelopRecordEntity.Desc = codeEditor.Scintilla.Text.Trim();
-                DevelopRecordEntity.Picture = ConvertImgToByte(picImg.Image);
+                string desc = codeEditor.Scintilla.Text.Trim();
+                byte[] picture = ConvertImgToByte(picImg.Image);
+                string subTypeName = string.Empty;
+                string parentTypeName = string.Empty;
+
                 if (rdioGChildType.SelectedIndex != -1)
-                    DevelopRecordEntity.SubTypeName = rdioGChildType.Properties.Items[rdioGChildType.SelectedIndex].Description;
+                    subTypeName = rdioGChildType.Properties.Items[rdioGChildType.SelectedIndex].Description;
                 if (rgParentType.SelectedIndex != -1)
-                    DevelopRecordEntity.ParentTypeName = rgParentType.Properties.Items[rgParentType.SelectedIndex].Description;
-                DevelopRecordEntity.UpdatedTime = editTime;
+                    parentTypeName = rgParentType.Properties.Items[rgParentType.SelectedIndex].Description;
 
-                this.LocalDevelopRecord.Title = DevelopRecordEntity.Title;
-                this.LocalDevelopRecord.Desc = DevelopRecordEntity.Desc;
+                this.LocalDevelopRecord.Title = title;
+                this.LocalDevelopRecord.Desc = desc;
                 this.LocalDevelopRecord.TypeId = DevelopRecordEntity.SubTypeId;
-
                 this.LocalDevelopRecord.UpdatedTime = editTime;
-                this.LocalDevelopRecord.Picture = DevelopRecordEntity.Picture;
+                this.LocalDevelopRecord.Picture = picture;
                 this.LocalDevelopRecord.UserId = DataManage.LoginUser.Id;
+
                 if (rgParentType.SelectedIndex == -1)
                     rgParentType.SelectedIndex = 0;
                 if (rdioGChildType.SelectedIndex == -1)
                     rdioGChildType.SelectedIndex = 0;
-
+                if (!VerifyHelper.IsEmptyOrNullOrWhiteSpace(zipPath))
+                {
+                    this.LocalDevelopRecord.Zip = ConvertFileToByte(zipPath);
+                }
                 if (actionState == DevelopActiveState.Updating)
                 {
-                    // 判断是否修改压缩包
-                    if (!VerifyHelper.IsEmptyOrNullOrWhiteSpace(zipPath))
-                    {
-                        this.LocalDevelopRecord.Zip = ConvertFileToByte(zipPath);
-                    }
                     await UnityDevelopRecordFacade.UpdateEntity(this.LocalDevelopRecord);
+                    DevelopRecordEntity.Title = title;
+                    DevelopRecordEntity.Desc = desc;
+                    DevelopRecordEntity.Picture = picture;
+                    DevelopRecordEntity.SubTypeName = subTypeName;
+                    DevelopRecordEntity.ParentTypeName = parentTypeName;
+                    DevelopRecordEntity.UpdatedTime = editTime;
+
                     MsgHelper.ShowInfo(PromptHelper.D_UPDATE_SUCCESS);
                     CloseNormal();
                 }
                 else if (actionState == DevelopActiveState.Adding)
                 {
-                    // 新增
-                    DevelopRecordEntity.UserName = DataManage.LoginUser.Name;
-                    DevelopRecordEntity.CreatedTime = editTime;
-                    this.LocalDevelopRecord.Zip = ConvertFileToByte(this.btnZipPath.Text.Trim());
                     this.LocalDevelopRecord.CreatedTime = editTime;
                     DevelopRecord record = await UnityDevelopRecordFacade.AddEntity(this.LocalDevelopRecord);
                     DevelopRecordEntity.Id = record.Id;
+                    DevelopRecordEntity.UserName = DataManage.LoginUser.Name;
+                    DevelopRecordEntity.CreatedTime = editTime;
                     // 添加到集合首行
                     DataManage.Instance.DevelopRecordEntityList.Insert(0, new DevelopRecordEntity
                     {
@@ -404,8 +407,6 @@ namespace DLCodeRecord.DevelopForms
                         this.picImg.Reset();
                         this.picImg.EditValue = null;
                         this.btnZipPath.ResetText();
-                        //this.txtTitle.DataBindings[0].ReadValue();
-                        //this.picImg.DataBindings[0].ReadValue();
                         SetDescValue();
                         actionState = DevelopActiveState.Adding;
                     }
