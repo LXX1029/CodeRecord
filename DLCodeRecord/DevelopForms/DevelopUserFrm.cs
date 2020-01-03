@@ -53,8 +53,8 @@ namespace DLCodeRecord.DevelopForms
             this.Load += DevelopUserFrm_Load;
             this.FormClosing -= DevelopUserFrm_FormClosing;
             this.FormClosing += DevelopUserFrm_FormClosing;
-            this.btnDelete.DoubleClick += (m, n) =>
-            {};
+            //this.btnDelete.DoubleClick += (m, n) =>
+            //{};
         }
         #endregion
 
