@@ -18,16 +18,7 @@ namespace DLCodeRecord
         [STAThread]
         private static void Main()
         {
-            //using (RecordContext recordContext = new RecordContext())
-            //{
-            //    if (!recordContext.Database.Exists())
-            //    {
-            //        recordContext.Database.Create();
-            //    }
-            //    recordContext.Database.Initialize(true);
-            //}
             log4net.Config.XmlConfigurator.Configure();
-
             // 创建新的地方化culture
             // zh-Hans 文件夹在Debug或者Release文件夹下
             CultureInfo culture = CultureInfo.CreateSpecificCulture("zh-Hans");

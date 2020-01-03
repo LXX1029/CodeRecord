@@ -180,19 +180,5 @@ namespace DLCodeRecord.DevelopForms
             origionEvent += targetEvent;
         }
         #endregion
-
-        #region 数据接口层
-        // protected virtual IUnityDevelopFunFacade UnityDevelopFunFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopFunFacade>();
-
-        // protected virtual IUnityDevelopPowerFunFacade UnityDevelopPowerFunFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopPowerFunFacade>();
-
-        // protected virtual IUnityDevelopRecordFacade UnityDevelopRecordFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopRecordFacade>();
-
-        // protected virtual IUnityDevelopTypeFacade UnityDevelopTypeFacade => UnityContainerManager.GetUnityFacade<IUnityDevelopTypeFacade>();
-
-        // protected virtual IUnityStatisticsFacade UnityStatisticsFacade => UnityContainerManager.GetUnityFacade<IUnityStatisticsFacade>();
-
-        // protected virtual IUnityUserFacade UnityUserFacade => UnityContainerManager.GetUnityFacade<IUnityUserFacade>();
-        #endregion
     }
 }
