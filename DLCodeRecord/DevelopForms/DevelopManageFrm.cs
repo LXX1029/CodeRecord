@@ -764,16 +764,22 @@ namespace DLCodeRecord.DevelopForms
         // 加载数据方法
         private async Task LoadDevelopRecord(CancellationToken cts)
         {
-            // 查询重新刷新按钮
-            //BarItem item = this.ribbonControl1.Items.FindById(501);
-            //if (item != null)
-            //    item.Enabled = false;
-            cts.Register(() =>
-            {
-                Console.WriteLine("##cancel");
-            });
-            WaitingFrm frm = null;
             _dataManage.DevelopRecordEntityList.Clear();
+            using (cts.Register(() =>
+             {
+                 Console.WriteLine("##cancel");
+             })) { };
+            WaitingFrm frm = null;
+            this.Invoke(new Action(() =>
+            {
+                frm = new WaitingFrm(TotalPagerCount)
+                {
+                    Owner = this,
+                };
+                if (frm.Visible == false)
+                    frm.Show();
+
+            }));
             try
             {
                 await Task.Run(async () =>
@@ -781,13 +787,7 @@ namespace DLCodeRecord.DevelopForms
                     TotalCount = await UnityDevelopRecordFacade.GetDevelopRecordListCount().ConfigureAwait(false);
                     PagerCount = TotalCount / StepCount;
                     TotalPagerCount = (TotalCount % StepCount) > 0 ? PagerCount + 1 : PagerCount;
-                    this.BeginInvoke(new Action(() =>
-                    {
-                        frm = new WaitingFrm(TotalPagerCount)
-                        {
-                            Owner = this,
-                        };
-                    }));
+
                     for (int i = 0; i < TotalPagerCount; i++)
                     {
                         if (cts.IsCancellationRequested)
@@ -798,12 +798,11 @@ namespace DLCodeRecord.DevelopForms
                         int pageIndex = i;
                         Console.WriteLine($"PageIndex:{pageIndex}");
                         Console.WriteLine($"Result:{result.Count}");
-                        this.Invoke(new Action(() =>
+                        this.BeginInvoke(new Action(() =>
                         {
                             frm.Percent = pageIndex + 1;
                             Console.WriteLine($"frm.Percent:{frm.Percent}");
-                            if (frm.Visible == false)
-                                frm.Show();
+
                             for (int j = 0; j < result.Count; j++)
                             {
                                 if (cts.IsCancellationRequested)
@@ -820,6 +819,7 @@ namespace DLCodeRecord.DevelopForms
                         frm?.Close();
                     }));
                 }, cts);
+
             }
             catch (Exception ex)
             {
