@@ -768,7 +768,7 @@ namespace DLCodeRecord.DevelopForms
             using (cts.Register(() =>
              {
                  Console.WriteLine("##cancel");
-             })) { };
+             })) ;
             WaitingFrm frm = null;
             this.Invoke(new Action(() =>
             {
@@ -778,7 +778,6 @@ namespace DLCodeRecord.DevelopForms
                 };
                 if (frm.Visible == false)
                     frm.Show();
-
             }));
             try
             {
@@ -798,11 +797,10 @@ namespace DLCodeRecord.DevelopForms
                         int pageIndex = i;
                         Console.WriteLine($"PageIndex:{pageIndex}");
                         Console.WriteLine($"Result:{result.Count}");
-                        this.BeginInvoke(new Action(() =>
+                        this.Invoke(new Action(() =>
                         {
                             frm.Percent = pageIndex + 1;
                             Console.WriteLine($"frm.Percent:{frm.Percent}");
-
                             for (int j = 0; j < result.Count; j++)
                             {
                                 if (cts.IsCancellationRequested)
@@ -814,11 +812,11 @@ namespace DLCodeRecord.DevelopForms
                             Console.WriteLine($"DevelopRecordEntityList:{_dataManage.DevelopRecordEntityList.Count}");
                         }));
                     }
-                    this.Invoke(new Action(() =>
-                    {
-                        frm?.Close();
-                    }));
                 }, cts);
+                this.Invoke(new Action(() =>
+                {
+                    frm?.Close();
+                }));
 
             }
             catch (Exception ex)
