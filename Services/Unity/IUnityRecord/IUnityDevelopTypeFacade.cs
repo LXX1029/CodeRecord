@@ -12,6 +12,7 @@ namespace Services.Unity
         Task<IList<DevelopType>> GetDevelopTypeListByFilter(string name, int parentId);
         Task<IList<DevelopType>> GetDevelopTypesByParentId(int parentId);
         Task<DevelopType> GetDevelopTypeByParentId(int parentId);
+        Task<DevelopType> GetDevelopTypeById(int id);
         Task<int> GetMaxDevelopTypeId();
     }
 }

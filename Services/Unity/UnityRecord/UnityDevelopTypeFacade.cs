@@ -19,11 +19,21 @@ namespace Services.Unity
         /// </summary>
         /// <param name="parentId">parentId</param>
         /// <returns>DevelopType</returns>
-
         public async Task<DevelopType> GetDevelopTypeByParentId(int parentId)
         {
             using (var context = new RecordContext())
                 return await context.DevelopTypes.SingleOrDefaultAsync(s => s.Id == parentId);
+        }
+
+        /// <summary>
+        /// Id 获取类型对象
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>DevelopType</returns>
+        public async Task<DevelopType> GetDevelopTypeById(int id)
+        {
+            using (var context = new RecordContext())
+                return await context.DevelopTypes.SingleOrDefaultAsync(s => s.Id == id);
         }
 
         /// <summary>
@@ -42,10 +52,8 @@ namespace Services.Unity
         /// 获取类型集合
         /// </summary>
 
-        public async Task<IList<DevelopType>> GetDevelopTypesByParentId(int parentId)
-        {
-            return await this.GetEntities(m => m.ParentId == parentId);
-        }
+        public async Task<IList<DevelopType>> GetDevelopTypesByParentId(int parentId) =>
+            await this.GetEntities(m => m.ParentId == parentId);
 
         /// <summary>
         /// 获取最大类型Id

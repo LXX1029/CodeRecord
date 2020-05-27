@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using Services.EFCodeFirst;
 
 namespace Services.Repositories
@@ -53,7 +54,7 @@ namespace Services.Repositories
         public virtual async Task<T> UpdateEntity(T t)
         {
             if (t == null) return null;
-            using (RecordContext context = new RecordContext())
+            using (var context = new RecordContext())
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -61,6 +62,10 @@ namespace Services.Repositories
                     {
                         if (context.Entry<T>(t).State != EntityState.Modified)
                             context.Entry<T>(t).State = EntityState.Modified;
+                        context.Database.Log = log =>
+                        {
+                            Console.WriteLine(log);
+                        };
                         await context.SaveChangesAsync();
                         trans.Commit();
                     }
@@ -70,6 +75,7 @@ namespace Services.Repositories
                         throw ex;
                     }
                 }
+
                 return t;
             }
         }

@@ -46,9 +46,9 @@ namespace Services.EFCodeFirst
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             if (Common.UtilityHelper.GetConfigurationKeyValue("IsUsedSqlite") == "0")
             {
-                modelBuilder.Entity<DevelopUser>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion().IsConcurrencyToken();
-                modelBuilder.Entity<DevelopRecord>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion().IsConcurrencyToken();
-
+                modelBuilder.Entity<DevelopUser>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion(); //.IsConcurrencyToken();
+                modelBuilder.Entity<DevelopRecord>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion(); //.IsConcurrencyToken();
+                modelBuilder.Entity<DevelopType>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion(); //.IsConcurrencyToken();
             }
             base.OnModelCreating(modelBuilder);
         }

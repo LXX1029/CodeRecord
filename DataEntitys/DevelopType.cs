@@ -17,6 +17,7 @@ namespace DataEntitys
         public string Name { get; set; }
         [Required]
         public int ParentId { get; set; }
+        public byte[] RowVersion { get; set; }
         public DateTime CreatedTime { get; set; } = DateTime.Now;
 
         public DateTime UpdatedTime { get; set; } = DateTime.Now;

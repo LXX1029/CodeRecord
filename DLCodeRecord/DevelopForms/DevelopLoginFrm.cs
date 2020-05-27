@@ -174,7 +174,7 @@ namespace DLCodeRecord.DevelopForms
                 }
                 else
                 {
-                    string pwdConfig = UtilityHelper.GetConfigurationKeyValue("pwd");
+                     string pwdConfig = UtilityHelper.GetConfigurationKeyValue("pwd");
                     if (VerifyHelper.IsEmptyOrNullOrWhiteSpace(pwdConfig))
                     {
                         pwd = UtilityHelper.MD5Encrypt(pwd);
