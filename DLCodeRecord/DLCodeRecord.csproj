@@ -476,6 +476,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="DB\20200527.bak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="DevelopForms\ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
@@ -657,6 +660,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Dll\RisCaptureLib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DB\RecordDbSqlite1.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Images\Bug.ico">
