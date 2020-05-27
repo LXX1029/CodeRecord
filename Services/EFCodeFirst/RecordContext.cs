@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using DataEntitys;
 using Services.Migrations;
@@ -12,6 +14,7 @@ namespace Services.EFCodeFirst
         public RecordContext()
           : base($"name={(GetConfigurationKeyValue("IsUsedSqlite") == "1" ? GetConfigurationKeyValue("SqliteName") : GetConfigurationKeyValue("SqlserverName"))}")
         {
+            //this.Configuration.AutoDetectChangesEnabled = false;
             // 判断是否已经进行了Migrate操作
             var isInitializer = GetConfigurationKeyValue("IsInitializer");
             if (isInitializer == "0")
@@ -46,9 +49,9 @@ namespace Services.EFCodeFirst
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             if (Common.UtilityHelper.GetConfigurationKeyValue("IsUsedSqlite") == "0")
             {
-                modelBuilder.Entity<DevelopUser>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion(); //.IsConcurrencyToken();
-                modelBuilder.Entity<DevelopRecord>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion(); //.IsConcurrencyToken();
-                modelBuilder.Entity<DevelopType>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion(); //.IsConcurrencyToken();
+                modelBuilder.Entity<DevelopUser>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion().IsConcurrencyToken();
+                modelBuilder.Entity<DevelopRecord>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion().IsConcurrencyToken();
+                modelBuilder.Entity<DevelopType>().Property(m => m.RowVersion).HasColumnType("Timestamp").IsRowVersion().IsConcurrencyToken();
             }
             base.OnModelCreating(modelBuilder);
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace DataEntitys
 {
@@ -13,7 +14,6 @@ namespace DataEntitys
         public int Id { get; set; }
         [MaxLength(50)]
         [Required]
-        [ConcurrencyCheck]
         public string Name { get; set; }
         [Required]
         public int ParentId { get; set; }

@@ -280,7 +280,6 @@ namespace DLCodeRecord.DevelopForms
                             this.txtNode.Focus();
                             return;
                         }
-                        //var type1 = await UnityDevelopTypeFacade.GetDevelopTypeById(type.Id);
                         type.Name = name;
                         type.UpdatedTime = DateTime.Now;
                         await UnityDevelopTypeFacade.UpdateEntity(type);

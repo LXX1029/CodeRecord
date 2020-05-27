@@ -60,8 +60,10 @@ namespace Services.Repositories
                 {
                     try
                     {
+                        var entry1 = context.Entry<T>(t);
                         if (context.Entry<T>(t).State != EntityState.Modified)
                             context.Entry<T>(t).State = EntityState.Modified;
+                        var entry = context.Entry<T>(t);
                         context.Database.Log = log =>
                         {
                             Console.WriteLine(log);

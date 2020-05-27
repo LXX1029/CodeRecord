@@ -78,7 +78,6 @@
             this.ToTable("DevelopRecords");
             this.HasKey(m => m.Id).Property(m => m.Id).HasColumnType("int")
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
-            //this.Property(m => m.RowVersion).IsConcurrencyToken().HasColumnType("");
         }
     }
 }
