@@ -42,7 +42,6 @@ namespace Services.Unity
         /// <param name="name">类型名称</param>
         /// <param name="parentId">父Id</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-
         public async Task<IList<DevelopType>> GetDevelopTypeListByFilter(string name, int parentId)
         {
             return await this.GetEntities(m => m.Name == name && m.ParentId == parentId);
@@ -51,7 +50,6 @@ namespace Services.Unity
         /// <summary>
         /// 获取类型集合
         /// </summary>
-
         public async Task<IList<DevelopType>> GetDevelopTypesByParentId(int parentId) =>
             await this.GetEntities(m => m.ParentId == parentId);
 

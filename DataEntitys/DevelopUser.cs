@@ -20,7 +20,7 @@ namespace DataEntitys
         public string Sex { get; set; }
 
         public decimal DevelopAge { get; set; }
-
+        //[ConcurrencyCheck]
         public byte[] RowVersion { get; set; }
 
         public virtual ICollection<DevelopRecord> DevelopRecords { get; set; }

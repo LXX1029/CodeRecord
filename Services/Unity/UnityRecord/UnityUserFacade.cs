@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -36,8 +37,14 @@ namespace Services.Unity
                 if (predicate == null)
                     return await context.DevelopUsers.Include(m => m.DevelopPowerFuns).ToListAsync();
                 else
-                    return await context.DevelopUsers.Include(m=>m.DevelopRecords).Include(m => m.DevelopPowerFuns).Where(predicate).ToListAsync();
+                    return await context.DevelopUsers.Include(m => m.DevelopRecords).Include(m => m.DevelopPowerFuns).Where(predicate).ToListAsync();
             }
+        }
+        public override Task<DevelopUser> AddEntity(DevelopUser t)
+        {
+            var rowversion = Guid.NewGuid().ToString();
+            t.RowVersion = System.Text.Encoding.UTF8.GetBytes(rowversion);
+            return base.AddEntity(t);
         }
     }
 }
