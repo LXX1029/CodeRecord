@@ -465,6 +465,10 @@ namespace DLCodeRecord.DevelopForms
                     else
                         Logger.InfoFormat($"用户名为：{selectedUser.Name}，移除权限：{powerFun.Name}");
                 }
+                else
+                {
+                    await Task.CompletedTask;
+                }
                 foreach (TreeListNode node in treeListNode.Nodes)
                 {
                     // 获取节点包含的数据对象

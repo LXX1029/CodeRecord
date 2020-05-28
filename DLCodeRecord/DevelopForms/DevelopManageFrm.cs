@@ -768,7 +768,7 @@ namespace DLCodeRecord.DevelopForms
             using (cts.Register(() =>
              {
                  Console.WriteLine("##cancel");
-             })) ;
+             }));
             WaitingFrm frm = null;
             this.Invoke(new Action(() =>
             {

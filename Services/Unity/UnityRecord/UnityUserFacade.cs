@@ -36,7 +36,7 @@ namespace Services.Unity
                 if (predicate == null)
                     return await context.DevelopUsers.Include(m => m.DevelopPowerFuns).ToListAsync();
                 else
-                    return await context.DevelopUsers.Include(m => m.DevelopPowerFuns).Where(predicate).ToListAsync();
+                    return await context.DevelopUsers.Include(m=>m.DevelopRecords).Include(m => m.DevelopPowerFuns).Where(predicate).ToListAsync();
             }
         }
     }

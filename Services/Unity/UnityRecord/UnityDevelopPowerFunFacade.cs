@@ -28,11 +28,13 @@ namespace Services.Unity
         /// <param name="developPowerFun">DevelopPowerFun</param>
         public async Task<DevelopPowerFun> SetDevelopPowerFun(DevelopPowerFun developPowerFun)
         {
-            DevelopPowerFun currentDevelopPowerFun = null;
-            using (var context = new RecordContext())
+            try
             {
-                currentDevelopPowerFun = context.DevelopPowerFuns.FirstOrDefault(m => m.UserId == developPowerFun.UserId && m.FunId == developPowerFun.FunId);
-
+                DevelopPowerFun currentDevelopPowerFun = null;
+                using (var context = new RecordContext())
+                {
+                    currentDevelopPowerFun = context.DevelopPowerFuns.FirstOrDefault(m => m.UserId == developPowerFun.UserId && m.FunId == developPowerFun.FunId);
+                }
                 if (currentDevelopPowerFun != null)
                 {
                     currentDevelopPowerFun.IsEnabled = developPowerFun.IsEnabled;
@@ -42,6 +44,10 @@ namespace Services.Unity
                 {
                     return await AddEntity(developPowerFun);
                 }
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
             }
         }
     }
