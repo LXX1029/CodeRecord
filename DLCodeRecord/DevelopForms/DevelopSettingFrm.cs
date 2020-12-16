@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common;
 using DataEntitys;
-using static Services.Unity.UnityContainerManager;
+using Services.Unity;
 
 namespace DLCodeRecord.DevelopForms
 {
@@ -12,10 +12,12 @@ namespace DLCodeRecord.DevelopForms
     /// </summary>
     public partial class DevelopSettingFrm : BaseFrm
     {
+        private readonly IUnityUserFacade _unityUserFacade;
         #region 构造函数
-        public DevelopSettingFrm()
+        public DevelopSettingFrm(IUnityUserFacade unityUserFacade)
         {
             InitializeComponent();
+            this._unityUserFacade = unityUserFacade;
             this.Text = "设置";
             this.Load -= DevelopSettingFrm_Load;
             this.Load += DevelopSettingFrm_Load;
@@ -75,7 +77,7 @@ namespace DLCodeRecord.DevelopForms
                     return;
                 }
                 pwd = UtilityHelper.MD5Encrypt(pwd.Trim());
-                DevelopUser user = await UnityUserFacade.GetEntity(Convert.ToInt32(userId));
+                DevelopUser user = await this._unityUserFacade.GetEntity(Convert.ToInt32(userId));
                 if (user.Pwd != pwd)
                 {
                     txtPwd.ErrorText = "原始密码输入不正确";
@@ -98,7 +100,7 @@ namespace DLCodeRecord.DevelopForms
                     return;
                 }
                 user.Pwd = md5Pwd;
-                await UnityUserFacade.UpdateEntity(user);
+                await this._unityUserFacade.UpdateEntity(user);
                 MsgHelper.ShowInfo("修改成功，下次登录有效。");
                 txtPwd.ResetText();
                 txtNewPwd.ResetText();

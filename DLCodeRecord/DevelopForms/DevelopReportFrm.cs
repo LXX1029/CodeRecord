@@ -13,7 +13,7 @@ using DataEntitys;
 using DevExpress.Utils;
 using DevExpress.XtraCharts;
 using log4net;
-using static Services.Unity.UnityContainerManager;
+using Services.Unity;
 
 namespace DLCodeRecord.DevelopForms
 {
@@ -24,12 +24,14 @@ namespace DLCodeRecord.DevelopForms
     {
         #region 属性
         private ChartControl _chartControl = new ChartControl();
+        private readonly IUnityStatisticsFacade _unityStatisticsFacade;
         #endregion 属性
 
         #region 构造函数
-        public DevelopReportFrm()
+        public DevelopReportFrm(IUnityStatisticsFacade unityStatisticsFacade)
         {
             InitializeComponent();
+            this._unityStatisticsFacade = unityStatisticsFacade;
 
             #region 初始化设置
             this.Text = "统计";
@@ -65,7 +67,7 @@ namespace DLCodeRecord.DevelopForms
                 await Task.Delay(1000);
                 CloseSplashScreenForm();
                 // 获取数据
-                List<ClickCountReportEntity> reportList = await UnityStatisticsFacade.GetClickCountReport();
+                List<ClickCountReportEntity> reportList = await this._unityStatisticsFacade.GetClickCountReport();
                 if (reportList.Count != 0)
                 {
                     // 线

@@ -169,7 +169,7 @@ namespace Common
 
         #region 获取屏幕大小
         /// <summary>
-        /// 获取屏幕大小
+        /// 不同窗体呈现时 获取屏幕大小
         /// Item1-mainSize
         /// Item2-mainLocation
         /// Item3-subSize

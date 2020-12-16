@@ -4,7 +4,8 @@ using System.Windows.Forms;
 using Common;
 using DataEntitys;
 using DevExpress.XtraEditors;
-using static Services.Unity.UnityContainerManager;
+using Microsoft.Extensions.DependencyInjection;
+using Services.Unity;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -12,6 +13,9 @@ namespace DLCodeRecord.DevelopForms
     /// </summary>
     public partial class DevelopLoginFrm : BaseFrm
     {
+        private readonly IUnityUserFacade _unityUserFacade;
+        private readonly IServiceProvider _serviceProvider;
+
         #region 构造函数
         /// <summary>
         /// 静态函数
@@ -28,9 +32,12 @@ namespace DLCodeRecord.DevelopForms
                 Application.Exit();
             }
         }
-        public DevelopLoginFrm()
+        public DevelopLoginFrm(IUnityUserFacade unityUserFacade,IServiceProvider serviceProvider)
         {
             InitializeComponent();
+            this._unityUserFacade = unityUserFacade;
+            this._serviceProvider = serviceProvider;
+
             #region 汉化
 
             // 汉化
@@ -96,7 +103,7 @@ namespace DLCodeRecord.DevelopForms
         {
             try
             {
-                var tuple = UtilityHelper.GetWorkingAreaSize(0.2, 0.2);
+                var tuple = UtilityHelper.GetWorkingAreaSize(0.25, 0.25);
                 this.Size = tuple.Item3;
                 this.Location = tuple.Item4;
                 this.txtName.Properties.MaxLength = 15;
@@ -174,13 +181,13 @@ namespace DLCodeRecord.DevelopForms
                 }
                 else
                 {
-                     string pwdConfig = UtilityHelper.GetConfigurationKeyValue("pwd");
+                    string pwdConfig = UtilityHelper.GetConfigurationKeyValue("pwd");
                     if (VerifyHelper.IsEmptyOrNullOrWhiteSpace(pwdConfig))
                     {
                         pwd = UtilityHelper.MD5Encrypt(pwd);
                     }
                 }
-                DevelopUser user = await UnityUserFacade.GetDevelopUser(name, pwd);
+                DevelopUser user = await this._unityUserFacade.GetDevelopUser(name, pwd);
                 if (user == null)
                 {
                     lcMessage.Text = "用户名或密码错误";
@@ -198,7 +205,8 @@ namespace DLCodeRecord.DevelopForms
                     UtilityHelper.SetConfigurationKeyValue("pwd", string.Empty);
                 UtilityHelper.SetConfigurationKeyValue("userId", user.Id.ToString());
                 // 显示主窗口
-                _manageFrm = new DevelopManageFrm();
+                //_manageFrm = new DevelopManageFrm();
+                _manageFrm = this._serviceProvider.GetService<DevelopManageFrm>();
                 _manageFrm.AttatchedHandler(new Action(() => { this.Hide(); }));
                 _manageFrm.Show();
             }

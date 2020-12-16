@@ -11,8 +11,8 @@ using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraTreeList.Columns;
 using DevExpress.XtraTreeList.Nodes;
+using Services.Unity;
 using static Common.MsgHelper;
-using static Services.Unity.UnityContainerManager;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -37,12 +37,18 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         public DevelopUser selectedUser { get; set; }
 
+        private readonly IUnityUserFacade _unityUserFacade;
+        private readonly IUnityDevelopFunFacade _unityDevelopFunFacade;
+        private readonly IUnityDevelopPowerFunFacade _unityDevelopPowerFunFacade;
         #endregion 属性
 
         #region 构造函数
-        public DevelopUserFrm()
+        public DevelopUserFrm(IUnityUserFacade unityUserFacade,IUnityDevelopFunFacade unityDevelopFunFacade, IUnityDevelopPowerFunFacade unityDevelopPowerFunFacade)
         {
             InitializeComponent();
+            this._unityUserFacade = unityUserFacade;
+            this._unityDevelopFunFacade = unityDevelopFunFacade;
+            this._unityDevelopPowerFunFacade = unityDevelopPowerFunFacade;
             #region 初始化设置
             this.Text = "用户权限管理";
             _dataManage = DataManage.Instance;
@@ -53,8 +59,6 @@ namespace DLCodeRecord.DevelopForms
             this.Load += DevelopUserFrm_Load;
             this.FormClosing -= DevelopUserFrm_FormClosing;
             this.FormClosing += DevelopUserFrm_FormClosing;
-            //this.btnDelete.DoubleClick += (m, n) =>
-            //{};
         }
         #endregion
 
@@ -195,7 +199,7 @@ namespace DLCodeRecord.DevelopForms
                 selectedUser = gvUser.GetFocusedRow() as DevelopUser;
                 if (selectedUser?.Id > 0)
                 {
-                    await UnityUserFacade.UpdateEntity(selectedUser);
+                    await this._unityUserFacade.UpdateEntity(selectedUser);
                     ShowInfo("修改成功");
                 }
                 actionState = DevelopActiveState.Normal;
@@ -243,7 +247,7 @@ namespace DLCodeRecord.DevelopForms
             if (selectedUser.Id == 0)
             {
                 selectedUser.Pwd = UtilityHelper.MD5Encrypt("111111");
-                var result = await UnityUserFacade.AddEntity(selectedUser);
+                var result = await this._unityUserFacade.AddEntity(selectedUser);
                 if (result.Id > 0)
                 {
                     MsgHelper.ShowInfo("添加成功");
@@ -262,8 +266,8 @@ namespace DLCodeRecord.DevelopForms
             try
             {
                 ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
-                IList<DevelopUser> userArray = await UnityUserFacade.GetDevelopUsers(m => m.Id != 1);
-                IList<DevelopFun> funList = await UnityDevelopFunFacade.GetEntities();
+                IList<DevelopUser> userArray = await this._unityUserFacade.GetDevelopUsers(m => m.Id != 1);
+                IList<DevelopFun> funList = await this._unityDevelopFunFacade.GetEntities();
                 _dataManage.DevelopUserList.Clear();
                 foreach (DevelopUser user in userArray)
                     _dataManage?.DevelopUserList.Add(user);
@@ -452,7 +456,7 @@ namespace DLCodeRecord.DevelopForms
             bool isChecked = treeListNode.Checked;
             if (tlUserPower.GetDataRecordByNode(treeListNode) is DevelopFun powerFun && selectedUser != null)
             {
-                DevelopPowerFun developPowerFun = await UnityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
+                DevelopPowerFun developPowerFun = await this._unityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
                 {
                     FunId = powerFun.Id,
                     UserId = selectedUser.Id,
@@ -474,7 +478,7 @@ namespace DLCodeRecord.DevelopForms
                     // 获取节点包含的数据对象
                     if (tlUserPower.GetDataRecordByNode(node) is DevelopFun powerFunData)
                     {
-                        developPowerFun = await UnityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
+                        developPowerFun = await this._unityDevelopPowerFunFacade.SetDevelopPowerFun(new DevelopPowerFun
                         {
                             FunId = powerFunData.Id,
                             UserId = selectedUser.Id,
@@ -507,7 +511,7 @@ namespace DLCodeRecord.DevelopForms
                 }
                 if (MsgHelper.ShowConfirm(PromptHelper.D_DELETE_CONFIRM) == DialogResult.OK)
                 {
-                    int affectedRows = await UnityUserFacade.RemoveEntity(selectedUser);
+                    int affectedRows = await this._unityUserFacade.RemoveEntity(selectedUser);
                     if (affectedRows > 0)
                     {
                         await ReLoadDevelopUser();

@@ -16,9 +16,9 @@ using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.API.Native;
 using DevExpress.XtraRichEdit.Services;
 using log4net;
+using Services.Unity;
 using static Common.LoggerHelper;
 using static Common.UtilityHelper;
-using static Services.Unity.UnityContainerManager;
 using namespaceDraw = System.Drawing;
 using namespaceFrm = System.Windows.Forms;
 using namespaceWin = System.Windows;
@@ -35,6 +35,7 @@ namespace DLCodeRecord.DevelopForms
         /// 截屏类
         /// </summary>
         private readonly RisCaptureLib.ScreenCaputre _screenCaputre = new RisCaptureLib.ScreenCaputre();
+
 
         /// <summary>
         /// 自定义记录类
@@ -58,10 +59,14 @@ namespace DLCodeRecord.DevelopForms
         #endregion 属性
 
         #region 构造函数
+        private readonly IUnityDevelopTypeFacade _unityDevelopTypeFacade;
+        private readonly IUnityDevelopRecordFacade _unityDevelopRecordFacade;
 
-        public DevelopFrm()
+        public DevelopFrm(IUnityDevelopTypeFacade unityDevelopTypeFacade, IUnityDevelopRecordFacade unityDevelopRecordFacade)
         {
             InitializeComponent();
+            this._unityDevelopTypeFacade = unityDevelopTypeFacade;
+            this._unityDevelopRecordFacade = unityDevelopRecordFacade;
             DevelopRecordEntity = new DevelopRecordEntity(DataManage.LoginUser.Id);
             this.Text = "操作窗口";
             _screenCaputre.ScreenCaputred -= OnScreenCaputred;
@@ -99,7 +104,7 @@ namespace DLCodeRecord.DevelopForms
         /// 修改操作构造函数
         /// </summary>
         /// <param name="entity">传过来的对象</param>
-        public DevelopFrm(DevelopRecordEntity entity) : this()
+        public DevelopFrm(DevelopRecordEntity entity, IUnityDevelopTypeFacade unityDevelopTypeFacade, IUnityDevelopRecordFacade unityDevelopRecordFacade) : this(unityDevelopTypeFacade, unityDevelopRecordFacade)
         {
             try
             {
@@ -118,7 +123,7 @@ namespace DLCodeRecord.DevelopForms
                     DevelopRecordEntity = entity;
                     Task.Run(async () =>
                     {
-                        LocalDevelopRecord = await UnityDevelopRecordFacade.GetEntity(entity.Id);
+                        LocalDevelopRecord = await this._unityDevelopRecordFacade.GetEntity(entity.Id);
                     });
                 }
             }
@@ -149,7 +154,7 @@ namespace DLCodeRecord.DevelopForms
                 this.txtTitle.Focus();
                 ShowSplashScreenForm(PromptHelper.D_LOADINGDATA);
                 // 加载大类
-                IList<DevelopType> parentTypes = await UnityDevelopTypeFacade.GetDevelopTypesByParentId(0);
+                IList<DevelopType> parentTypes = await this._unityDevelopTypeFacade.GetDevelopTypesByParentId(0);
                 if (parentTypes.Count() > 0)
                 {
                     foreach (var f in parentTypes)
@@ -201,7 +206,7 @@ namespace DLCodeRecord.DevelopForms
             try
             {
                 int parentId = Convert.ToInt32(rgParentType.EditValue.ToString());
-                IEnumerable<DevelopType> childTypes = await UnityDevelopTypeFacade.GetDevelopTypesByParentId(parentId);
+                IEnumerable<DevelopType> childTypes = await this._unityDevelopTypeFacade.GetDevelopTypesByParentId(parentId);
                 this.rdioGChildType.Properties.Items.Clear();
                 if (childTypes.Count() > 0)
                 {
@@ -355,7 +360,7 @@ namespace DLCodeRecord.DevelopForms
                 }
                 if (actionState == DevelopActiveState.Updating)
                 {
-                    await UnityDevelopRecordFacade.UpdateEntity(this.LocalDevelopRecord);
+                    await this._unityDevelopRecordFacade.UpdateEntity(this.LocalDevelopRecord);
                     DevelopRecordEntity.Title = title;
                     DevelopRecordEntity.Desc = desc;
                     DevelopRecordEntity.Picture = picture;
@@ -369,7 +374,7 @@ namespace DLCodeRecord.DevelopForms
                 else if (actionState == DevelopActiveState.Adding)
                 {
                     this.LocalDevelopRecord.CreatedTime = editTime;
-                    DevelopRecord record = await UnityDevelopRecordFacade.AddEntity(this.LocalDevelopRecord);
+                    DevelopRecord record = await this._unityDevelopRecordFacade.AddEntity(this.LocalDevelopRecord);
                     DevelopRecordEntity.Id = record.Id;
                     DevelopRecordEntity.UserName = DataManage.LoginUser.Name;
                     DevelopRecordEntity.CreatedTime = editTime;

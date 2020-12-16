@@ -92,7 +92,6 @@
     <Compile Include="Migrations\SqliteConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\DbContextFactory.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Unity\IUnityRecord\IUnityDevelopFunFacade.cs" />
@@ -101,15 +100,13 @@
     <Compile Include="Unity\IUnityRecord\IUnityDevelopTypeFacade.cs" />
     <Compile Include="Unity\IUnityRecord\IUnityStatisticsFacade.cs" />
     <Compile Include="Unity\IUnityRecord\IUnityUserFacade.cs" />
-    <Compile Include="Unity\UnityControl\UnityCallHandlers.cs" />
-    <Compile Include="Unity\UnityControl\UnityAttributes.cs" />
+    <Compile Include="Unity\UnityContainerManager.cs" />
     <Compile Include="Unity\UnityRecord\UnityDevelopFunFacade.cs" />
     <Compile Include="Unity\UnityRecord\UnityDevelopPowerFunFacade.cs" />
     <Compile Include="Unity\UnityRecord\UnityDevelopRecordFacade.cs" />
     <Compile Include="Unity\UnityRecord\UnityDevelopTypeFacade.cs" />
     <Compile Include="Unity\UnityRecord\UnityStatisticsFacade.cs" />
     <Compile Include="Unity\UnityRecord\UnityUserFacade.cs" />
-    <Compile Include="Unity\UnityContainerManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

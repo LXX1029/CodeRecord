@@ -21,8 +21,9 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraSplashScreen;
 using DLCodeRecord.Reports;
 using log4net;
+using Microsoft.Extensions.DependencyInjection;
+using Services.Unity;
 using static Common.ExceptionHelper;
-using static Services.Unity.UnityContainerManager;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -63,12 +64,20 @@ namespace DLCodeRecord.DevelopForms
         /// </summary>
         private int TotalPagerCount { get; set; }
 
+        private readonly IUnityDevelopRecordFacade _unityDevelopRecordFacade;
+        private readonly IUnityDevelopFunFacade _unityDevelopFunFacade;
+        private readonly IUnityDevelopTypeFacade _unityDevelopTypeFacade;
+        private readonly IServiceProvider _serviceProvider;
         #endregion 变量
 
         #region 构造函数
-        public DevelopManageFrm()
+        public DevelopManageFrm(IUnityDevelopRecordFacade unityDevelopRecordFacade, IUnityDevelopFunFacade unityDevelopFunFacade,IUnityDevelopTypeFacade unityDevelopTypeFacade, IServiceProvider serviceProvider)
         {
             InitializeComponent();
+            this._unityDevelopRecordFacade = unityDevelopRecordFacade;
+            this._unityDevelopFunFacade = unityDevelopFunFacade;
+            this._unityDevelopTypeFacade = unityDevelopTypeFacade;
+            this._serviceProvider = serviceProvider;
             #region 初始化设置
             this.Text = "Bug/Code记录";
             this.TopMost = false;
@@ -360,7 +369,7 @@ namespace DLCodeRecord.DevelopForms
                 if (gvDevelop.GetFocusedRow() is DevelopRecordEntity entity)
                 {
                     // 更新数据库
-                    bool result = await UnityDevelopRecordFacade.UpdateDevelopRecordClickCount(entity.Id);
+                    bool result = await this._unityDevelopRecordFacade.UpdateDevelopRecordClickCount(entity.Id);
                     DevelopViewFrm developViewFrm = new DevelopViewFrm(entity)
                     {
                         Owner = this,
@@ -374,7 +383,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 if (gvDevelop.GetFocusedRow() is DevelopRecordEntity entity)
                 {
-                    DevelopRecord record = await UnityDevelopRecordFacade.GetEntity(entity.Id);
+                    DevelopRecord record = await this._unityDevelopRecordFacade.GetEntity(entity.Id);
                     if (record.Zip == null)
                     {
                         MsgHelper.ShowInfo(PromptHelper.D_NOPACKAGE);
@@ -493,7 +502,7 @@ namespace DLCodeRecord.DevelopForms
             // 管理员
             if (developUser.Name == "admin")
             {
-                IList<DevelopFun> funList = await UnityDevelopFunFacade.GetEntities();
+                IList<DevelopFun> funList = await this._unityDevelopFunFacade.GetEntities();
                 if (funList != null)
                 {
                     // 遍历父节点
@@ -666,6 +675,7 @@ namespace DLCodeRecord.DevelopForms
                     group.ShowCaptionButton = false;  // 不显示右下角箭头
             }
             #endregion
+
             #region 设置ApplicationButton菜单
             // 设置ApplicationButton菜单
             this.popupMenu.AddItems(new BarItem[]
@@ -688,16 +698,20 @@ namespace DLCodeRecord.DevelopForms
                 int id = e.Item.Id;
                 if (id == (int)DevelopFunCaptions.DevelopAdd)
                 {
-                    DevelopFrm addFrm = new DevelopFrm(null)
-                    {
-                        Owner = this,
-                        StartPosition = FormStartPosition.CenterParent,
-                    };
+                    //DevelopFrm addFrm = new DevelopFrm(null)
+                    //{
+                    //    Owner = this,
+                    //    StartPosition = FormStartPosition.CenterParent,
+                    //};
+                    var addFrm = this._serviceProvider.GetService<DevelopFrm>();
+                    addFrm.Owner = this;
+                    addFrm.StartPosition = FormStartPosition.CenterParent;
                     addFrm.ShowDialog();
                 }
                 if (id == (int)DevelopFunCaptions.DevelopTypeAdd)
                 {
-                    DevelopTypeAddFrm frm = new DevelopTypeAddFrm();
+                    //DevelopTypeAddFrm frm = new DevelopTypeAddFrm();
+                    var frm = this._serviceProvider.GetService<DevelopTypeAddFrm>();
                     if (!IsExistForm(frm))
                     {
                         // 重新加载数据
@@ -714,20 +728,23 @@ namespace DLCodeRecord.DevelopForms
                 }
                 if (id == (int)DevelopFunCaptions.DevelopReport)
                 {
-                    DevelopReportFrm frm = new DevelopReportFrm();
+                    //DevelopReportFrm frm = new DevelopReportFrm();
+                    var frm = this._serviceProvider.GetService<DevelopReportFrm>();
                     if (!IsExistForm(frm))
                         ShowForm(frm);
                 }
 
                 if (id == (int)DevelopFunCaptions.DevelopUser)
                 {
-                    DevelopUserFrm frm = new DevelopUserFrm();
+                    //DevelopUserFrm frm = new DevelopUserFrm();
+                    var frm = this._serviceProvider.GetService<DevelopUserFrm>();
                     if (!IsExistForm(frm))
                         ShowForm(frm);
                 }
                 if (id == (int)DevelopFunCaptions.DevelopSetting)
                 {
-                    var frm = new DevelopSettingFrm();
+                    //var frm = new DevelopSettingFrm();
+                    var frm = this._serviceProvider.GetService<DevelopSettingFrm>();
                     if (!IsExistForm(frm))
                         ShowForm(frm);
                 }
@@ -768,7 +785,7 @@ namespace DLCodeRecord.DevelopForms
             using (cts.Register(() =>
              {
                  Console.WriteLine("##cancel");
-             }));
+             })) ;
             WaitingFrm frm = null;
             this.Invoke(new Action(() =>
             {
@@ -783,7 +800,7 @@ namespace DLCodeRecord.DevelopForms
             {
                 await Task.Run(async () =>
                 {
-                    TotalCount = await UnityDevelopRecordFacade.GetDevelopRecordListCount().ConfigureAwait(false);
+                    TotalCount = await this._unityDevelopRecordFacade.GetDevelopRecordListCount().ConfigureAwait(false);
                     PagerCount = TotalCount / StepCount;
                     TotalPagerCount = (TotalCount % StepCount) > 0 ? PagerCount + 1 : PagerCount;
 
@@ -793,7 +810,7 @@ namespace DLCodeRecord.DevelopForms
                         {
                             break;
                         }
-                        var result = await UnityDevelopRecordFacade.GetDevelopRecordListByPager(i, StepCount).ConfigureAwait(false);
+                        var result = await this._unityDevelopRecordFacade.GetDevelopRecordListByPager(i, StepCount).ConfigureAwait(false);
                         int pageIndex = i;
                         Console.WriteLine($"PageIndex:{pageIndex}");
                         Console.WriteLine($"Result:{result.Count}");
@@ -830,6 +847,7 @@ namespace DLCodeRecord.DevelopForms
 
         #region 重新加载
         private CancellationTokenSource _source = new CancellationTokenSource();
+
         /// <summary>
         /// 重新加载数据
         /// </summary>
@@ -856,7 +874,7 @@ namespace DLCodeRecord.DevelopForms
                 if (MsgHelper.ShowConfirm(PromptHelper.D_DELETE_CONFIRM) == DialogResult.OK)
                 {
                     DevelopRecordEntity entity = obj as DevelopRecordEntity;
-                    int affectedRows = await UnityDevelopRecordFacade.RemoveEntity(entity.Id);
+                    int affectedRows = await this._unityDevelopRecordFacade.RemoveEntity(entity.Id);
                     if (affectedRows > 0)
                     {
                         _dataManage.DevelopRecordEntityList.Remove(entity);
@@ -890,7 +908,9 @@ namespace DLCodeRecord.DevelopForms
             if (this.gvDevelop.GetFocusedRow() is DevelopRecordEntity entity)
             {
                 this.SelectedRowIndex = this.gvDevelop.FocusedRowHandle;
-                var frm = new DevelopFrm(entity) { Owner = this };
+                var frm = new DevelopFrm(entity,this._unityDevelopTypeFacade,this._unityDevelopRecordFacade) { Owner = this };
+                //var frm = this._serviceProvider.GetService<DevelopFrm>();
+              
                 frm.ShowDialog();
                 this.Activate();
             }

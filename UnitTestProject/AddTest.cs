@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using DataEntitys;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static Services.Unity.UnityContainerManager;
+using Services.Unity;
 
 namespace UnitTestProject
 {

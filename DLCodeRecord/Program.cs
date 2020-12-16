@@ -6,7 +6,11 @@ using System.Threading;
 using System.Windows.Forms;
 using Common;
 using DLCodeRecord.DevelopForms;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Services.EFCodeFirst;
+using Services.Unity;
 
 namespace DLCodeRecord
 {
@@ -51,13 +55,51 @@ namespace DLCodeRecord
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.ApplicationExit -= Application_ApplicationExit;
             Application.ApplicationExit += Application_ApplicationExit;
-            Application.Run(new DevelopLoginFrm());
+            CreateHost();
+            //Application.Run(new DevelopLoginFrm());
             //Application.Run(new DevelopFrm());
             //Application.Run(new DevelopUserFrm());
             //Application.Run(new DevelopReportFrm());
             //Application.Run(new DevelopTypeAddFrm());
         }
+        /// <summary>
+        /// 配置信息
+        /// </summary>
+        private static IConfiguration _configuration { get; set; }
+        private static void CreateHost()
+        {
+            var host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    _configuration = context.Configuration;
+                    ConfigurationServices(services);
+                })
 
+                .Build();
+            var loginWindow = host.Services.GetRequiredService<DevelopLoginFrm>();
+            Application.Run(loginWindow);
+        }
+
+        private static void ConfigurationServices(IServiceCollection services)
+        {
+            services.AddOptions();
+
+            services.AddScoped<IUnityUserFacade, UnityUserFacade>();
+            services.AddScoped<IUnityDevelopRecordFacade, UnityDevelopRecordFacade>();
+            services.AddScoped<IUnityDevelopFunFacade, UnityDevelopFunFacade>();
+            services.AddScoped<IUnityDevelopPowerFunFacade, UnityDevelopPowerFunFacade>();
+            services.AddScoped<IUnityDevelopTypeFacade, UnityDevelopTypeFacade>();
+            services.AddScoped<IUnityStatisticsFacade, UnityStatisticsFacade>();
+
+            services.AddSingleton<DevelopLoginFrm>();
+            services.AddTransient<DevelopManageFrm>();
+            services.AddTransient<DevelopFrm>();
+            services.AddTransient<DevelopSettingFrm>();
+            services.AddTransient<DevelopUserFrm>();
+            services.AddTransient<DevelopViewFrm>();
+            services.AddTransient<DevelopReportFrm>();
+        }
+        #region 捕获线程异常
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             MsgHelper.CloseSplashScreenForm();
@@ -71,9 +113,6 @@ namespace DLCodeRecord
         {
             GC.Collect();
         }
-
-        #region 捕获线程异常
-
         private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
             LoggerHelper.WriteException(e.Exception);

@@ -6,8 +6,8 @@ using Common;
 using DataEntitys;
 using DevExpress.XtraEditors;
 using DevExpress.XtraTreeList.Nodes;
+using Services.Unity;
 using static Common.VerifyHelper;
-using static Services.Unity.UnityContainerManager;
 namespace DLCodeRecord.DevelopForms
 {
     /// <summary>
@@ -15,10 +15,12 @@ namespace DLCodeRecord.DevelopForms
     /// </summary>
     public partial class DevelopTypeAddFrm : BaseFrm
     {
+        private readonly IUnityDevelopTypeFacade _unityDevelopTypeFacade;
         #region 构造函数
-        public DevelopTypeAddFrm()
+        public DevelopTypeAddFrm(IUnityDevelopTypeFacade unityDevelopTypeFacade)
         {
             InitializeComponent();
+            this._unityDevelopTypeFacade = unityDevelopTypeFacade;
 
             #region 初始化设置
 
@@ -96,7 +98,7 @@ namespace DLCodeRecord.DevelopForms
         {
             try
             {
-                IList<DevelopType> developTypeList = await UnityDevelopTypeFacade.GetEntities();
+                IList<DevelopType> developTypeList = await this._unityDevelopTypeFacade.GetEntities();
                 this.tlDevelopList.DataSource = developTypeList;
             }
             catch (Exception ex)
@@ -127,7 +129,7 @@ namespace DLCodeRecord.DevelopForms
                     return;
                 }
 
-                IList<DevelopType> array = await UnityDevelopTypeFacade.GetDevelopTypeListByFilter(name, 0);
+                IList<DevelopType> array = await this._unityDevelopTypeFacade.GetDevelopTypeListByFilter(name, 0);
                 if (array.Count > 0)
                 {
                     txtRoot.ErrorText = "该版块名称已存在";
@@ -138,7 +140,7 @@ namespace DLCodeRecord.DevelopForms
                 {
                     Name = name,
                 };
-                await UnityDevelopTypeFacade.AddEntity(type);
+                await this._unityDevelopTypeFacade.AddEntity(type);
                 this.txtRoot.Text = string.Empty;
                 await LoadDevelopType();
                 MsgHelper.ShowInfo(PromptHelper.D_ADD_SUCCESS);
@@ -183,7 +185,7 @@ namespace DLCodeRecord.DevelopForms
                     return;
                 }
 
-                IList<DevelopType> array = await UnityDevelopTypeFacade.GetDevelopTypeListByFilter(name, parentType.Id);
+                IList<DevelopType> array = await this._unityDevelopTypeFacade.GetDevelopTypeListByFilter(name, parentType.Id);
                 if (array.Count > 0)
                 {
                     txtChild.ErrorText = "该版块已存在";
@@ -198,7 +200,7 @@ namespace DLCodeRecord.DevelopForms
                     ParentId = parentType.Id,
                     CreatedTime = DateTime.Now,
                 };
-                await UnityDevelopTypeFacade.AddEntity(type);
+                await this._unityDevelopTypeFacade.AddEntity(type);
                 txtChild.Text = string.Empty;
                 await LoadDevelopType();
                 tlDevelopList.FocusedNode.ExpandAll();
@@ -231,7 +233,7 @@ namespace DLCodeRecord.DevelopForms
                     {
                         TreeListNode parentNode = tlDevelopList.FocusedNode.ParentNode;
                         // 执行删除
-                        int affectedRows = await UnityDevelopTypeFacade.RemoveEntity(type);
+                        int affectedRows = await this._unityDevelopTypeFacade.RemoveEntity(type);
                         if (affectedRows > 0)
                         {
                             await LoadDevelopType();
@@ -282,7 +284,7 @@ namespace DLCodeRecord.DevelopForms
                         }
                         type.Name = name;
                         type.UpdatedTime = DateTime.Now;
-                        await UnityDevelopTypeFacade.UpdateEntity(type);
+                        await this._unityDevelopTypeFacade.UpdateEntity(type);
                         await LoadDevelopType();
                         FocusedNode(type.Name);
                         txtNode.Text = string.Empty;
